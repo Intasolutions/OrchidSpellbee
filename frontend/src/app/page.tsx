@@ -227,7 +227,7 @@ export default function Home() {
             </p>
             <button className="btn" style={{ borderRadius: '4px' }}>Why Orchid Spell Bee ↓</button>
           </div>
-          <div style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+          <div className="about-images" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
             <div style={{ 
               background: 'url("https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80") center/cover', 
               height: '300px', 

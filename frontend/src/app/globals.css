@@ -368,4 +368,9 @@ a {
   footer div[style*="display: flex"] {
     gap: 1.5rem !important;
   }
+  
+  /* Hide decorative about us images on mobile to prevent empty gap */
+  .about-images {
+    display: none !important;
+  }
 }
