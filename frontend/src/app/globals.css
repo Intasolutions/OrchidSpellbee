@@ -390,3 +390,98 @@ a {
     display: grid !important;
   }
 }
+
+/* Custom Cursor Follower Styles */
+.custom-cursor-follower {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 32px;
+  height: 32px;
+  border: 2px solid var(--color-text-heading);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+              height 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+              background-color 0.3s, 
+              border-color 0.3s, 
+              box-shadow 0.3s,
+              opacity 0.3s;
+  opacity: 0;
+  mix-blend-mode: difference;
+}
+
+.custom-cursor-follower.visible {
+  opacity: 1;
+}
+
+.custom-cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background-color: var(--color-accent-orange);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  transition: width 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+              height 0.3s cubic-bezier(0.25, 1, 0.5, 1), 
+              background-color 0.3s, 
+              opacity 0.3s;
+  opacity: 0;
+}
+
+.custom-cursor-dot.visible {
+  opacity: 1;
+}
+
+/* Hovering over links/buttons */
+.custom-cursor-follower.hovered {
+  width: 48px;
+  height: 48px;
+  border-color: var(--color-accent-orange);
+  background-color: rgba(255, 184, 0, 0.15);
+  box-shadow: 0 0 20px rgba(255, 184, 0, 0.25);
+  mix-blend-mode: normal;
+}
+
+.custom-cursor-dot.hovered {
+  width: 4px;
+  height: 4px;
+  background-color: var(--color-accent-orange);
+}
+
+/* Clicking */
+.custom-cursor-follower.clicked {
+  width: 24px;
+  height: 24px;
+  border-color: var(--color-accent-orange);
+  background-color: rgba(255, 184, 0, 0.3);
+  mix-blend-mode: normal;
+}
+
+.custom-cursor-dot.clicked {
+  width: 12px;
+  height: 12px;
+  background-color: var(--color-text-heading);
+}
+
+/* Hide standard cursor only on desktop devices when the custom cursor is loaded */
+@media (hover: hover) and (pointer: fine) {
+  html.has-custom-cursor,
+  html.has-custom-cursor *,
+  html.has-custom-cursor a,
+  html.has-custom-cursor button,
+  html.has-custom-cursor input,
+  html.has-custom-cursor select,
+  html.has-custom-cursor textarea,
+  html.has-custom-cursor [role="button"] {
+    cursor: none !important;
+  }
+}

@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import ScrollObserver from "../components/ScrollObserver";
 import MainLayoutWrapper from "../components/MainLayoutWrapper";
+import CursorFollower from "../components/CursorFollower";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <ScrollObserver />
+        <CursorFollower />
         <MainLayoutWrapper>{children}</MainLayoutWrapper>
       </body>
     </html>
