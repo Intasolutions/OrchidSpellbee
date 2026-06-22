@@ -24,6 +24,7 @@ body {
   min-height: 100vh;
   line-height: 1.6;
   overflow-x: hidden;
+  perspective: 1200px; /* Enable global 3D perspective for child rotations */
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -57,14 +58,18 @@ a {
   font-weight: 600;
   border: none;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease, background-color 0.3s;
   box-shadow: 0 4px 15px rgba(255, 184, 0, 0.3);
 }
 
 .btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 184, 0, 0.4);
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 12px 25px rgba(255, 184, 0, 0.4);
   background: var(--color-accent-orange-hover);
+}
+
+.btn:active {
+  transform: translateY(-1px) scale(0.97);
 }
 
 .btn-outline {
@@ -83,13 +88,13 @@ a {
   border: 1px solid var(--color-border);
   border-radius: 12px;
   padding: 2rem;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s;
   box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  transform: translateY(-8px) scale(1.025) rotateZ(0.5deg);
+  box-shadow: 0 20px 35px rgba(0,0,0,0.08);
 }
 
 /* Animations */
@@ -166,55 +171,59 @@ a {
   transform: translateY(0);
 }
 
-/* Revealing scroll animations with clip-path (premium visual mask reveal) */
+/* Revealing scroll animations with 3D perspective zoom & rotation */
 .reveal-up {
-  clip-path: inset(100% 0 0 0);
-  transform: translateY(30px);
-  transition: clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: clip-path, transform;
+  opacity: 0;
+  transform: translateY(50px) scale(0.92) rotateX(10deg);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+  transform-origin: center bottom;
 }
 .reveal-up.visible {
-  clip-path: inset(0 0 0 0);
-  transform: translateY(0);
+  opacity: 1;
+  transform: translateY(0) scale(1) rotateX(0);
 }
 
 .reveal-left {
-  clip-path: inset(0 100% 0 0);
-  transform: translateX(-30px);
-  transition: clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: clip-path, transform;
+  opacity: 0;
+  transform: translateX(-70px) scale(0.94) rotateY(-12deg);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+  transform-origin: left center;
 }
 .reveal-left.visible {
-  clip-path: inset(0 0 0 0);
-  transform: translateX(0);
+  opacity: 1;
+  transform: translateX(0) scale(1) rotateY(0);
 }
 
 .reveal-right {
-  clip-path: inset(0 0 0 100%);
-  transform: translateX(30px);
-  transition: clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: clip-path, transform;
+  opacity: 0;
+  transform: translateX(70px) scale(0.94) rotateY(12deg);
+  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+  transform-origin: right center;
 }
 .reveal-right.visible {
-  clip-path: inset(0 0 0 0);
-  transform: translateX(0);
+  opacity: 1;
+  transform: translateX(0) scale(1) rotateY(0);
 }
 
-/* Page load reveal animations for Hero section */
+/* Page load reveal animations for Hero section with 3D scaling */
 @keyframes revealUp {
   from {
-    clip-path: inset(100% 0 0 0);
-    transform: translateY(40px);
+    opacity: 0;
+    transform: translateY(60px) scale(0.9) rotateX(15deg);
   }
   to {
-    clip-path: inset(0 0 0 0);
-    transform: translateY(0);
+    opacity: 1;
+    transform: translateY(0) scale(1) rotateX(0);
   }
 }
 
 .animate-reveal-up {
+  opacity: 0;
   animation: revealUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  will-change: clip-path, transform;
+  will-change: opacity, transform;
 }
 
 /* Staggered Delays for premium feel */
