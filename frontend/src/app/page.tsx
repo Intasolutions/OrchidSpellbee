@@ -228,7 +228,7 @@ export default function Home() {
         </div>
         
         <div className="about-inner" style={{ display: 'flex', gap: '4rem', alignItems: 'flex-start' }}>
-          <div className="slide-left" style={{ flex: 1 }}>
+          <div className="fade-up" style={{ flex: 1 }}>
             <h4 style={{ color: '#a0aec0', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', fontSize: '0.9rem' }}>WHO WE ARE</h4>
             <h3 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'var(--color-text-heading)' }}>Welcome to Orchid Spell Bee</h3>
             <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem', fontStyle: 'italic' }}>
@@ -245,7 +245,7 @@ export default function Home() {
               Why Orchid Spell Bee ↓
             </button>
           </div>
-          <div className="about-images slide-right" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+          <div className="about-images fade-up" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
             <div className="about-img-large" style={{ 
               background: 'url("/img/7.jpeg") center/cover', 
               height: '300px', 
@@ -373,7 +373,7 @@ export default function Home() {
           
           <div className="awards-inner" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem', alignItems: 'center' }}>
             {/* Left Content */}
-            <div className="slide-left" style={{ paddingRight: '2rem' }}>
+            <div className="fade-up" style={{ paddingRight: '2rem' }}>
               <div style={{ color: '#a0aec0', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '700', letterSpacing: '1.5px', marginBottom: '1rem' }}>PRIZES AND RECOGNITIONS</div>
               <h3 style={{ fontSize: '2.2rem', color: '#1a202c', margin: '0 0 1.5rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '800' }}>
                 Rounds and Prizes
@@ -391,7 +391,7 @@ export default function Home() {
             </div>
             
             {/* Right Card / Table */}
-            <div className="slide-right" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
+            <div className="fade-up" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
                {/* Decorative background cards to create stacked effect */}
                <div style={{ position: 'absolute', top: '6px', right: '-6px', bottom: '-6px', left: '6px', background: '#4c3a99', borderRadius: '12px', zIndex: 1 }}></div>
                
