@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from "react";
 export default function CursorFollower() {
   const followerRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
+  const [isEnabled, setIsEnabled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
 
@@ -16,20 +16,21 @@ export default function CursorFollower() {
     const hasHover = window.matchMedia("(hover: hover)").matches;
     if (!hasHover) return;
 
-    // Enable custom cursor class
+    // Enable custom cursor styles
     document.documentElement.classList.add("has-custom-cursor");
-    setIsVisible(true);
+    setIsEnabled(true);
 
     const follower = followerRef.current;
     const dot = dotRef.current;
+    if (!follower || !dot) return;
 
-    // Initialize positions off-screen so it doesn't pop in the center
-    let mouseX = -100;
-    let mouseY = -100;
-    let followerX = -100;
-    let followerY = -100;
-    let dotX = -100;
-    let dotY = -100;
+    // Start positions (centered initially)
+    let mouseX = window.innerWidth / 2;
+    let mouseY = window.innerHeight / 2;
+    let followerX = mouseX;
+    let followerY = mouseY;
+    let dotX = mouseX;
+    let dotY = mouseY;
 
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
@@ -50,9 +51,9 @@ export default function CursorFollower() {
       if (dot) dot.style.opacity = "1";
     };
 
-    // Fallback: If user actually touches screen, disable custom cursor instantly
+    // If user touches screen, disable custom cursor instantly
     const onTouchStart = () => {
-      setIsVisible(false);
+      setIsEnabled(false);
       document.documentElement.classList.remove("has-custom-cursor");
     };
 
@@ -118,17 +119,15 @@ export default function CursorFollower() {
     };
   }, []);
 
-  if (!isVisible) return null;
-
   return (
     <>
       <div
         ref={followerRef}
-        className={`custom-cursor-follower visible ${isHovered ? "hovered" : ""} ${isClicked ? "clicked" : ""}`}
+        className={`custom-cursor-follower ${isEnabled ? "visible" : ""} ${isHovered ? "hovered" : ""} ${isClicked ? "clicked" : ""}`}
       />
       <div
         ref={dotRef}
-        className={`custom-cursor-dot visible ${isHovered ? "hovered" : ""} ${isClicked ? "clicked" : ""}`}
+        className={`custom-cursor-dot ${isEnabled ? "visible" : ""} ${isHovered ? "hovered" : ""} ${isClicked ? "clicked" : ""}`}
       />
     </>
   );
