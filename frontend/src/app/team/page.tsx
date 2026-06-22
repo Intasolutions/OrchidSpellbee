@@ -3,7 +3,7 @@
 export default function TeamPage() {
   const team = [
     {
-      name: "Dr. Ravi Krishnan",
+      name: "test",
       role: "Founder & Director",
       initials: "RK",
       color: "#ffb800",
@@ -12,7 +12,7 @@ export default function TeamPage() {
       expertise: ["Education Leadership", "Curriculum Design", "Public Speaking"],
     },
     {
-      name: "Anitha Menon",
+      name: "test",
       role: "Chief Education Officer",
       initials: "AM",
       color: "#7c3aed",
@@ -21,7 +21,7 @@ export default function TeamPage() {
       expertise: ["Linguistics", "Word Curation", "Student Coaching"],
     },
     {
-      name: "Sanjay Thomas",
+      name: "test",
       role: "Head of Competitions",
       initials: "ST",
       color: "#0ea5e9",
@@ -30,7 +30,7 @@ export default function TeamPage() {
       expertise: ["Event Management", "Operations", "Judging Protocols"],
     },
     {
-      name: "Priya Nair",
+      name: "test",
       role: "Curriculum Director",
       initials: "PN",
       color: "#10b981",
@@ -39,7 +39,7 @@ export default function TeamPage() {
       expertise: ["Pedagogy", "Book Authoring", "Teacher Training"],
     },
     {
-      name: "Arjun Pillai",
+      name: "test",
       role: "Technology Lead",
       initials: "AP",
       color: "#f97316",
@@ -48,7 +48,7 @@ export default function TeamPage() {
       expertise: ["Web Development", "Systems Design", "Data Analytics"],
     },
     {
-      name: "Deepa Varma",
+      name: "test",
       role: "Events Coordinator",
       initials: "DV",
       color: "#ec4899",
