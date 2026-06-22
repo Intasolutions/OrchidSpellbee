@@ -9,8 +9,13 @@ export default function CursorFollower() {
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   
-  // Track if we are in touch mode (hybrid screen use)
-  const isTouchMode = useRef(false);
+  // Track enabled status using a ref to bypass useEffect state closures
+  const isEnabledRef = useRef(false);
+
+  const setEnabledStatus = (status: boolean) => {
+    setIsEnabled(status);
+    isEnabledRef.current = status;
+  };
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -21,7 +26,7 @@ export default function CursorFollower() {
 
     // Enable custom cursor styles
     document.documentElement.classList.add("has-custom-cursor");
-    setIsEnabled(true);
+    setEnabledStatus(true);
 
     // Start positions (centered initially)
     let mouseX = window.innerWidth / 2;
@@ -31,13 +36,24 @@ export default function CursorFollower() {
     let dotX = mouseX;
     let dotY = mouseY;
 
-    const onMouseMove = (e: MouseEvent) => {
-      // If we were in touch mode but the user has moved the mouse again, restore follower
-      if (isTouchMode.current) {
-        isTouchMode.current = false;
-        setIsEnabled(true);
+    const onPointerMove = (e: PointerEvent) => {
+      // If touch interaction is detected, hide follower and restore native cursor
+      if (e.pointerType === "touch") {
+        if (isEnabledRef.current) {
+          setEnabledStatus(false);
+          document.documentElement.classList.remove("has-custom-cursor");
+          const f = followerRef.current;
+          const d = dotRef.current;
+          if (f) f.style.opacity = "0";
+          if (d) d.style.opacity = "0";
+        }
+        return;
+      }
+
+      // If we were disabled (e.g. by touch) but are now moving with a mouse, restore follower
+      if (!isEnabledRef.current) {
+        setEnabledStatus(true);
         document.documentElement.classList.add("has-custom-cursor");
-        
         const f = followerRef.current;
         const d = dotRef.current;
         if (f) f.style.opacity = "1";
@@ -48,38 +64,44 @@ export default function CursorFollower() {
       mouseY = e.clientY;
     };
 
-    const onMouseDown = () => setIsClicked(true);
-    const onMouseUp = () => setIsClicked(false);
+    const onPointerDown = (e: PointerEvent) => {
+      if (e.pointerType === "touch") {
+        if (isEnabledRef.current) {
+          setEnabledStatus(false);
+          document.documentElement.classList.remove("has-custom-cursor");
+          const f = followerRef.current;
+          const d = dotRef.current;
+          if (f) f.style.opacity = "0";
+          if (d) d.style.opacity = "0";
+        }
+        return;
+      }
+      setIsClicked(true);
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
+      setIsClicked(false);
+    };
     
     // Hide visual elements when mouse leaves window bounds
-    const onMouseLeave = () => {
+    const onPointerLeave = () => {
       const f = followerRef.current;
       const d = dotRef.current;
       if (f) f.style.opacity = "0";
       if (d) d.style.opacity = "0";
     };
     
-    const onMouseEnter = () => {
-      if (isTouchMode.current) return;
+    const onPointerEnter = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
       const f = followerRef.current;
       const d = dotRef.current;
       if (f) f.style.opacity = "1";
       if (d) d.style.opacity = "1";
     };
 
-    // If user touches screen, disable custom cursor instantly to allow standard scrolling
-    const onTouchStart = () => {
-      isTouchMode.current = true;
-      setIsEnabled(false);
-      document.documentElement.classList.remove("has-custom-cursor");
-      
-      const f = followerRef.current;
-      const d = dotRef.current;
-      if (f) f.style.opacity = "0";
-      if (d) d.style.opacity = "0";
-    };
-
-    const handleMouseOver = (e: MouseEvent) => {
+    const handlePointerOver = (e: PointerEvent) => {
+      if (e.pointerType === "touch") return;
       const target = e.target as HTMLElement;
       if (
         target &&
@@ -100,13 +122,12 @@ export default function CursorFollower() {
       }
     };
 
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mousedown", onMouseDown);
-    window.addEventListener("mouseup", onMouseUp);
-    document.addEventListener("mouseleave", onMouseLeave);
-    document.addEventListener("mouseenter", onMouseEnter);
-    window.addEventListener("mouseover", handleMouseOver);
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("pointermove", onPointerMove);
+    window.addEventListener("pointerdown", onPointerDown);
+    window.addEventListener("pointerup", onPointerUp);
+    document.addEventListener("pointerleave", onPointerLeave);
+    document.addEventListener("pointerenter", onPointerEnter);
+    window.addEventListener("pointerover", handlePointerOver);
 
     let animationFrameId: number;
     const tick = () => {
@@ -134,13 +155,12 @@ export default function CursorFollower() {
 
     return () => {
       document.documentElement.classList.remove("has-custom-cursor");
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mousedown", onMouseDown);
-      window.removeEventListener("mouseup", onMouseUp);
-      document.removeEventListener("mouseleave", onMouseLeave);
-      document.removeEventListener("mouseenter", onMouseEnter);
-      window.removeEventListener("mouseover", handleMouseOver);
-      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("pointermove", onPointerMove);
+      window.removeEventListener("pointerdown", onPointerDown);
+      window.removeEventListener("pointerup", onPointerUp);
+      document.removeEventListener("pointerleave", onPointerLeave);
+      document.removeEventListener("pointerenter", onPointerEnter);
+      window.removeEventListener("pointerover", handlePointerOver);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
