@@ -246,20 +246,20 @@ export default function Home() {
             </button>
           </div>
           <div className="about-images" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
-            <div style={{ 
+            <div className="about-img-large" style={{ 
               background: 'url("/img/7.jpeg") center/cover', 
               height: '300px', 
               borderRadius: '12px', 
               gridRow: 'span 2',
               boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
             }}></div>
-            <div style={{ 
+            <div className="about-img-small" style={{ 
               background: 'url("/img/8.jpeg") center/cover', 
               height: '140px', 
               borderRadius: '12px',
               boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
             }}></div>
-            <div style={{ 
+            <div className="about-img-small" style={{ 
               background: 'url("/img/9.jpeg") center/cover', 
               height: '140px', 
               borderRadius: '12px',
@@ -279,7 +279,7 @@ export default function Home() {
             <h2 style={{ fontSize: '2.5rem', color: 'var(--color-text-heading)', margin: 0 }}>Why Orchid Spell Bee?</h2>
           </div>
           
-          <div style={{ position: 'relative', maxWidth: '1000px', margin: '0 auto', padding: '4rem 0' }}>
+          <div className="values-tree-container" style={{ position: 'relative', maxWidth: '1000px', margin: '0 auto', padding: '4rem 0' }}>
             
             {/* Literal SVG Tree Background */}
             <div style={{ 

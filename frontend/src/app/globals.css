@@ -385,9 +385,24 @@ a {
     gap: 1.5rem !important;
   }
   
-  /* Restore decorative about us images on mobile */
+  /* Restore decorative about us images on mobile and adjust heights to reduce gap */
   .about-images {
     display: grid !important;
+    gap: 0.75rem !important;
+  }
+  .about-img-large {
+    height: 180px !important;
+  }
+  .about-img-small {
+    height: 85px !important;
+  }
+
+  /* Reduce spacing and container paddings for Core Values section on mobile */
+  #why-us {
+    padding: 3rem 0 !important;
+  }
+  .values-tree-container {
+    padding: 1rem 0 !important;
   }
 }
 
