@@ -261,11 +261,11 @@ export default function OurBooksPage() {
                   </div>
                   <div
                     style={{
-                      width: "140px",
-                      height: "190px",
-                      margin: "0 auto 1.5rem auto",
-                      boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-                      borderRadius: "8px",
+                      width: "100%",
+                      aspectRatio: "2048/1151",
+                      margin: "1.5rem auto 1rem auto",
+                      boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
+                      borderRadius: "12px",
                       overflow: "hidden",
                       position: "relative",
                       border: "1px solid rgba(0,0,0,0.08)",
@@ -276,7 +276,7 @@ export default function OurBooksPage() {
                       src={book.image} 
                       alt={book.title} 
                       fill
-                      sizes="140px"
+                      sizes="(max-width: 768px) 100vw, 320px"
                       style={{ objectFit: "cover" }}
                     />
                   </div>
