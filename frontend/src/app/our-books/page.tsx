@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 
 export default function OurBooksPage() {
   const books = [
@@ -421,24 +422,29 @@ export default function OurBooksPage() {
             Available through your school coordinator or directly from our office in Cochin.
           </p>
           <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-            <button
-              className="btn"
-              style={{ fontSize: "1rem", padding: "1rem 2.5rem", borderRadius: "50px" }}
-            >
-              Order Now →
-            </button>
-            <button
-              className="btn btn-outline"
-              style={{
-                fontSize: "1rem",
-                padding: "1rem 2.5rem",
-                borderRadius: "50px",
-                borderColor: "rgba(255,255,255,0.4)",
-                color: "white",
-              }}
-            >
-              Contact Us
-            </button>
+            <Link href="/contact" style={{ textDecoration: 'none' }}>
+              <button
+                className="btn"
+                style={{ fontSize: "1rem", padding: "1rem 2.5rem", borderRadius: "50px", cursor: "pointer" }}
+              >
+                Order Now →
+              </button>
+            </Link>
+            <Link href="/contact" style={{ textDecoration: 'none' }}>
+              <button
+                className="btn btn-outline"
+                style={{
+                  fontSize: "1rem",
+                  padding: "1rem 2.5rem",
+                  borderRadius: "50px",
+                  borderColor: "rgba(255,255,255,0.4)",
+                  color: "white",
+                  cursor: "pointer",
+                }}
+              >
+                Contact Us
+              </button>
+            </Link>
           </div>
         </div>
       </div>

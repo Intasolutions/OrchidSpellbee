@@ -1,5 +1,7 @@
 "use client";
 
+import Link from 'next/link';
+
 export default function TeamPage() {
   const team = [
     {
@@ -454,16 +456,19 @@ export default function TeamPage() {
             We're always looking for passionate educators, volunteers, and professionals
             to help shape the next generation of spelling champions.
           </p>
-          <button
-            className="btn"
-            style={{
-              fontSize: "1rem",
-              padding: "1rem 2.5rem",
-              borderRadius: "50px",
-            }}
-          >
-            Get In Touch →
-          </button>
+          <Link href="/contact" style={{ textDecoration: 'none', display: 'inline-block' }}>
+            <button
+              className="btn"
+              style={{
+                fontSize: "1rem",
+                padding: "1rem 2.5rem",
+                borderRadius: "50px",
+                cursor: "pointer",
+              }}
+            >
+              Get In Touch →
+            </button>
+          </Link>
         </div>
       </div>
     </div>
