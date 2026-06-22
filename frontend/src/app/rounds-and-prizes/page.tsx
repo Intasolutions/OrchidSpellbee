@@ -253,7 +253,7 @@ export default function RoundsAndPrizesPage() {
             {rounds.map((round, i) => (
               <div
                 key={i}
-                className="fade-up"
+                className="fade-up round-row"
                 style={{
                   display: "flex",
                   gap: "2.5rem",
@@ -374,6 +374,7 @@ export default function RoundsAndPrizesPage() {
           </div>
 
           <div
+            className="prize-tables-grid"
             style={{
               display: "grid",
               gridTemplateColumns: "repeat(auto-fit, minmax(400px, 1fr))",

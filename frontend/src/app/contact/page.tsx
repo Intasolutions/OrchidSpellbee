@@ -134,7 +134,7 @@ export default function ContactPage() {
       {/* Contact Info + Form */}
       <div style={{ background: "#f8f9fa", padding: "7rem 0" }}>
         <div
-          className="container"
+          className="container contact-grid"
           style={{
             maxWidth: "1100px", margin: "0 auto",
             display: "grid", gridTemplateColumns: "1fr 1.6fr",
@@ -267,7 +267,7 @@ export default function ContactPage() {
             <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
 
               {/* Name row */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div className="form-row-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                 {[
                   { label: "First Name *", field: "firstName", placeholder: "First Name" },
                   { label: "Last Name", field: "lastName", placeholder: "Last Name" },
@@ -289,7 +289,7 @@ export default function ContactPage() {
               </div>
 
               {/* Email + Phone row */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+              <div className="form-row-2col" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
                   <label style={labelStyle}>Email Address</label>
                   <input type="email" placeholder="you@example.com" value={form.email} onChange={set("email")} style={inputStyle} onFocus={focusBorder} onBlur={blurBorder} />

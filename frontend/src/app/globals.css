@@ -185,3 +185,187 @@ a {
 .nav-link::after {
   display: none;
 }
+
+/* Responsive adjustments for mobile and tablet */
+@media (max-width: 1024px) {
+  .hero-section {
+    padding: 6rem 2rem 4rem 2rem !important;
+    gap: 2rem !important;
+  }
+}
+
+@media (max-width: 768px) {
+  /* Navbar */
+  .nav-links {
+    display: none !important;
+  }
+  .mobile-menu-btn {
+    display: block !important;
+  }
+  
+  /* Typography */
+  h1 {
+    font-size: 2.25rem !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.5px !important;
+  }
+  h2 {
+    font-size: 1.8rem !important;
+  }
+  h3 {
+    font-size: 1.5rem !important;
+  }
+  
+  /* Hero Section */
+  .hero-section {
+    flex-direction: column !important;
+    text-align: center !important;
+    padding: 9.5rem 1.5rem 3rem 1.5rem !important;
+    min-height: auto !important;
+  }
+  .hero-left {
+    padding-left: 0 !important;
+  }
+  .hero-left div {
+    margin: 0 auto 1.5rem auto !important;
+  }
+  .hero-left h1 {
+    font-size: 2.5rem !important;
+  }
+  .hero-left p {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    font-size: 1rem !important;
+    margin-bottom: 2rem !important;
+  }
+  .hero-left div[style*="display: flex"] {
+    justify-content: center !important;
+  }
+  .hero-right {
+    width: 100% !important;
+    margin-top: 2rem !important;
+  }
+  .hero-right-inner {
+    width: 100% !important;
+    max-width: 320px !important;
+    height: 350px !important;
+  }
+  
+  /* About Us inner flex container */
+  .about-inner {
+    flex-direction: column !important;
+    gap: 2rem !important;
+  }
+  
+  /* Why Orchid Spell Bee inner cards grid */
+  .values-grid-inner {
+    grid-template-columns: 1fr !important;
+    gap: 1.5rem !important;
+    margin-top: 2rem !important;
+    margin-bottom: 2rem !important;
+  }
+  .values-grid-inner .card {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    align-self: stretch !important;
+  }
+  
+  /* SVG Tree Background hidden/dimmed on mobile */
+  .values-section svg, 
+  div[style*="position: absolute"][style*="radial-gradient"] {
+    opacity: 0.1 !important;
+  }
+  
+  /* Competitions & Awards flex layout */
+  .awards-inner {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  .awards-inner > div {
+    padding-right: 0 !important;
+  }
+  
+  /* Statistics and Info grid */
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 1.5rem !important;
+  }
+  
+  /* Active Tab Detail panel inside Competitions page */
+  .comp-detail-panel {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    padding: 1.5rem !important;
+  }
+  
+  /* Timeline Path Rows inside Rounds & Prizes page */
+  .round-row {
+    flex-direction: column !important;
+    gap: 1rem !important;
+    align-items: center !important;
+    text-align: center !important;
+  }
+  .round-row div[style*="border-left"] {
+    border-left: none !important;
+    border-top: 5px solid var(--color-accent-orange) !important; /* fallback */
+  }
+  .round-row:nth-child(1) div[style*="border-left"] { border-top: 5px solid #ffb800 !important; }
+  .round-row:nth-child(2) div[style*="border-left"] { border-top: 5px solid #7c3aed !important; }
+  .round-row:nth-child(3) div[style*="border-left"] { border-top: 5px solid #0ea5e9 !important; }
+  .round-row:nth-child(4) div[style*="border-left"] { border-top: 5px solid #f97316 !important; }
+  
+  /* Hide timeline vertical line on mobile */
+  div[style*="position: absolute"][style*="left: 43px"] {
+    display: none !important;
+  }
+  
+  /* Prize Tables grid */
+  .prize-tables-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  
+  /* Contact page grid and form rows */
+  .contact-grid {
+    grid-template-columns: 1fr !important;
+    gap: 3rem !important;
+  }
+  .form-row-2col {
+    grid-template-columns: 1fr !important;
+    gap: 1.25rem !important;
+  }
+  .contact-grid > div:last-child {
+    padding: 1.5rem !important;
+  }
+  
+  /* FAQ inner layout */
+  .faq-inner {
+    grid-template-columns: 1fr !important;
+  }
+  
+  /* Modals */
+  .modal-overlay {
+    padding-right: 0 !important;
+    justify-content: center !important;
+    align-items: flex-end !important;
+  }
+  .modal-content {
+    border-radius: 20px 20px 0 0 !important;
+    max-height: 85vh !important;
+    padding: 1.5rem !important;
+  }
+  
+  /* Layout sections general adjustments */
+  div[style*="padding: 6rem"], 
+  div[style*="padding: 7rem"] {
+    padding: 4rem 1rem !important;
+  }
+  div[style*="padding: 10rem 3rem 7rem"] {
+    padding: 9.5rem 1.5rem 4rem 1.5rem !important;
+  }
+  
+  /* Footers wrapping */
+  footer div[style*="display: flex"] {
+    gap: 1.5rem !important;
+  }
+}

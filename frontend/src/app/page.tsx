@@ -74,7 +74,7 @@ export default function Home() {
   return (
     <div className="page-layout">
       {/* Hero Section */}
-      <div style={{ 
+      <div className="hero-section" style={{ 
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
@@ -89,7 +89,7 @@ export default function Home() {
         <div style={{ position: 'absolute', top: '-10%', right: '-5%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(255,184,0,0.08) 0%, rgba(255,184,0,0) 70%)', borderRadius: '50%', zIndex: 0 }}></div>
         
         {/* Left Content */}
-        <div style={{ flex: '1', position: 'relative', zIndex: 1, paddingLeft: '2rem' }}>
+        <div className="hero-left" style={{ flex: '1', position: 'relative', zIndex: 1, paddingLeft: '2rem' }}>
           <div style={{ 
             padding: '0.5rem 1.5rem', 
             background: 'rgba(255,184,0,0.1)', 
@@ -146,8 +146,8 @@ export default function Home() {
         </div>
 
         {/* Right Content - Images */}
-        <div style={{ flex: '1', position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'center' }}>
-          <div style={{ position: 'relative', width: '500px', height: '540px' }}>
+        <div className="hero-right" style={{ flex: '1', position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'center' }}>
+          <div className="hero-right-inner" style={{ position: 'relative', width: '500px', height: '540px' }}>
             {/* Main Image */}
             <div style={{ 
               position: 'absolute', 
@@ -215,7 +215,7 @@ export default function Home() {
           <div style={{ width: '60px', height: '3px', background: 'var(--color-accent-orange)', margin: '0 auto' }}></div>
         </div>
         
-        <div style={{ display: 'flex', gap: '4rem', alignItems: 'flex-start' }}>
+        <div className="about-inner" style={{ display: 'flex', gap: '4rem', alignItems: 'flex-start' }}>
           <div style={{ flex: 1 }}>
             <h4 style={{ color: '#a0aec0', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', fontSize: '0.9rem' }}>WHO WE ARE</h4>
             <h3 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'var(--color-text-heading)' }}>Welcome to Orchid Spell Bee</h3>
@@ -307,7 +307,7 @@ export default function Home() {
             </div>
             
             {/* Grid Layout over the Tree */}
-            <div style={{ 
+            <div className="values-grid-inner" style={{ 
               display: 'grid', 
               gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', 
               gap: '2rem 150px',
@@ -353,7 +353,7 @@ export default function Home() {
             <div style={{ width: '80px', height: '3px', background: 'var(--color-accent-orange)', margin: '0 auto' }}></div>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem', alignItems: 'center' }}>
+          <div className="awards-inner" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem', alignItems: 'center' }}>
             {/* Left Content */}
             <div style={{ paddingRight: '2rem' }}>
               <div style={{ color: '#a0aec0', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '700', letterSpacing: '1.5px', marginBottom: '1rem' }}>PRIZES AND RECOGNITIONS</div>
@@ -411,7 +411,7 @@ export default function Home() {
             <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.95rem' }}>Get quick answers to common questions—clear, concise, and always helpful!</p>
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1rem' }}>
+          <div className="faq-inner" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1rem' }}>
             {[
               {
                 q: "What is a spelling bee competition?",

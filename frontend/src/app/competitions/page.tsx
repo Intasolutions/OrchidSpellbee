@@ -242,7 +242,7 @@ export default function CompetitionsPage() {
         }}
       >
         <div
-          className="container"
+          className="container stats-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",
@@ -346,6 +346,7 @@ export default function CompetitionsPage() {
               activeTab === level.id && (
                 <div
                   key={level.id}
+                  className="comp-detail-panel"
                   style={{
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr",

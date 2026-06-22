@@ -140,7 +140,7 @@ export default function OurBooksPage() {
       {/* Stats row */}
       <div style={{ background: "#f8f9fa", padding: "3rem 0", borderBottom: "1px solid #e2e8f0" }}>
         <div
-          className="container"
+          className="container stats-grid"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",
