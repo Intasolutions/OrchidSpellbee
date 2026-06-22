@@ -3,57 +3,45 @@
 export default function TeamPage() {
   const team = [
     {
-      name: "test",
-      role: "Founder & Director",
-      initials: "RK",
+      name: "Founder & Director",
       color: "#ffb800",
       bgLight: "rgba(255,184,0,0.1)",
-      bio: "With over 20 years in education, Dr. Krishnan founded Orchid Spell Bee to bring structured linguistic excellence to every student in Kerala.",
+      bio: "With over 20 years in education, our founder established Orchid Spell Bee to bring structured linguistic excellence to every student in Kerala.",
       expertise: ["Education Leadership", "Curriculum Design", "Public Speaking"],
     },
     {
-      name: "test",
-      role: "Chief Education Officer",
-      initials: "AM",
+      name: "Chief Education Officer",
       color: "#7c3aed",
       bgLight: "rgba(124,58,237,0.1)",
-      bio: "A passionate linguist and former national spelling bee champion herself, Anitha oversees all academic content and word list curation.",
+      bio: "A passionate linguist and former national spelling bee champion, our Chief Education Officer oversees all academic content and word list curation.",
       expertise: ["Linguistics", "Word Curation", "Student Coaching"],
     },
     {
-      name: "test",
-      role: "Head of Competitions",
-      initials: "ST",
+      name: "Head of Competitions",
       color: "#0ea5e9",
       bgLight: "rgba(14,165,233,0.1)",
-      bio: "Sanjay manages the end-to-end logistics of all competition tiers, ensuring a fair, smooth, and memorable experience for every participant.",
+      bio: "Our Head of Competitions manages the end-to-end logistics of all competition tiers, ensuring a fair, smooth, and memorable experience for every participant.",
       expertise: ["Event Management", "Operations", "Judging Protocols"],
     },
     {
-      name: "test",
-      role: "Curriculum Director",
-      initials: "PN",
+      name: "Curriculum Director",
       color: "#10b981",
       bgLight: "rgba(16,185,129,0.1)",
-      bio: "Priya leads the development of our study books and teaching aids, combining modern pedagogy with proven spelling techniques.",
+      bio: "Our Curriculum Director leads the development of our study books and teaching aids, combining modern pedagogy with proven spelling techniques.",
       expertise: ["Pedagogy", "Book Authoring", "Teacher Training"],
     },
     {
-      name: "test",
-      role: "Technology Lead",
-      initials: "AP",
+      name: "Technology Lead",
       color: "#f97316",
       bgLight: "rgba(249,115,22,0.1)",
-      bio: "Arjun builds and maintains the digital platforms that power our registration, scoring, and communication systems.",
+      bio: "Our Technology Lead builds and maintains the digital platforms that power our registration, scoring, and communication systems.",
       expertise: ["Web Development", "Systems Design", "Data Analytics"],
     },
     {
-      name: "test",
-      role: "Events Coordinator",
-      initials: "DV",
+      name: "Events Coordinator",
       color: "#ec4899",
       bgLight: "rgba(236,72,153,0.1)",
-      bio: "Deepa ensures every event is an experience — from the décor and stage setup to participant hospitality and awards ceremonies.",
+      bio: "Our Events Coordinator ensures every event is an experience — from the décor and stage setup to participant hospitality and awards ceremonies.",
       expertise: ["Event Planning", "Hospitality", "Communications"],
     },
   ];
@@ -345,14 +333,14 @@ export default function TeamPage() {
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    fontSize: "1.3rem",
-                    fontWeight: "800",
-                    color: member.color,
                     flexShrink: 0,
                     border: `2px solid ${member.color}33`,
                   }}
                 >
-                  {member.initials}
+                  <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke={member.color} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                  </svg>
                 </div>
 
                 {/* Info */}
@@ -362,23 +350,11 @@ export default function TeamPage() {
                       fontSize: "1.15rem",
                       fontWeight: "800",
                       color: "var(--color-text-heading)",
-                      marginBottom: "0.3rem",
+                      marginBottom: "0.75rem",
                     }}
                   >
                     {member.name}
                   </h3>
-                  <div
-                    style={{
-                      fontSize: "0.8rem",
-                      fontWeight: "700",
-                      color: member.color,
-                      textTransform: "uppercase" as const,
-                      letterSpacing: "0.8px",
-                      marginBottom: "0.75rem",
-                    }}
-                  >
-                    {member.role}
-                  </div>
                   <p
                     style={{
                       fontSize: "0.88rem",
