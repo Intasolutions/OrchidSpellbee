@@ -44,18 +44,13 @@ export default function Navbar() {
         maxWidth: '1200px',
         position: 'relative'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
             <img 
               src="/img/logo.png" 
               alt="Orchid SpellBee Logo" 
-              style={{ height: '40px', width: 'auto' }} 
+              style={{ height: '52px', width: 'auto', display: 'block' }} 
             />
-            <div style={{ fontSize: '1.3rem', fontWeight: '800', letterSpacing: '-0.5px', lineHeight: 1.1 }}>
-              <span style={{color: 'var(--color-text-heading)'}}>Orchid</span>
-              <span style={{color: 'var(--color-accent-orange)'}}>SpellBee</span>
-              <div style={{fontSize: '0.6rem', color: 'var(--color-text-secondary)', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase'}}>Private Limited</div>
-            </div>
           </Link>
         </div>
         
