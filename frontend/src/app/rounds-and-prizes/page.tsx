@@ -209,7 +209,7 @@ export default function RoundsAndPrizesPage() {
           className="container"
           style={{ maxWidth: "900px", margin: "0 auto" }}
         >
-          <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+          <div className="reveal-up" style={{ textAlign: "center", marginBottom: "5rem" }}>
             <h2
               style={{
                 fontSize: "2.5rem",
@@ -255,7 +255,7 @@ export default function RoundsAndPrizesPage() {
             {rounds.map((round, i) => (
               <div
                 key={i}
-                className="fade-up round-row"
+                className="reveal-up round-row"
                 style={{
                   display: "flex",
                   gap: "2.5rem",

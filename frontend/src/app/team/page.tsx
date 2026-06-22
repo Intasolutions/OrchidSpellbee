@@ -273,7 +273,7 @@ export default function TeamPage() {
       {/* Team Members */}
       <div style={{ padding: "7rem 0", background: "white" }}>
         <div className="container" style={{ maxWidth: "1200px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "5rem" }}>
+          <div className="reveal-up" style={{ textAlign: "center", marginBottom: "5rem" }}>
             <h2
               style={{
                 fontSize: "2.5rem",
@@ -304,7 +304,7 @@ export default function TeamPage() {
             {team.map((member, i) => (
               <div
                 key={i}
-                className="fade-up"
+                className="reveal-up"
                 style={{
                   background: "white",
                   border: "1px solid #f0f0f0",

@@ -170,6 +170,7 @@ export default function CompetitionsPage() {
           }}
         >
           <div
+            className="animate-reveal-up"
             style={{
               display: "inline-flex",
               alignItems: "center",
@@ -205,6 +206,7 @@ export default function CompetitionsPage() {
           </div>
 
           <h1
+            className="animate-reveal-up delay-100"
             style={{
               fontSize: "4rem",
               fontWeight: "800",
@@ -219,6 +221,7 @@ export default function CompetitionsPage() {
             Four Tiers. One Champion.
           </h1>
           <p
+            className="animate-reveal-up delay-200"
             style={{
               fontSize: "1.15rem",
               lineHeight: "1.8",
@@ -243,7 +246,7 @@ export default function CompetitionsPage() {
         }}
       >
         <div
-          className="container stats-grid"
+          className="container stats-grid reveal-up"
           style={{
             display: "grid",
             gridTemplateColumns: "repeat(4, 1fr)",
@@ -284,7 +287,7 @@ export default function CompetitionsPage() {
         style={{ background: "#f8f9fa", padding: "6rem 0" }}
       >
         <div className="container" style={{ maxWidth: "1100px", margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: "4rem" }}>
+          <div className="reveal-up" style={{ textAlign: "center", marginBottom: "4rem" }}>
             <h2
               style={{
                 fontSize: "2.5rem",
@@ -307,6 +310,7 @@ export default function CompetitionsPage() {
 
           {/* Tab Buttons */}
           <div
+            className="reveal-up"
             style={{
               display: "flex",
               justifyContent: "center",
@@ -347,7 +351,7 @@ export default function CompetitionsPage() {
               activeTab === level.id && (
                 <div
                   key={level.id}
-                  className="comp-detail-panel"
+                  className="comp-detail-panel reveal-up"
                   style={{
                     display: "grid",
                     gridTemplateColumns: "1fr 1fr",

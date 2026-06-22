@@ -99,8 +99,8 @@ export default function Home() {
         <div style={{ position: 'absolute', top: '-10%', right: '-5%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(255,184,0,0.08) 0%, rgba(255,184,0,0) 70%)', borderRadius: '50%', zIndex: 0 }}></div>
         
         {/* Left Content */}
-        <div className="hero-left animate-fade-in" style={{ flex: '1', position: 'relative', zIndex: 1, paddingLeft: '2rem' }}>
-          <div style={{ 
+        <div className="hero-left" style={{ flex: '1', position: 'relative', zIndex: 1, paddingLeft: '2rem' }}>
+          <div className="animate-reveal-up" style={{ 
             padding: '0.5rem 1.5rem', 
             background: 'rgba(255,184,0,0.1)', 
             color: 'var(--color-accent-orange-hover)', 
@@ -117,7 +117,7 @@ export default function Home() {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"></path><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"></path></svg>
             THE ULTIMATE SPELLING COMPETITION
           </div>
-          <h1 style={{ 
+          <h1 className="animate-reveal-up delay-100" style={{ 
             fontSize: '4.5rem', 
             lineHeight: '1.1', 
             marginBottom: '1.5rem', 
@@ -128,7 +128,7 @@ export default function Home() {
             Spell to Excel, <br/>
             <span style={{ color: 'var(--color-accent-orange)' }}>Conquer</span> and Shine!
           </h1>
-          <p style={{ 
+          <p className="animate-reveal-up delay-200" style={{ 
             fontSize: '1.2rem', 
             color: 'var(--color-text-secondary)', 
             marginBottom: '3rem',
@@ -137,7 +137,7 @@ export default function Home() {
           }}>
             Join thousands of students in a celebration of the English language. Improve your linguistic prowess and embark on a journey of self-improvement.
           </p>
-          <div style={{ display: 'flex', gap: '1rem' }}>
+          <div className="animate-reveal-up delay-300" style={{ display: 'flex', gap: '1rem' }}>
             <button 
               className="btn" 
               style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '1rem 2.5rem', boxShadow: '0 10px 25px rgba(255,184,0,0.3)' }}
@@ -158,7 +158,7 @@ export default function Home() {
         </div>
 
         {/* Right Content - Images */}
-        <div className="hero-right animate-fade-in" style={{ flex: '1', position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'center' }}>
+        <div className="hero-right animate-reveal-up delay-200" style={{ flex: '1', position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'center' }}>
           <div className="hero-right-inner" style={{ position: 'relative', width: '500px', height: '540px' }}>
             {/* Main Image */}
             <div style={{ 
@@ -222,13 +222,13 @@ export default function Home() {
 
       {/* About Us Section */}
       <div className="container about-section" style={{ padding: '4rem 2rem' }}>
-        <div className="fade-up" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+        <div className="reveal-up" style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <h2 style={{ fontSize: '2.5rem', color: 'var(--color-text-heading)' }}>About US</h2>
           <div style={{ width: '60px', height: '3px', background: 'var(--color-accent-orange)', margin: '0 auto' }}></div>
         </div>
         
         <div className="about-inner" style={{ display: 'flex', gap: '4rem', alignItems: 'flex-start' }}>
-          <div className="fade-up" style={{ flex: 1 }}>
+          <div className="reveal-left" style={{ flex: 1 }}>
             <h4 style={{ color: '#a0aec0', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', fontSize: '0.9rem' }}>WHO WE ARE</h4>
             <h3 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'var(--color-text-heading)' }}>Welcome to Orchid Spell Bee</h3>
             <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem', fontStyle: 'italic' }}>
@@ -245,7 +245,7 @@ export default function Home() {
               Why Orchid Spell Bee ↓
             </button>
           </div>
-          <div className="about-images fade-up" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+          <div className="about-images reveal-right" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
             <div className="about-img-large" style={{ 
               background: 'url("/img/7.jpeg") center/cover', 
               height: '300px', 
@@ -272,7 +272,7 @@ export default function Home() {
       {/* Why Orchid Spell Bee Section */}
       <div id="why-us" style={{ background: '#f8f9fa', padding: '6rem 0' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
+          <div className="reveal-up" style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <div style={{ display: 'inline-block', padding: '0.4rem 1.2rem', background: 'rgba(255,184,0,0.1)', color: 'var(--color-accent-orange-hover)', borderRadius: '20px', fontWeight: '700', fontSize: '0.85rem', marginBottom: '1rem', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
               Core Values
             </div>
@@ -335,25 +335,25 @@ export default function Home() {
             }}>
               
               {/* Card 1 (Top Left) */}
-              <div className="card fade-up" style={{ background: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', backdropFilter: 'blur(15px)', border: '1px solid rgba(255,184,0,0.2)', boxShadow: '0 15px 35px rgba(0,0,0,0.05)', alignSelf: 'start', marginTop: '2rem' }}>
+              <div className="card reveal-up" style={{ background: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', backdropFilter: 'blur(15px)', border: '1px solid rgba(255,184,0,0.2)', boxShadow: '0 15px 35px rgba(0,0,0,0.05)', alignSelf: 'start', marginTop: '2rem' }}>
                 <h3 style={{ margin: 0, marginBottom: '0.8rem', color: 'var(--color-text-heading)', fontSize: '1.3rem', fontWeight: '800' }}>Celebration of Language</h3>
                 <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '1rem', lineHeight: '1.6' }}>The competition isn't just about spelling words correctly. It's a celebration of the English language's richness and complexity.</p>
               </div>
               
               {/* Card 2 (Top Right) */}
-              <div className="card fade-up" style={{ background: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', backdropFilter: 'blur(15px)', border: '1px solid rgba(255,184,0,0.2)', boxShadow: '0 15px 35px rgba(0,0,0,0.05)', alignSelf: 'start', marginTop: '6rem' }}>
+              <div className="card reveal-up" style={{ background: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', backdropFilter: 'blur(15px)', border: '1px solid rgba(255,184,0,0.2)', boxShadow: '0 15px 35px rgba(0,0,0,0.05)', alignSelf: 'start', marginTop: '6rem' }}>
                 <h3 style={{ margin: 0, marginBottom: '0.8rem', color: 'var(--color-text-heading)', fontSize: '1.3rem', fontWeight: '800' }}>Linguistic Prowess</h3>
                 <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '1rem', lineHeight: '1.6' }}>The art of spelling demonstrates a high level of linguistic skill. Competitors showcase their command of the language.</p>
               </div>
               
               {/* Card 3 (Bottom Left) */}
-              <div className="card fade-up" style={{ background: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', backdropFilter: 'blur(15px)', border: '1px solid rgba(255,184,0,0.2)', boxShadow: '0 15px 35px rgba(0,0,0,0.05)', alignSelf: 'end', marginBottom: '6rem' }}>
+              <div className="card reveal-up" style={{ background: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', backdropFilter: 'blur(15px)', border: '1px solid rgba(255,184,0,0.2)', boxShadow: '0 15px 35px rgba(0,0,0,0.05)', alignSelf: 'end', marginBottom: '6rem' }}>
                 <h3 style={{ margin: 0, marginBottom: '0.8rem', color: 'var(--color-text-heading)', fontSize: '1.3rem', fontWeight: '800' }}>Learning Journey</h3>
                 <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '1rem', lineHeight: '1.6' }}>The competition is more about the learning process than merely winning. Participants embark on a journey of self improvement.</p>
               </div>
               
               {/* Card 4 (Bottom Right) */}
-              <div className="card fade-up" style={{ background: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', backdropFilter: 'blur(15px)', border: '1px solid rgba(255,184,0,0.2)', boxShadow: '0 15px 35px rgba(0,0,0,0.05)', alignSelf: 'end', marginBottom: '2rem' }}>
+              <div className="card reveal-up" style={{ background: 'rgba(255,255,255,0.85)', padding: '2rem', borderRadius: '20px', backdropFilter: 'blur(15px)', border: '1px solid rgba(255,184,0,0.2)', boxShadow: '0 15px 35px rgba(0,0,0,0.05)', alignSelf: 'end', marginBottom: '2rem' }}>
                 <h3 style={{ margin: 0, marginBottom: '0.8rem', color: 'var(--color-text-heading)', fontSize: '1.3rem', fontWeight: '800' }}>Joy of Achievement</h3>
                 <p style={{ margin: 0, color: 'var(--color-text-secondary)', fontSize: '1rem', lineHeight: '1.6' }}>The competition instills a sense of accomplishment. Whether they win or not, participants experience the joy of achieving goals.</p>
               </div>
@@ -366,14 +366,14 @@ export default function Home() {
       {/* Competitions & Awards Section */}
       <div style={{ padding: '4rem 0', background: 'white' }}>
         <div className="container">
-          <div className="fade-up" style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <div className="reveal-up" style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <h2 style={{ fontSize: '2.5rem', color: 'var(--color-text-heading)', margin: 0, marginBottom: '1rem', fontWeight: '800' }}>Competitions & Awards</h2>
             <div style={{ width: '80px', height: '3px', background: 'var(--color-accent-orange)', margin: '0 auto' }}></div>
           </div>
           
           <div className="awards-inner" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem', alignItems: 'center' }}>
             {/* Left Content */}
-            <div className="fade-up" style={{ paddingRight: '2rem' }}>
+            <div className="reveal-left" style={{ paddingRight: '2rem' }}>
               <div style={{ color: '#a0aec0', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '700', letterSpacing: '1.5px', marginBottom: '1rem' }}>PRIZES AND RECOGNITIONS</div>
               <h3 style={{ fontSize: '2.2rem', color: '#1a202c', margin: '0 0 1.5rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '800' }}>
                 Rounds and Prizes
@@ -391,7 +391,7 @@ export default function Home() {
             </div>
             
             {/* Right Card / Table */}
-            <div className="fade-up" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
+            <div className="reveal-right" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
                {/* Decorative background cards to create stacked effect */}
                <div style={{ position: 'absolute', top: '6px', right: '-6px', bottom: '-6px', left: '6px', background: '#4c3a99', borderRadius: '12px', zIndex: 1 }}></div>
                
@@ -425,7 +425,7 @@ export default function Home() {
       {/* FAQ Section */}
       <div style={{ padding: '6rem 0', background: '#f8f9fa' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <div className="reveal-up" style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <h2 style={{ fontSize: '2.5rem', color: 'var(--color-text-heading)', margin: 0, marginBottom: '1rem', fontWeight: '800' }}>Frequently Asked Questions</h2>
             <div style={{ width: '80px', height: '1px', background: '#cbd5e0', margin: '0 auto 1.5rem auto' }}></div>
             <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.95rem' }}>Get quick answers to common questions—clear, concise, and always helpful!</p>
@@ -460,7 +460,7 @@ export default function Home() {
             ].map((item, i) => {
               const isOpen = openFaqIndex === i;
               return (
-                <div key={i} className="card fade-up" style={{ background: 'white', padding: '1.5rem 2rem', borderRadius: '4px', display: 'flex', flexDirection: 'column', gap: '1rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', border: '1px solid #e2e8f0' }}>
+                <div key={i} className="card reveal-up" style={{ background: 'white', padding: '1.5rem 2rem', borderRadius: '4px', display: 'flex', flexDirection: 'column', gap: '1rem', boxShadow: '0 2px 4px rgba(0,0,0,0.02)', border: '1px solid #e2e8f0' }}>
                   <div 
                     onClick={() => setOpenFaqIndex(isOpen ? null : i)}
                     style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}

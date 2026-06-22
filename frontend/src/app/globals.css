@@ -166,6 +166,72 @@ a {
   transform: translateY(0);
 }
 
+/* Revealing scroll animations with clip-path (premium visual mask reveal) */
+.reveal-up {
+  clip-path: inset(100% 0 0 0);
+  transform: translateY(30px);
+  transition: clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: clip-path, transform;
+}
+.reveal-up.visible {
+  clip-path: inset(0 0 0 0);
+  transform: translateY(0);
+}
+
+.reveal-left {
+  clip-path: inset(0 100% 0 0);
+  transform: translateX(-30px);
+  transition: clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: clip-path, transform;
+}
+.reveal-left.visible {
+  clip-path: inset(0 0 0 0);
+  transform: translateX(0);
+}
+
+.reveal-right {
+  clip-path: inset(0 0 0 100%);
+  transform: translateX(30px);
+  transition: clip-path 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: clip-path, transform;
+}
+.reveal-right.visible {
+  clip-path: inset(0 0 0 0);
+  transform: translateX(0);
+}
+
+/* Page load reveal animations for Hero section */
+@keyframes revealUp {
+  from {
+    clip-path: inset(100% 0 0 0);
+    transform: translateY(40px);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+    transform: translateY(0);
+  }
+}
+
+.animate-reveal-up {
+  animation: revealUp 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: clip-path, transform;
+}
+
+/* Staggered Delays for premium feel */
+.delay-100 {
+  animation-delay: 100ms;
+}
+.delay-200 {
+  animation-delay: 200ms;
+}
+.delay-300 {
+  animation-delay: 300ms;
+}
+.delay-400 {
+  animation-delay: 400ms;
+}
+
+
 /* Navbar Links */
 .nav-link {
   color: var(--color-text-primary);
