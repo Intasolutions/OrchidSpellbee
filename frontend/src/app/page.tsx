@@ -167,7 +167,6 @@ export default function Home() {
               background: 'url("/img/6.jpeg") center/cover', 
               borderRadius: '24px',
               boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)',
-              transform: 'perspective(1000px) rotateY(-5deg) rotateX(5deg)',
               border: '8px solid white'
             }}></div>
             
