@@ -1,6 +1,114 @@
 "use client";
 
+import React, { useState } from 'react';
 import Link from 'next/link';
+
+// Custom Interactive Value Card Component for Core Values section
+interface ValueCardProps {
+  v: {
+    icon: React.ReactElement;
+    title: string;
+    desc: string;
+    bg: string;
+    themeColor: string;
+    borderColor: string;
+    glowColor: string;
+    shadowColor: string;
+  };
+}
+
+function ValueCard({ v }: ValueCardProps) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      style={{
+        background: "linear-gradient(145deg, #ffffff 0%, #fafafc 100%)",
+        borderRadius: "24px",
+        padding: "2.5rem 2rem",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        textAlign: "center",
+        boxShadow: hovered 
+          ? `0 20px 40px rgba(30, 27, 75, 0.06), 0 10px 24px ${v.shadowColor}`
+          : "0 8px 30px rgba(30, 27, 75, 0.02), 0 1px 3px rgba(30, 27, 75, 0.01)",
+        border: "1px solid",
+        borderColor: hovered ? v.borderColor : "rgba(30, 27, 75, 0.05)",
+        transform: hovered ? "translateY(-8px) scale(1.02)" : "translateY(0) scale(1)",
+        transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+        position: "relative",
+        overflow: "hidden",
+        minHeight: "260px",
+        justifyContent: "center"
+      }}
+    >
+      {/* Soft background glow */}
+      <div 
+        style={{
+          position: "absolute",
+          top: "-50%",
+          left: "-50%",
+          width: "200%",
+          height: "200%",
+          background: `radial-gradient(circle at center, ${v.glowColor} 0%, transparent 60%)`,
+          opacity: hovered ? 1 : 0,
+          transition: "opacity 0.4s ease",
+          pointerEvents: "none",
+          zIndex: 0
+        }}
+      />
+      
+      {/* Icon block */}
+      <div
+        style={{
+          width: "72px",
+          height: "72px",
+          background: hovered ? v.themeColor : v.bg,
+          borderRadius: "20px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          marginBottom: "1.5rem",
+          flexShrink: 0,
+          transform: hovered ? "scale(1.1) rotate(5deg)" : "scale(1) rotate(0deg)",
+          transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
+          boxShadow: hovered ? `0 10px 20px ${v.shadowColor}` : "none",
+          zIndex: 1
+        }}
+      >
+        {React.cloneElement(v.icon, { stroke: hovered ? "#ffffff" : v.themeColor } as any)}
+      </div>
+      
+      {/* Title & Desc */}
+      <div style={{ zIndex: 1 }}>
+        <h4
+          style={{
+            fontSize: "1.2rem",
+            fontWeight: "800",
+            color: "var(--color-text-heading)",
+            marginBottom: "0.75rem",
+            letterSpacing: "-0.5px"
+          }}
+        >
+          {v.title}
+        </h4>
+        <p
+          style={{
+            fontSize: "0.92rem",
+            color: "var(--color-text-secondary)",
+            lineHeight: "1.6",
+            margin: 0,
+            maxWidth: "260px"
+          }}
+        >
+          {v.desc}
+        </p>
+      </div>
+    </div>
+  );
+}
 
 export default function TeamPage() {
   const team = [
@@ -51,7 +159,7 @@ export default function TeamPage() {
   const values = [
     {
       icon: (
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
           <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
           <path d="M6 12v5c3 3 9 3 12 0v-5" />
         </svg>
@@ -59,10 +167,14 @@ export default function TeamPage() {
       title: "Education First",
       desc: "Every decision we make is rooted in what's best for the student's growth.",
       bg: "rgba(124,58,237,0.08)",
+      themeColor: "#7c3aed",
+      borderColor: "rgba(124,58,237,0.25)",
+      glowColor: "rgba(124,58,237,0.12)",
+      shadowColor: "rgba(124,58,237,0.15)",
     },
     {
       icon: (
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#0ea5e9" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
           <polyline points="9 12 11 14 15 10" />
         </svg>
@@ -70,20 +182,28 @@ export default function TeamPage() {
       title: "Integrity",
       desc: "Fair, transparent, and consistent in all our competitions and operations.",
       bg: "rgba(14,165,233,0.08)",
+      themeColor: "#0ea5e9",
+      borderColor: "rgba(14,165,233,0.25)",
+      glowColor: "rgba(14,165,233,0.12)",
+      shadowColor: "rgba(14,165,233,0.15)",
     },
     {
       icon: (
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ffb800" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
           <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
         </svg>
       ),
       title: "Excellence",
       desc: "We hold ourselves and our participants to the highest standards.",
       bg: "rgba(255,184,0,0.08)",
+      themeColor: "#ffb800",
+      borderColor: "rgba(255,184,0,0.25)",
+      glowColor: "rgba(255,184,0,0.12)",
+      shadowColor: "rgba(255,184,0,0.15)",
     },
     {
       icon: (
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none" strokeWidth="2.0" strokeLinecap="round" strokeLinejoin="round">
           <path d="M12 22V12" />
           <path d="M12 12C12 8 15 5 19 5c0 4-2 7-7 7z" />
           <path d="M12 12C12 8 9 5 5 5c0 4 2 7 7 7z" />
@@ -92,6 +212,10 @@ export default function TeamPage() {
       title: "Nurturing",
       desc: "We build confidence and love of learning, not just spelling skills.",
       bg: "rgba(16,185,129,0.08)",
+      themeColor: "#10b981",
+      borderColor: "rgba(16,185,129,0.25)",
+      glowColor: "rgba(16,185,129,0.12)",
+      shadowColor: "rgba(16,185,129,0.15)",
     },
   ];
 
@@ -151,23 +275,6 @@ export default function TeamPage() {
               marginBottom: "2rem",
             }}
           >
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              padding: "0.4rem 1.2rem",
-              background: "rgba(255,184,0,0.15)",
-              border: "1px solid rgba(255,184,0,0.3)",
-              borderRadius: "30px",
-              fontSize: "0.8rem",
-              fontWeight: "700",
-              color: "#ffb800",
-              letterSpacing: "1.5px",
-              textTransform: "uppercase" as const,
-              marginBottom: "2rem",
-            }}
-          >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
               <circle cx="9" cy="7" r="4" />
@@ -175,7 +282,6 @@ export default function TeamPage() {
               <path d="M16 3.13a4 4 0 0 1 0 7.75" />
             </svg>
             The People Behind It All
-          </div>
           </div>
           <h1
             style={{
@@ -205,66 +311,61 @@ export default function TeamPage() {
       </div>
 
       {/* Core Values */}
-      <div style={{ background: "#f8f9fa", padding: "5rem 0" }}>
-        <div className="container" style={{ maxWidth: "1100px", margin: "0 auto" }}>
+      <div style={{ background: "#f8f9fa", padding: "6rem 0" }}>
+        <div className="container" style={{ maxWidth: "1200px", margin: "0 auto" }}>
+          
+          {/* Section Header */}
+          <div className="reveal-up" style={{ textAlign: "center", marginBottom: "4rem" }}>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "0.5rem",
+                padding: "0.4rem 1.2rem",
+                background: "rgba(255,184,0,0.1)",
+                border: "1px solid rgba(255,184,0,0.2)",
+                borderRadius: "30px",
+                fontSize: "0.8rem",
+                fontWeight: "700",
+                color: "var(--color-accent-orange-hover)",
+                letterSpacing: "1.5px",
+                textTransform: "uppercase",
+                marginBottom: "1rem",
+              }}
+            >
+              Core Values
+            </div>
+            <h2
+              style={{
+                fontSize: "2.5rem",
+                fontWeight: "800",
+                color: "var(--color-text-heading)",
+                margin: 0,
+              }}
+            >
+              What Guides Us
+            </h2>
+            <div
+              style={{
+                width: "50px",
+                height: "3px",
+                background: "var(--color-accent-orange)",
+                margin: "1rem auto 0 auto",
+                borderRadius: "2px"
+              }}
+            />
+          </div>
+
           <div
+            className="reveal-up"
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-              gap: "1.5rem",
+              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+              gap: "2rem",
             }}
           >
             {values.map((v, i) => (
-              <div
-                key={i}
-                style={{
-                  background: "white",
-                  borderRadius: "18px",
-                  padding: "2rem",
-                  display: "flex",
-                  gap: "1.25rem",
-                  alignItems: "flex-start",
-                  boxShadow: "0 2px 12px rgba(0,0,0,0.04)",
-                  border: "1px solid #f0f0f0",
-                }}
-              >
-          <div
-            style={{
-              width: "72px",
-              height: "72px",
-              background: v.bg,
-              borderRadius: "20px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-            }}
-          >
-            {v.icon}
-          </div>
-                <div>
-                  <h4
-                    style={{
-                      fontSize: "1rem",
-                      fontWeight: "800",
-                      color: "var(--color-text-heading)",
-                      marginBottom: "0.5rem",
-                    }}
-                  >
-                    {v.title}
-                  </h4>
-                  <p
-                    style={{
-                      fontSize: "0.875rem",
-                      color: "var(--color-text-secondary)",
-                      lineHeight: "1.6",
-                      margin: 0,
-                    }}
-                  >
-                    {v.desc}
-                  </p>
-                </div>
-              </div>
+              <ValueCard key={i} v={v} />
             ))}
           </div>
         </div>
