@@ -29,6 +29,15 @@ export default function Home() {
       .catch(err => console.error("Failed to fetch form", err));
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("register") === "true") {
+        setIsModalOpen(true);
+      }
+    }
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!activeForm) return;

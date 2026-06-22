@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 
 // Professional SVG icons for each level
 const SchoolIcon = ({ size = 28, color = "currentColor" }: { size?: number; color?: string }) => (
@@ -575,16 +576,19 @@ export default function CompetitionsPage() {
             Register today and take the first step towards becoming a national
             spelling champion.
           </p>
-          <button
-            className="btn"
-            style={{
-              fontSize: "1.05rem",
-              padding: "1rem 3rem",
-              borderRadius: "50px",
-            }}
-          >
-            Register Now →
-          </button>
+          <Link href="/?register=true" style={{ textDecoration: 'none', display: 'inline-block' }}>
+            <button
+              className="btn"
+              style={{
+                fontSize: "1.05rem",
+                padding: "1rem 3rem",
+                borderRadius: "50px",
+                cursor: "pointer",
+              }}
+            >
+              Register Now →
+            </button>
+          </Link>
         </div>
       </div>
     </div>

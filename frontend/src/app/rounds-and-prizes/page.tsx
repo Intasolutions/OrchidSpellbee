@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function RoundsAndPrizesPage() {
   const rounds = [
     {
@@ -740,16 +742,19 @@ export default function RoundsAndPrizesPage() {
             Register for the school level today — your path to national glory
             begins with a single word.
           </p>
-          <button
-            className="btn"
-            style={{
-              fontSize: "1.05rem",
-              padding: "1rem 3rem",
-              borderRadius: "50px",
-            }}
-          >
-            Register Now →
-          </button>
+          <Link href="/?register=true" style={{ textDecoration: 'none', display: 'inline-block' }}>
+            <button
+              className="btn"
+              style={{
+                fontSize: "1.05rem",
+                padding: "1rem 3rem",
+                borderRadius: "50px",
+                cursor: "pointer",
+              }}
+            >
+              Register Now →
+            </button>
+          </Link>
         </div>
       </div>
     </div>
