@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { API_BASE_URL } from "@/config";
 
@@ -144,13 +145,15 @@ export default function Home() {
             >
               Register Now
             </button>
-            <button 
-              className="btn btn-outline" 
-              style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '1rem 2.5rem', display: 'flex', gap: '0.75rem', alignItems: 'center' }}
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> 
-              Join WhatsApp
-            </button>
+            <a href="https://wa.me/917560997700" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+              <button 
+                className="btn btn-outline" 
+                style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '1rem 2.5rem', display: 'flex', gap: '0.75rem', alignItems: 'center', cursor: 'pointer' }}
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg> 
+                Join WhatsApp
+              </button>
+            </a>
           </div>
         </div>
 
@@ -234,7 +237,13 @@ export default function Home() {
             <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>
               At Orchid Spell Bee, we believe that the path to mastery is as important as the destination. Our competition emphasizes the learning process, where each participant embarks on a journey of self-improvement and personal growth.
             </p>
-            <button className="btn" style={{ borderRadius: '4px' }}>Why Orchid Spell Bee ↓</button>
+            <button 
+              className="btn" 
+              style={{ borderRadius: '4px', cursor: 'pointer' }}
+              onClick={() => document.getElementById('why-us')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              Why Orchid Spell Bee ↓
+            </button>
           </div>
           <div className="about-images" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
             <div style={{ 
@@ -261,7 +270,7 @@ export default function Home() {
       </div>
 
       {/* Why Orchid Spell Bee Section */}
-      <div style={{ background: '#f8f9fa', padding: '6rem 0' }}>
+      <div id="why-us" style={{ background: '#f8f9fa', padding: '6rem 0' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
             <div style={{ display: 'inline-block', padding: '0.4rem 1.2rem', background: 'rgba(255,184,0,0.1)', color: 'var(--color-accent-orange-hover)', borderRadius: '20px', fontWeight: '700', fontSize: '0.85rem', marginBottom: '1rem', letterSpacing: '1.5px', textTransform: 'uppercase' }}>
@@ -376,7 +385,9 @@ export default function Home() {
               <p style={{ color: '#718096', fontSize: '0.95rem', lineHeight: '1.7', marginBottom: '2rem', fontStyle: 'italic' }}>
                 The competition is structured into four tiers: school, district, state, and national. Each level acts as a stepping stone to the next, with students needing to qualify at one level to advance to the next. At the school level, participants will undergo a written test to showcase their spelling skills. Those who qualify will move on to the district level, where oral rounds will commence and continue through to the national level.
               </p>
-              <button className="btn" style={{ borderRadius: '6px', padding: '0.7rem 1.8rem', fontWeight: 'bold', fontSize: '0.95rem' }}>Check the Prizes →</button>
+              <Link href="/rounds-and-prizes" style={{ textDecoration: 'none' }}>
+                <button className="btn" style={{ borderRadius: '6px', padding: '0.7rem 1.8rem', fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }}>Check the Prizes →</button>
+              </Link>
             </div>
             
             {/* Right Card / Table */}
