@@ -28,6 +28,10 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-ffjxru*k6$bckxvux=f-h
 DEBUG = os.environ.get('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+env_allowed_hosts = os.environ.get('ALLOWED_HOSTS')
+if env_allowed_hosts:
+    ALLOWED_HOSTS.extend([host.strip() for host in env_allowed_hosts.split(',') if host.strip()])
+
 if os.environ.get('RENDER_EXTERNAL_HOSTNAME'):
     ALLOWED_HOSTS.append(os.environ.get('RENDER_EXTERNAL_HOSTNAME'))
 
