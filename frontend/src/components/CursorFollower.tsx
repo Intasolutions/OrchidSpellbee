@@ -101,9 +101,11 @@ export default function CursorFollower() {
     const handlePointerOver = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
       const target = e.target as HTMLElement;
-      if (
-        target &&
-        (target.tagName === 'A' ||
+      
+      // Safety check: target.closest is only defined on Element nodes (crashes on text/document nodes)
+      if (target && typeof target.closest === "function") {
+        if (
+          target.tagName === 'A' ||
           target.tagName === 'BUTTON' ||
           target.closest('a') ||
           target.closest('button') ||
@@ -112,12 +114,13 @@ export default function CursorFollower() {
           target.closest('.card') ||
           target.tagName === 'INPUT' ||
           target.tagName === 'SELECT' ||
-          target.tagName === 'TEXTAREA')
-      ) {
-        setIsHovered(true);
-      } else {
-        setIsHovered(false);
+          target.tagName === 'TEXTAREA'
+        ) {
+          setIsHovered(true);
+          return;
+        }
       }
+      setIsHovered(false);
     };
 
     window.addEventListener("pointermove", onPointerMove);
