@@ -10,25 +10,26 @@ export default function CursorFollower() {
   const [isClicked, setIsClicked] = useState(false);
 
   useEffect(() => {
-    // Check if it's a touch device or device with no hover support
-    const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    if (isTouch) return;
+    if (typeof window === "undefined") return;
 
-    // Enable custom cursor styles in CSS
+    // Check if the device supports a hovering pointer (desktops, laptops)
+    const hasHover = window.matchMedia("(hover: hover)").matches;
+    if (!hasHover) return;
+
+    // Enable custom cursor class
     document.documentElement.classList.add("has-custom-cursor");
     setIsVisible(true);
 
     const follower = followerRef.current;
     const dot = dotRef.current;
-    if (!follower || !dot) return;
 
-    // Position variables
-    let mouseX = window.innerWidth / 2;
-    let mouseY = window.innerHeight / 2;
-    let followerX = mouseX;
-    let followerY = mouseY;
-    let dotX = mouseX;
-    let dotY = mouseY;
+    // Initialize positions off-screen so it doesn't pop in the center
+    let mouseX = -100;
+    let mouseY = -100;
+    let followerX = -100;
+    let followerY = -100;
+    let dotX = -100;
+    let dotY = -100;
 
     const onMouseMove = (e: MouseEvent) => {
       mouseX = e.clientX;
@@ -37,10 +38,24 @@ export default function CursorFollower() {
 
     const onMouseDown = () => setIsClicked(true);
     const onMouseUp = () => setIsClicked(false);
-    const onMouseLeave = () => setIsVisible(false);
-    const onMouseEnter = () => setIsVisible(true);
+    
+    // Hide visual elements when mouse leaves window bounds
+    const onMouseLeave = () => {
+      if (follower) follower.style.opacity = "0";
+      if (dot) dot.style.opacity = "0";
+    };
+    
+    const onMouseEnter = () => {
+      if (follower) follower.style.opacity = "1";
+      if (dot) dot.style.opacity = "1";
+    };
 
-    // Track hovered elements
+    // Fallback: If user actually touches screen, disable custom cursor instantly
+    const onTouchStart = () => {
+      setIsVisible(false);
+      document.documentElement.classList.remove("has-custom-cursor");
+    };
+
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       if (
@@ -68,16 +83,13 @@ export default function CursorFollower() {
     document.addEventListener("mouseleave", onMouseLeave);
     document.addEventListener("mouseenter", onMouseEnter);
     window.addEventListener("mouseover", handleMouseOver);
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
 
-    // Spring effect frame loop
     let animationFrameId: number;
     const tick = () => {
-      // Linear interpolation / easing
-      // Outer ring follows mouse with 0.15 easing (springy lag)
       followerX += (mouseX - followerX) * 0.15;
       followerY += (mouseY - followerY) * 0.15;
 
-      // Inner dot follows mouse with 0.35 easing (tighter connection)
       dotX += (mouseX - dotX) * 0.35;
       dotY += (mouseY - dotY) * 0.35;
 
@@ -101,6 +113,7 @@ export default function CursorFollower() {
       document.removeEventListener("mouseleave", onMouseLeave);
       document.removeEventListener("mouseenter", onMouseEnter);
       window.removeEventListener("mouseover", handleMouseOver);
+      window.removeEventListener("touchstart", onTouchStart);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
