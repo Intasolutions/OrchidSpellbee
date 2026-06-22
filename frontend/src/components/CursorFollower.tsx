@@ -8,6 +8,9 @@ export default function CursorFollower() {
   const [isEnabled, setIsEnabled] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
+  
+  // Track if we are in touch mode (hybrid screen use)
+  const isTouchMode = useRef(false);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -20,10 +23,6 @@ export default function CursorFollower() {
     document.documentElement.classList.add("has-custom-cursor");
     setIsEnabled(true);
 
-    const follower = followerRef.current;
-    const dot = dotRef.current;
-    if (!follower || !dot) return;
-
     // Start positions (centered initially)
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
@@ -33,6 +32,18 @@ export default function CursorFollower() {
     let dotY = mouseY;
 
     const onMouseMove = (e: MouseEvent) => {
+      // If we were in touch mode but the user has moved the mouse again, restore follower
+      if (isTouchMode.current) {
+        isTouchMode.current = false;
+        setIsEnabled(true);
+        document.documentElement.classList.add("has-custom-cursor");
+        
+        const f = followerRef.current;
+        const d = dotRef.current;
+        if (f) f.style.opacity = "1";
+        if (d) d.style.opacity = "1";
+      }
+
       mouseX = e.clientX;
       mouseY = e.clientY;
     };
@@ -42,19 +53,30 @@ export default function CursorFollower() {
     
     // Hide visual elements when mouse leaves window bounds
     const onMouseLeave = () => {
-      if (follower) follower.style.opacity = "0";
-      if (dot) dot.style.opacity = "0";
+      const f = followerRef.current;
+      const d = dotRef.current;
+      if (f) f.style.opacity = "0";
+      if (d) d.style.opacity = "0";
     };
     
     const onMouseEnter = () => {
-      if (follower) follower.style.opacity = "1";
-      if (dot) dot.style.opacity = "1";
+      if (isTouchMode.current) return;
+      const f = followerRef.current;
+      const d = dotRef.current;
+      if (f) f.style.opacity = "1";
+      if (d) d.style.opacity = "1";
     };
 
-    // If user touches screen, disable custom cursor instantly
+    // If user touches screen, disable custom cursor instantly to allow standard scrolling
     const onTouchStart = () => {
+      isTouchMode.current = true;
       setIsEnabled(false);
       document.documentElement.classList.remove("has-custom-cursor");
+      
+      const f = followerRef.current;
+      const d = dotRef.current;
+      if (f) f.style.opacity = "0";
+      if (d) d.style.opacity = "0";
     };
 
     const handleMouseOver = (e: MouseEvent) => {
@@ -94,11 +116,15 @@ export default function CursorFollower() {
       dotX += (mouseX - dotX) * 0.35;
       dotY += (mouseY - dotY) * 0.35;
 
-      if (follower) {
-        follower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
+      // Always read latest refs to prevent animating stale unmounted nodes
+      const currentFollower = followerRef.current;
+      const currentDot = dotRef.current;
+
+      if (currentFollower) {
+        currentFollower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
       }
-      if (dot) {
-        dot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
+      if (currentDot) {
+        currentDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
       }
 
       animationFrameId = requestAnimationFrame(tick);
@@ -124,10 +150,12 @@ export default function CursorFollower() {
       <div
         ref={followerRef}
         className={`custom-cursor-follower ${isEnabled ? "visible" : ""} ${isHovered ? "hovered" : ""} ${isClicked ? "clicked" : ""}`}
+        style={{ display: isEnabled ? "block" : "none" }}
       />
       <div
         ref={dotRef}
         className={`custom-cursor-dot ${isEnabled ? "visible" : ""} ${isHovered ? "hovered" : ""} ${isClicked ? "clicked" : ""}`}
+        style={{ display: isEnabled ? "block" : "none" }}
       />
     </>
   );
