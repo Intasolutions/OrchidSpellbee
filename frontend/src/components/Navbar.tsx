@@ -45,7 +45,12 @@ export default function Navbar() {
         position: 'relative'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <Link href="/" style={{ textDecoration: 'none' }}>
+          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img 
+              src="/img/logo.png" 
+              alt="Orchid SpellBee Logo" 
+              style={{ height: '40px', width: 'auto' }} 
+            />
             <div style={{ fontSize: '1.3rem', fontWeight: '800', letterSpacing: '-0.5px', lineHeight: 1.1 }}>
               <span style={{color: 'var(--color-text-heading)'}}>Orchid</span>
               <span style={{color: 'var(--color-accent-orange)'}}>SpellBee</span>

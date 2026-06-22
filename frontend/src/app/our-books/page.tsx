@@ -1,10 +1,13 @@
 "use client";
 
+import Image from "next/image";
+
 export default function OurBooksPage() {
   const books = [
     {
       title: "Junior Spelling Guide",
       level: "Classes 1 – 3",
+      image: "/img/01.png",
       color: "#ffb800",
       bgLight: "rgba(255,184,0,0.08)",
       borderColor: "rgba(255,184,0,0.25)",
@@ -16,6 +19,7 @@ export default function OurBooksPage() {
     {
       title: "Intermediate Vocab Builder",
       level: "Classes 4 – 6",
+      image: "/img/02.png",
       color: "#7c3aed",
       bgLight: "rgba(124,58,237,0.08)",
       borderColor: "rgba(124,58,237,0.25)",
@@ -27,6 +31,7 @@ export default function OurBooksPage() {
     {
       title: "Advanced Linguistic Mastery",
       level: "Classes 7 – 9",
+      image: "/img/03.png",
       color: "#0ea5e9",
       bgLight: "rgba(14,165,233,0.08)",
       borderColor: "rgba(14,165,233,0.25)",
@@ -38,6 +43,7 @@ export default function OurBooksPage() {
     {
       title: "The Grand Finale Dictionary",
       level: "Classes 10 – 12",
+      image: "/img/04.png",
       color: "#f97316",
       bgLight: "rgba(249,115,22,0.08)",
       borderColor: "rgba(249,115,22,0.25)",
@@ -255,21 +261,24 @@ export default function OurBooksPage() {
                   </div>
                   <div
                     style={{
-                      width: "80px",
-                      height: "80px",
-                      background: "white",
-                      borderRadius: "18px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      margin: "0 auto 1rem auto",
-                      boxShadow: `0 8px 24px ${book.color}30`,
+                      width: "140px",
+                      height: "190px",
+                      margin: "0 auto 1.5rem auto",
+                      boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+                      borderRadius: "8px",
+                      overflow: "hidden",
+                      position: "relative",
+                      border: "1px solid rgba(0,0,0,0.08)",
+                      background: "white"
                     }}
                   >
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke={book.color} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-                    </svg>
+                    <Image 
+                      src={book.image} 
+                      alt={book.title} 
+                      fill
+                      sizes="140px"
+                      style={{ objectFit: "cover" }}
+                    />
                   </div>
                   <div
                     style={{

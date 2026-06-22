@@ -385,8 +385,8 @@ a {
     gap: 1.5rem !important;
   }
   
-  /* Hide decorative about us images on mobile to prevent empty gap */
+  /* Restore decorative about us images on mobile */
   .about-images {
-    display: none !important;
+    display: grid !important;
   }
 }

@@ -152,7 +152,7 @@ export default function Home() {
             <div style={{ 
               position: 'absolute', 
               inset: 0, 
-              background: 'url("https://images.unsplash.com/photo-1544928147-79a2dbc1f389?auto=format&fit=crop&q=80") center/cover', 
+              background: 'url("/img/6.jpeg") center/cover', 
               borderRadius: '24px',
               boxShadow: '0 25px 50px -12px rgba(0,0,0,0.15)',
               transform: 'perspective(1000px) rotateY(-5deg) rotateX(5deg)',
@@ -229,20 +229,20 @@ export default function Home() {
           </div>
           <div className="about-images" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
             <div style={{ 
-              background: 'url("https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?auto=format&fit=crop&q=80") center/cover', 
+              background: 'url("/img/7.jpeg") center/cover', 
               height: '300px', 
               borderRadius: '12px', 
               gridRow: 'span 2',
               boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
             }}></div>
             <div style={{ 
-              background: 'url("https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&q=80") center/cover', 
+              background: 'url("/img/8.jpeg") center/cover', 
               height: '140px', 
               borderRadius: '12px',
               boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
             }}></div>
             <div style={{ 
-              background: 'url("https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&q=80") center/cover', 
+              background: 'url("/img/9.jpeg") center/cover', 
               height: '140px', 
               borderRadius: '12px',
               boxShadow: '0 10px 25px rgba(0,0,0,0.1)'

@@ -7,6 +7,20 @@ export default function Footer() {
     <footer style={{ background: '#f8f9fa', borderTop: '1px solid #e2e8f0', padding: '4rem 0 0 0', position: 'relative', marginTop: 'auto' }}>
       <div className="container" style={{ display: 'flex', flexWrap: 'wrap', gap: '3rem', justifyContent: 'space-between', marginBottom: '3rem' }}>
         
+        {/* Brand Logo */}
+        <div style={{ flex: '1.2 1 240px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.2rem' }}>
+            <img src="/img/logo.png" alt="Orchid SpellBee Logo" style={{ height: '45px', width: 'auto' }} />
+            <div style={{ fontSize: '1.2rem', fontWeight: '800', letterSpacing: '-0.5px', lineHeight: 1.1, color: 'var(--color-text-heading)' }}>
+              <span>Orchid</span>
+              <span style={{color: 'var(--color-accent-orange)'}}>SpellBee</span>
+              <div style={{fontSize: '0.55rem', color: 'var(--color-text-secondary)', fontWeight: '600', letterSpacing: '0.5px', textTransform: 'uppercase'}}>Private Limited</div>
+            </div>
+          </div>
+          <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.85rem', lineHeight: '1.6', margin: 0 }}>
+            Dedicated to engaging children in the enriching practice of English language skills and fostering linguistic growth.
+          </p>
+        </div>
         {/* Address */}
         <div style={{ flex: '1 1 200px' }}>
            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-heading)', marginBottom: '1.5rem', fontWeight: '800' }}>
