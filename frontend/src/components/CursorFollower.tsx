@@ -5,30 +5,39 @@ import { useEffect, useRef, useState } from "react";
 export default function CursorFollower() {
   const followerRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
+  
   const [isEnabled, setIsEnabled] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isClicked, setIsClicked] = useState(false);
   
-  // Track enabled status using a ref to bypass useEffect state closures
+  // Refs to track states synchronously inside the pointer events loop without closure staleness
   const isEnabledRef = useRef(false);
+  const isVisibleRef = useRef(false);
 
   const setEnabledStatus = (status: boolean) => {
     setIsEnabled(status);
     isEnabledRef.current = status;
   };
 
+  const setVisibleStatus = (status: boolean) => {
+    setIsVisible(status);
+    isVisibleRef.current = status;
+  };
+
   useEffect(() => {
     if (typeof window === "undefined") return;
 
-    // Check if the device supports a hovering pointer (desktops, laptops)
+    // Verify hover support (desktops, laptops with mice/trackpads)
     const hasHover = window.matchMedia("(hover: hover)").matches;
     if (!hasHover) return;
 
-    // Enable custom cursor styles
+    // Enable custom cursor classes
     document.documentElement.classList.add("has-custom-cursor");
     setEnabledStatus(true);
+    setVisibleStatus(true);
 
-    // Start positions (centered initially)
+    // Initial position in the center
     let mouseX = window.innerWidth / 2;
     let mouseY = window.innerHeight / 2;
     let followerX = mouseX;
@@ -37,41 +46,38 @@ export default function CursorFollower() {
     let dotY = mouseY;
 
     const onPointerMove = (e: PointerEvent) => {
-      // If touch interaction is detected, hide follower and restore native cursor
+      // Touch interaction detected (scrolling/gestures on touchscreen/trackpad)
       if (e.pointerType === "touch") {
         if (isEnabledRef.current) {
           setEnabledStatus(false);
+          setVisibleStatus(false);
           document.documentElement.classList.remove("has-custom-cursor");
-          const f = followerRef.current;
-          const d = dotRef.current;
-          if (f) f.style.opacity = "0";
-          if (d) d.style.opacity = "0";
         }
         return;
       }
 
-      // If we were disabled (e.g. by touch) but are now moving with a mouse, restore follower
+      // Re-enable if moving pointer with a mouse/trackpad fine input
       if (!isEnabledRef.current) {
         setEnabledStatus(true);
+        setVisibleStatus(true);
         document.documentElement.classList.add("has-custom-cursor");
       }
 
-      const f = followerRef.current;
-      const d = dotRef.current;
-
-      // Clean bounds checking instead of flaky document pointerleave/pointerenter events
-      const isOutOfBounds = 
+      // Check boundaries
+      const outOfBounds = 
         e.clientX <= 2 || 
         e.clientY <= 2 || 
         e.clientX >= window.innerWidth - 2 || 
         e.clientY >= window.innerHeight - 2;
 
-      if (isOutOfBounds) {
-        if (f) f.style.opacity = "0";
-        if (d) d.style.opacity = "0";
+      if (outOfBounds) {
+        if (isVisibleRef.current) {
+          setVisibleStatus(false);
+        }
       } else {
-        if (f) f.style.opacity = "1";
-        if (d) d.style.opacity = "1";
+        if (!isVisibleRef.current) {
+          setVisibleStatus(true);
+        }
       }
 
       mouseX = e.clientX;
@@ -82,11 +88,8 @@ export default function CursorFollower() {
       if (e.pointerType === "touch") {
         if (isEnabledRef.current) {
           setEnabledStatus(false);
+          setVisibleStatus(false);
           document.documentElement.classList.remove("has-custom-cursor");
-          const f = followerRef.current;
-          const d = dotRef.current;
-          if (f) f.style.opacity = "0";
-          if (d) d.style.opacity = "0";
         }
         return;
       }
@@ -102,7 +105,6 @@ export default function CursorFollower() {
       if (e.pointerType === "touch") return;
       const target = e.target as HTMLElement;
       
-      // Safety check: target.closest is only defined on Element nodes (crashes on text/document nodes)
       if (target && typeof target.closest === "function") {
         if (
           target.tagName === 'A' ||
@@ -136,15 +138,14 @@ export default function CursorFollower() {
       dotX += (mouseX - dotX) * 0.35;
       dotY += (mouseY - dotY) * 0.35;
 
-      // Always read latest refs to prevent animating stale unmounted nodes
-      const currentFollower = followerRef.current;
-      const currentDot = dotRef.current;
+      const f = followerRef.current;
+      const d = dotRef.current;
 
-      if (currentFollower) {
-        currentFollower.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
+      if (f) {
+        f.style.transform = `translate3d(${followerX}px, ${followerY}px, 0) translate(-50%, -50%)`;
       }
-      if (currentDot) {
-        currentDot.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
+      if (d) {
+        d.style.transform = `translate3d(${dotX}px, ${dotY}px, 0) translate(-50%, -50%)`;
       }
 
       animationFrameId = requestAnimationFrame(tick);
@@ -166,14 +167,15 @@ export default function CursorFollower() {
     <>
       <div
         ref={followerRef}
-        className={`custom-cursor-follower ${isEnabled ? "visible" : ""} ${isHovered ? "hovered" : ""} ${isClicked ? "clicked" : ""}`}
+        className={`custom-cursor-follower ${isEnabled && isVisible ? "visible" : ""} ${isHovered ? "hovered" : ""} ${isClicked ? "clicked" : ""}`}
         style={{ display: isEnabled ? "block" : "none" }}
       />
       <div
         ref={dotRef}
-        className={`custom-cursor-dot ${isEnabled ? "visible" : ""} ${isHovered ? "hovered" : ""} ${isClicked ? "clicked" : ""}`}
+        className={`custom-cursor-dot ${isEnabled && isVisible ? "visible" : ""} ${isHovered ? "hovered" : ""} ${isClicked ? "clicked" : ""}`}
         style={{ display: isEnabled ? "block" : "none" }}
       />
     </>
   );
 }
+
