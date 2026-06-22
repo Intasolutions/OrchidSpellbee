@@ -209,7 +209,7 @@ export default function Home() {
       </div>
 
       {/* About Us Section */}
-      <div className="container fade-up" style={{ padding: '4rem 2rem' }}>
+      <div className="container fade-up about-section" style={{ padding: '4rem 2rem' }}>
         <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <h2 style={{ fontSize: '2.5rem', color: 'var(--color-text-heading)' }}>About US</h2>
           <div style={{ width: '60px', height: '3px', background: 'var(--color-accent-orange)', margin: '0 auto' }}></div>

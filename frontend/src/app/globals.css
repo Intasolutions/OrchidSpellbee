@@ -356,12 +356,28 @@ a {
   }
   
   /* Layout sections general adjustments */
+  div[style*="padding: 5rem"],
   div[style*="padding: 6rem"], 
   div[style*="padding: 7rem"] {
-    padding: 4rem 1rem !important;
+    padding: 2.5rem 1rem !important;
   }
   div[style*="padding: 10rem 3rem 7rem"] {
     padding: 9.5rem 1.5rem 4rem 1.5rem !important;
+  }
+  div[style*="padding: 4rem 0"] {
+    padding: 1.5rem 0 !important;
+  }
+  
+  /* Reduce spacing between section headers and content on mobile */
+  div[style*="margin-bottom: 3rem"],
+  div[style*="margin-bottom: 4rem"],
+  div[style*="margin-bottom: 5rem"] {
+    margin-bottom: 2rem !important;
+  }
+  
+  /* About Us section mobile padding */
+  .about-section {
+    padding: 2.5rem 1.25rem !important;
   }
   
   /* Footers wrapping */
