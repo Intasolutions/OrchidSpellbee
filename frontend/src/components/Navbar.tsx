@@ -44,7 +44,7 @@ export default function Navbar() {
         maxWidth: '1200px',
         position: 'relative'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
           <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
             <img 
               src="/img/logo.png" 
@@ -52,18 +52,18 @@ export default function Navbar() {
               style={{ height: '52px', width: 'auto', display: 'block' }} 
             />
           </Link>
-        </div>
-        
-        <div className="nav-links" style={{ display: 'flex', gap: '1.8rem', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
-          {navLinks.map((link) => (
-            <Link 
-              key={link.path} 
-              href={link.path} 
-              className={`nav-link ${pathname === link.path ? 'active' : ''}`}
-            >
-              {link.name}
-            </Link>
-          ))}
+          
+          <div className="nav-links" style={{ display: 'flex', gap: '1.5rem', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
+            {navLinks.map((link) => (
+              <Link 
+                key={link.path} 
+                href={link.path} 
+                className={`nav-link ${pathname === link.path ? 'active' : ''}`}
+              >
+                {link.name}
+              </Link>
+            ))}
+          </div>
         </div>
 
         {/* Mobile Menu Button */}
