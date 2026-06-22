@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 import ScrollObserver from "../components/ScrollObserver";
 import MainLayoutWrapper from "../components/MainLayoutWrapper";
 import CursorFollower from "../components/CursorFollower";
 
-const inter = Inter({ subsets: ["latin"] });
+const plusJakartaSans = Plus_Jakarta_Sans({ 
+  subsets: ["latin"],
+  display: "swap" 
+});
 
 export const metadata: Metadata = {
   title: "Orchid SpellBee",
@@ -19,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={plusJakartaSans.className}>
         <ScrollObserver />
         <CursorFollower />
         <MainLayoutWrapper>{children}</MainLayoutWrapper>
