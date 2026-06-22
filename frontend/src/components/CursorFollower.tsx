@@ -54,8 +54,22 @@ export default function CursorFollower() {
       if (!isEnabledRef.current) {
         setEnabledStatus(true);
         document.documentElement.classList.add("has-custom-cursor");
-        const f = followerRef.current;
-        const d = dotRef.current;
+      }
+
+      const f = followerRef.current;
+      const d = dotRef.current;
+
+      // Clean bounds checking instead of flaky document pointerleave/pointerenter events
+      const isOutOfBounds = 
+        e.clientX <= 2 || 
+        e.clientY <= 2 || 
+        e.clientX >= window.innerWidth - 2 || 
+        e.clientY >= window.innerHeight - 2;
+
+      if (isOutOfBounds) {
+        if (f) f.style.opacity = "0";
+        if (d) d.style.opacity = "0";
+      } else {
         if (f) f.style.opacity = "1";
         if (d) d.style.opacity = "1";
       }
@@ -83,22 +97,6 @@ export default function CursorFollower() {
       if (e.pointerType === "touch") return;
       setIsClicked(false);
     };
-    
-    // Hide visual elements when mouse leaves window bounds
-    const onPointerLeave = () => {
-      const f = followerRef.current;
-      const d = dotRef.current;
-      if (f) f.style.opacity = "0";
-      if (d) d.style.opacity = "0";
-    };
-    
-    const onPointerEnter = (e: PointerEvent) => {
-      if (e.pointerType === "touch") return;
-      const f = followerRef.current;
-      const d = dotRef.current;
-      if (f) f.style.opacity = "1";
-      if (d) d.style.opacity = "1";
-    };
 
     const handlePointerOver = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
@@ -125,8 +123,6 @@ export default function CursorFollower() {
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("pointerup", onPointerUp);
-    document.addEventListener("pointerleave", onPointerLeave);
-    document.addEventListener("pointerenter", onPointerEnter);
     window.addEventListener("pointerover", handlePointerOver);
 
     let animationFrameId: number;
@@ -158,8 +154,6 @@ export default function CursorFollower() {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointerup", onPointerUp);
-      document.removeEventListener("pointerleave", onPointerLeave);
-      document.removeEventListener("pointerenter", onPointerEnter);
       window.removeEventListener("pointerover", handlePointerOver);
       cancelAnimationFrame(animationFrameId);
     };
