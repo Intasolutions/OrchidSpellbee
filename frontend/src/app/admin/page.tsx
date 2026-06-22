@@ -1,12 +1,13 @@
 "use client";
 import { useEffect, useState } from 'react';
+import { API_BASE_URL } from '@/config';
 
 export default function AdminDashboard() {
   const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/submissions/')
+    fetch(`${API_BASE_URL}/api/submissions/`)
       .then(res => res.json())
       .then(data => {
         setSubmissions(data);

@@ -2,10 +2,11 @@
 
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
+import { API_BASE_URL } from "@/config";
 
 export async function loginAction(username: string, password: string) {
   try {
-    const res = await fetch("http://127.0.0.1:8000/api/admin-login/", {
+    const res = await fetch(`${API_BASE_URL}/api/admin-login/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { API_BASE_URL } from "@/config";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -13,7 +14,7 @@ export default function Home() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:8000/api/forms/active/')
+    fetch(`${API_BASE_URL}/api/forms/active/`)
       .then(res => res.json())
       .then(data => {
         if (!data.detail) {
@@ -52,7 +53,7 @@ export default function Home() {
     };
 
     try {
-      const res = await fetch('http://localhost:8000/api/submit/', {
+      const res = await fetch(`${API_BASE_URL}/api/submit/`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -90,7 +91,6 @@ export default function Home() {
         {/* Left Content */}
         <div style={{ flex: '1', position: 'relative', zIndex: 1, paddingLeft: '2rem' }}>
           <div style={{ 
-            display: 'inline-block', 
             padding: '0.5rem 1.5rem', 
             background: 'rgba(255,184,0,0.1)', 
             color: 'var(--color-accent-orange-hover)', 
