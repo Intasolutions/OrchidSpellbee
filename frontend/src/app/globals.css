@@ -157,7 +157,7 @@ a {
 /* Animations */
 .fade-up {
   opacity: 0;
-  transform: translateY(15px);
+  transform: translateY(8px);
   transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   will-change: opacity, transform;
 }
@@ -376,7 +376,7 @@ a {
   
   /* About Us section mobile padding */
   .about-section {
-    padding: 2.5rem 1.25rem !important;
+    padding: 2.5rem 1.25rem 0.5rem 1.25rem !important;
   }
   
   /* Footers wrapping */
@@ -390,18 +390,18 @@ a {
     gap: 0.75rem !important;
   }
   .about-img-large {
-    height: 180px !important;
+    height: 150px !important;
   }
   .about-img-small {
-    height: 85px !important;
+    height: 70px !important;
   }
 
   /* Reduce spacing and container paddings for Core Values section on mobile */
   #why-us {
-    padding: 3rem 0 !important;
+    padding: 1rem 0 !important;
   }
   .values-tree-container {
-    padding: 1rem 0 !important;
+    padding: 0 !important;
   }
 }
 
