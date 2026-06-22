@@ -7,8 +7,10 @@ export default function ScrollObserver() {
   const pathname = usePathname();
 
   useEffect(() => {
+    const selectors = '.fade-up, .fade-in, .slide-left, .slide-right, .scale-in';
+
     // Reset all previously observed elements so they can be re-observed on navigation
-    document.querySelectorAll('.fade-up').forEach((el) => {
+    document.querySelectorAll(selectors).forEach((el) => {
       el.classList.remove('observed', 'visible');
     });
 
@@ -19,10 +21,11 @@ export default function ScrollObserver() {
           observer.unobserve(entry.target); // Animate only once
         }
       });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+    }, { threshold: 0.05, rootMargin: '0px 0px -40px 0px' });
 
     const observeElements = () => {
-      document.querySelectorAll('.fade-up:not(.observed)').forEach((el) => {
+      const query = selectors.split(', ').map(s => `${s}:not(.observed)`).join(', ');
+      document.querySelectorAll(query).forEach((el) => {
         el.classList.add('observed');
         observer.observe(el);
       });

@@ -99,7 +99,7 @@ export default function Home() {
         <div style={{ position: 'absolute', top: '-10%', right: '-5%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(255,184,0,0.08) 0%, rgba(255,184,0,0) 70%)', borderRadius: '50%', zIndex: 0 }}></div>
         
         {/* Left Content */}
-        <div className="hero-left" style={{ flex: '1', position: 'relative', zIndex: 1, paddingLeft: '2rem' }}>
+        <div className="hero-left animate-fade-in" style={{ flex: '1', position: 'relative', zIndex: 1, paddingLeft: '2rem' }}>
           <div style={{ 
             padding: '0.5rem 1.5rem', 
             background: 'rgba(255,184,0,0.1)', 
@@ -158,7 +158,7 @@ export default function Home() {
         </div>
 
         {/* Right Content - Images */}
-        <div className="hero-right" style={{ flex: '1', position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'center' }}>
+        <div className="hero-right animate-fade-in" style={{ flex: '1', position: 'relative', zIndex: 1, display: 'flex', justifyContent: 'center' }}>
           <div className="hero-right-inner" style={{ position: 'relative', width: '500px', height: '540px' }}>
             {/* Main Image */}
             <div style={{ 
@@ -221,14 +221,14 @@ export default function Home() {
       </div>
 
       {/* About Us Section */}
-      <div className="container fade-up about-section" style={{ padding: '4rem 2rem' }}>
-        <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+      <div className="container about-section" style={{ padding: '4rem 2rem' }}>
+        <div className="fade-up" style={{ textAlign: 'center', marginBottom: '3rem' }}>
           <h2 style={{ fontSize: '2.5rem', color: 'var(--color-text-heading)' }}>About US</h2>
           <div style={{ width: '60px', height: '3px', background: 'var(--color-accent-orange)', margin: '0 auto' }}></div>
         </div>
         
         <div className="about-inner" style={{ display: 'flex', gap: '4rem', alignItems: 'flex-start' }}>
-          <div style={{ flex: 1 }}>
+          <div className="slide-left" style={{ flex: 1 }}>
             <h4 style={{ color: '#a0aec0', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', fontSize: '0.9rem' }}>WHO WE ARE</h4>
             <h3 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'var(--color-text-heading)' }}>Welcome to Orchid Spell Bee</h3>
             <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem', fontStyle: 'italic' }}>
@@ -245,7 +245,7 @@ export default function Home() {
               Why Orchid Spell Bee ↓
             </button>
           </div>
-          <div className="about-images" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
+          <div className="about-images slide-right" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
             <div className="about-img-large" style={{ 
               background: 'url("/img/7.jpeg") center/cover', 
               height: '300px', 
@@ -366,14 +366,14 @@ export default function Home() {
       {/* Competitions & Awards Section */}
       <div style={{ padding: '4rem 0', background: 'white' }}>
         <div className="container">
-          <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
+          <div className="fade-up" style={{ textAlign: 'center', marginBottom: '3rem' }}>
             <h2 style={{ fontSize: '2.5rem', color: 'var(--color-text-heading)', margin: 0, marginBottom: '1rem', fontWeight: '800' }}>Competitions & Awards</h2>
             <div style={{ width: '80px', height: '3px', background: 'var(--color-accent-orange)', margin: '0 auto' }}></div>
           </div>
           
           <div className="awards-inner" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem', alignItems: 'center' }}>
             {/* Left Content */}
-            <div style={{ paddingRight: '2rem' }}>
+            <div className="slide-left" style={{ paddingRight: '2rem' }}>
               <div style={{ color: '#a0aec0', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '700', letterSpacing: '1.5px', marginBottom: '1rem' }}>PRIZES AND RECOGNITIONS</div>
               <h3 style={{ fontSize: '2.2rem', color: '#1a202c', margin: '0 0 1.5rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '800' }}>
                 Rounds and Prizes
@@ -391,7 +391,7 @@ export default function Home() {
             </div>
             
             {/* Right Card / Table */}
-            <div style={{ position: 'relative', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
+            <div className="slide-right" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
                {/* Decorative background cards to create stacked effect */}
                <div style={{ position: 'absolute', top: '6px', right: '-6px', bottom: '-6px', left: '6px', background: '#4c3a99', borderRadius: '12px', zIndex: 1 }}></div>
                
