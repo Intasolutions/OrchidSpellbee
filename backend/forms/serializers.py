@@ -52,7 +52,8 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['id', 'name', 'email', 'current_tier', 'current_tier_name', 'created_at']
+        fields = ['id', 'name', 'email', 'current_tier', 'current_tier_name', 'created_at', 'is_deleted', 'deleted_at']
+
 
 class SubmissionCreateSerializer(serializers.Serializer):
     student_name = serializers.CharField(max_length=200)

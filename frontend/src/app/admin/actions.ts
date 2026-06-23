@@ -170,10 +170,10 @@ export async function deleteTierForm(id: number) {
   }
 }
 
-export async function getStudents() {
+export async function getStudents(trash = false) {
   try {
     await verifySession();
-    const res = await fetch(`${API_BASE_URL}/api/admin/students/`, {
+    const res = await fetch(`${API_BASE_URL}/api/admin/students/?trash=${trash}`, {
       headers: getAdminHeaders(),
       cache: "no-store"
     });
@@ -184,6 +184,23 @@ export async function getStudents() {
     return [];
   }
 }
+
+export async function restoreStudent(id: number) {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/admin/students/${id}/restore/`, {
+      method: "POST",
+      headers: getAdminHeaders(),
+      cache: "no-store"
+    });
+    if (!res.ok) throw new Error("Failed to restore student profile");
+    return { success: true };
+  } catch (error: any) {
+    console.error("restoreStudent error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
 
 export async function promoteStudent(id: number, tierId: number) {
   try {

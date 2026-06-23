@@ -35,9 +35,12 @@ class Student(models.Model):
     email = models.EmailField(unique=True)
     current_tier = models.ForeignKey(TierForm, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
+    deleted_at = models.DateTimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name
+
 
 class Submission(models.Model):
     student = models.ForeignKey(Student, related_name='submissions', on_delete=models.CASCADE)
