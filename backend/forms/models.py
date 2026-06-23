@@ -37,9 +37,19 @@ class Student(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
     deleted_at = models.DateTimeField(null=True, blank=True)
+    student_code = models.CharField(max_length=50, unique=True, null=True, blank=True)
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+        if is_new and not self.student_code:
+            from django.utils import timezone
+            self.student_code = f"OSB-{self.created_at.year if self.created_at else timezone.now().year}-{self.id:04d}"
+            super().save(update_fields=['student_code'])
 
     def __str__(self):
         return self.name
+
 
 
 class Submission(models.Model):

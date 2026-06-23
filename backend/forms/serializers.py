@@ -52,7 +52,8 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ['id', 'name', 'email', 'current_tier', 'current_tier_name', 'created_at', 'is_deleted', 'deleted_at']
+        fields = ['id', 'name', 'email', 'student_code', 'current_tier', 'current_tier_name', 'created_at', 'is_deleted', 'deleted_at']
+
 
 
 class SubmissionCreateSerializer(serializers.Serializer):
@@ -89,8 +90,10 @@ class SubmissionCreateSerializer(serializers.Serializer):
 class SubmissionListSerializer(serializers.ModelSerializer):
     student_name = serializers.CharField(source='student.name', read_only=True)
     student_email = serializers.EmailField(source='student.email', read_only=True)
+    student_code = serializers.CharField(source='student.student_code', read_only=True)
     form_name = serializers.CharField(source='form.name', read_only=True)
 
     class Meta:
         model = Submission
-        fields = ['id', 'student_name', 'student_email', 'form_name', 'data', 'payment_status', 'submitted_at']
+        fields = ['id', 'student_name', 'student_email', 'student_code', 'form_name', 'data', 'payment_status', 'submitted_at']
+

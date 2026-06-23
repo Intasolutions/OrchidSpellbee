@@ -84,13 +84,16 @@ export default function StudentsManager() {
 
   const filteredStudents = students.filter((s: any) => 
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.email.toLowerCase().includes(searchQuery.toLowerCase())
+    s.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (s.student_code && s.student_code.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
   const filteredTrashed = trashedStudents.filter((s: any) => 
     s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.email.toLowerCase().includes(searchQuery.toLowerCase())
+    s.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (s.student_code && s.student_code.toLowerCase().includes(searchQuery.toLowerCase()))
   );
+
 
   const displayedList = activeTab === "active" ? filteredStudents : filteredTrashed;
 
@@ -229,9 +232,18 @@ export default function StudentsManager() {
               ) : displayedList.map((student: any) => (
                 <tr key={student.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
                   <td style={{ padding: "1.2rem 1rem" }}>
-                    <div style={{ fontWeight: 700, color: "#1e1b4b" }}>{student.name}</div>
-                    <div style={{ fontSize: "0.8rem", color: "#64748b" }}>{student.email}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                      <div style={{ fontWeight: 700, color: "#1e1b4b" }}>{student.name}</div>
+                      {student.student_code && (
+                        <span style={{ background: "rgba(255, 184, 0, 0.12)", color: "var(--color-accent-orange-hover)", fontSize: "0.65rem", padding: "0.15rem 0.4rem", borderRadius: "4px", fontWeight: 800, letterSpacing: "0.5px" }}>
+                          {student.student_code}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.15rem" }}>{student.email}</div>
                   </td>
+
+
                   
                   {activeTab === "active" ? (
                     <>

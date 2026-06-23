@@ -50,7 +50,8 @@ export default function RegistrationsManager() {
   const filteredSubmissions = submissions.filter((sub: any) => {
     const matchesSearch = 
       sub.student_name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-      sub.student_email.toLowerCase().includes(searchQuery.toLowerCase());
+      sub.student_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (sub.student_code && sub.student_code.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesTier = selectedTier === "" || sub.form_name === selectedTier;
     const matchesStatus = selectedStatus === "" || sub.payment_status === selectedStatus;
     return matchesSearch && matchesTier && matchesStatus;
@@ -62,7 +63,7 @@ export default function RegistrationsManager() {
       return;
     }
     // Headers
-    const headers = ["Registration ID", "Student Name", "Student Email", "Level / Stage", "Payment Status", "Date Registered", "Dynamic Fields Data"];
+    const headers = ["Registration ID", "Student Code", "Student Name", "Student Email", "Level / Stage", "Payment Status", "Date Registered", "Dynamic Fields Data"];
     
     // Rows mapping
     const rows = filteredSubmissions.map((sub: any) => {
@@ -73,6 +74,7 @@ export default function RegistrationsManager() {
 
       return [
         sub.id,
+        `"${(sub.student_code || "").replace(/"/g, '""')}"`,
         `"${sub.student_name.replace(/"/g, '""')}"`,
         `"${sub.student_email.replace(/"/g, '""')}"`,
         `"${sub.form_name.replace(/"/g, '""')}"`,
@@ -92,6 +94,7 @@ export default function RegistrationsManager() {
     link.click();
     document.body.removeChild(link);
   };
+
 
   return (
     <div>
@@ -193,9 +196,17 @@ export default function RegistrationsManager() {
                   style={{ borderBottom: "1px solid #f1f5f9" }}
                 >
                   <td style={{ padding: "1.2rem 1rem" }}>
-                    <div style={{ fontWeight: 700, color: "#1e1b4b" }}>{sub.student_name}</div>
-                    <div style={{ fontSize: "0.8rem", color: "#64748b" }}>{sub.student_email}</div>
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                      <div style={{ fontWeight: 700, color: "#1e1b4b" }}>{sub.student_name}</div>
+                      {sub.student_code && (
+                        <span style={{ background: "rgba(255, 184, 0, 0.12)", color: "var(--color-accent-orange-hover)", fontSize: "0.65rem", padding: "0.15rem 0.4rem", borderRadius: "4px", fontWeight: 800, letterSpacing: "0.5px" }}>
+                          {sub.student_code}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.15rem" }}>{sub.student_email}</div>
                   </td>
+
                   <td style={{ padding: "1.2rem 1rem" }}>
                     <span style={{ background: "rgba(30, 27, 117, 0.08)", color: "#1e1b4b", padding: "0.3rem 0.6rem", borderRadius: "6px", fontSize: "0.8rem", fontWeight: 700 }}>
                       {sub.form_name}
@@ -278,10 +289,20 @@ export default function RegistrationsManager() {
                 <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#1e1b4b", marginTop: "0.15rem" }}>{selectedSub.student_email}</div>
               </div>
 
+              {selectedSub.student_code && (
+                <div style={{ borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
+                  <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Student Code</span>
+                  <div style={{ display: "inline-block", background: "rgba(255, 184, 0, 0.12)", color: "var(--color-accent-orange-hover)", fontSize: "0.8rem", padding: "0.25rem 0.6rem", borderRadius: "6px", fontWeight: 800, marginTop: "0.25rem", letterSpacing: "0.5px" }}>
+                    {selectedSub.student_code}
+                  </div>
+                </div>
+              )}
+
               <div style={{ borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
                 <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Level / Stage Registered</span>
                 <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#1e1b4b", marginTop: "0.15rem" }}>{selectedSub.form_name}</div>
               </div>
+
 
               <div style={{ borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
                 <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Payment Status</span>
