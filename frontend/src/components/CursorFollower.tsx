@@ -15,14 +15,24 @@ export default function CursorFollower() {
   const isEnabledRef = useRef(false);
   const isVisibleRef = useRef(false);
 
+  const updateCursorClass = (enabled: boolean, visible: boolean) => {
+    if (enabled && visible) {
+      document.documentElement.classList.add("has-custom-cursor");
+    } else {
+      document.documentElement.classList.remove("has-custom-cursor");
+    }
+  };
+
   const setEnabledStatus = (status: boolean) => {
     setIsEnabled(status);
     isEnabledRef.current = status;
+    updateCursorClass(status, isVisibleRef.current);
   };
 
   const setVisibleStatus = (status: boolean) => {
     setIsVisible(status);
     isVisibleRef.current = status;
+    updateCursorClass(isEnabledRef.current, status);
   };
 
   useEffect(() => {
@@ -33,7 +43,6 @@ export default function CursorFollower() {
     if (!hasHover) return;
 
     // Enable custom cursor classes
-    document.documentElement.classList.add("has-custom-cursor");
     setEnabledStatus(true);
     setVisibleStatus(true);
 
@@ -51,7 +60,6 @@ export default function CursorFollower() {
         if (isEnabledRef.current) {
           setEnabledStatus(false);
           setVisibleStatus(false);
-          document.documentElement.classList.remove("has-custom-cursor");
         }
         return;
       }
@@ -60,14 +68,13 @@ export default function CursorFollower() {
       if (!isEnabledRef.current) {
         setEnabledStatus(true);
         setVisibleStatus(true);
-        document.documentElement.classList.add("has-custom-cursor");
       }
 
-      // Check boundaries
+      // Check boundaries (threshold of 15px on the right to account for scrollbars)
       const outOfBounds = 
         e.clientX <= 2 || 
         e.clientY <= 2 || 
-        e.clientX >= window.innerWidth - 2 || 
+        e.clientX >= window.innerWidth - 15 || 
         e.clientY >= window.innerHeight - 2;
 
       if (outOfBounds) {
@@ -89,7 +96,6 @@ export default function CursorFollower() {
         if (isEnabledRef.current) {
           setEnabledStatus(false);
           setVisibleStatus(false);
-          document.documentElement.classList.remove("has-custom-cursor");
         }
         return;
       }
@@ -101,34 +107,45 @@ export default function CursorFollower() {
       setIsClicked(false);
     };
 
+    const evaluateHoverState = (target: HTMLElement | null) => {
+      if (!target || typeof target.closest !== "function") {
+        setIsHovered(false);
+        return;
+      }
+      if (
+        target.tagName === 'A' ||
+        target.tagName === 'BUTTON' ||
+        target.closest('a') ||
+        target.closest('button') ||
+        target.closest('.interactive') ||
+        target.closest('.btn') ||
+        target.closest('.card') ||
+        target.tagName === 'INPUT' ||
+        target.tagName === 'SELECT' ||
+        target.tagName === 'TEXTAREA'
+      ) {
+        setIsHovered(true);
+      } else {
+        setIsHovered(false);
+      }
+    };
+
     const handlePointerOver = (e: PointerEvent) => {
       if (e.pointerType === "touch") return;
-      const target = e.target as HTMLElement;
-      
-      if (target && typeof target.closest === "function") {
-        if (
-          target.tagName === 'A' ||
-          target.tagName === 'BUTTON' ||
-          target.closest('a') ||
-          target.closest('button') ||
-          target.closest('.interactive') ||
-          target.closest('.btn') ||
-          target.closest('.card') ||
-          target.tagName === 'INPUT' ||
-          target.tagName === 'SELECT' ||
-          target.tagName === 'TEXTAREA'
-        ) {
-          setIsHovered(true);
-          return;
-        }
-      }
-      setIsHovered(false);
+      evaluateHoverState(e.target as HTMLElement);
+    };
+
+    const onScroll = () => {
+      if (mouseX === undefined || mouseY === undefined) return;
+      const target = document.elementFromPoint(mouseX, mouseY) as HTMLElement;
+      evaluateHoverState(target);
     };
 
     window.addEventListener("pointermove", onPointerMove);
     window.addEventListener("pointerdown", onPointerDown);
     window.addEventListener("pointerup", onPointerUp);
     window.addEventListener("pointerover", handlePointerOver);
+    window.addEventListener("scroll", onScroll, { passive: true });
 
     let animationFrameId: number;
     const tick = () => {
@@ -159,6 +176,7 @@ export default function CursorFollower() {
       window.removeEventListener("pointerdown", onPointerDown);
       window.removeEventListener("pointerup", onPointerUp);
       window.removeEventListener("pointerover", handlePointerOver);
+      window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
