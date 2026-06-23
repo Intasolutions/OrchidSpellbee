@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function CursorFollower() {
   const followerRef = useRef<HTMLDivElement>(null);
   const dotRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
   
   const [isEnabled, setIsEnabled] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
@@ -37,6 +39,13 @@ export default function CursorFollower() {
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+
+    // Disable custom cursor in the admin panel routes
+    if (pathname && pathname.startsWith("/admin")) {
+      setEnabledStatus(false);
+      setVisibleStatus(false);
+      return;
+    }
 
     // Verify hover support (desktops, laptops with mice/trackpads)
     const hasHover = window.matchMedia("(hover: hover)").matches;
@@ -179,7 +188,7 @@ export default function CursorFollower() {
       window.removeEventListener("scroll", onScroll);
       cancelAnimationFrame(animationFrameId);
     };
-  }, []);
+  }, [pathname]);
 
   return (
     <>
@@ -196,4 +205,3 @@ export default function CursorFollower() {
     </>
   );
 }
-

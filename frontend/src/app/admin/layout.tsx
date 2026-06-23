@@ -78,18 +78,22 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         {/* Brand Header */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '3rem', paddingLeft: '0.5rem' }}>
           <div style={{ 
-            background: 'var(--color-accent-orange)', 
-            width: '38px', 
-            height: '38px', 
+            background: 'white', 
+            width: '42px', 
+            height: '42px', 
             borderRadius: '10px', 
             display: 'flex', 
             alignItems: 'center', 
             justifyContent: 'center',
-            color: '#1e1b4b',
-            fontWeight: 800,
-            fontSize: '1.2rem'
+            padding: '4px',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            flexShrink: 0
           }}>
-            O
+            <img 
+              src="/img/logo.png" 
+              alt="Orchid SpellBee Logo" 
+              style={{ maxHeight: '100%', maxWidth: '100%', objectFit: 'contain', display: 'block' }} 
+            />
           </div>
           <div>
             <h2 style={{ fontSize: '1rem', fontWeight: 800, margin: 0, letterSpacing: '0.5px', color: '#ffffff' }}>Orchid SpellBee</h2>
