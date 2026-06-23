@@ -571,3 +571,14 @@ a {
     cursor: none !important;
   }
 }
+
+/* Admin Custom Sidebar Link States */
+.admin-sidebar-link {
+  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+.admin-sidebar-link:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: #ffffff !important;
+  transform: translateX(4px);
+}
+
