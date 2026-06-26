@@ -9,3 +9,4 @@ whitenoise==6.6.0
 gunicorn==23.0.0; sys_platform != 'win32'
 psycopg2-binary==2.9.9; sys_platform != 'win32'
 google-auth==2.30.0
+requests==2.32.3
