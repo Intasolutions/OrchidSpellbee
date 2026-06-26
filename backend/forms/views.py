@@ -60,7 +60,7 @@ class TierFormViewSet(viewsets.ReadOnlyModelViewSet):
 # Public form submission endpoint
 class SubmitFormView(APIView):
     def post(self, request):
-        serializer = SubmissionCreateSerializer(data=request.data)
+        serializer = SubmissionCreateSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response({"status": "success", "message": "Submission received successfully!"}, status=status.HTTP_201_CREATED)
