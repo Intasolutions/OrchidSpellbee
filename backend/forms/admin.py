@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import TierForm, FormField, Student, Submission
 
-class FormFieldInline(admin.TabularInline):
+class FormFieldInline(admin.StackedInline):
     model = FormField
     fields = ('label', 'field_type', 'options', 'required', 'order', 'depends_on', 'depends_on_value')
     extra = 1
