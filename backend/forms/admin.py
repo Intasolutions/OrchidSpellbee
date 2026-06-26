@@ -17,5 +17,13 @@ class StudentAdmin(admin.ModelAdmin):
 
 @admin.register(Submission)
 class SubmissionAdmin(admin.ModelAdmin):
-    list_display = ('student', 'form', 'payment_status', 'submitted_at')
+    list_display = ('student', 'form', 'payment_status', 'marks', 'is_passed_status', 'submitted_at')
     list_filter = ('form', 'payment_status')
+    list_editable = ('marks', 'payment_status')
+    search_fields = ('student__name', 'student__email')
+
+    def is_passed_status(self, obj):
+        if obj.is_passed is None:
+            return "Pending Grading"
+        return "Passed" if obj.is_passed else "Failed"
+    is_passed_status.short_description = "Result"

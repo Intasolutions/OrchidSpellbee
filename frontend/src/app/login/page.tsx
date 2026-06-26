@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { API_BASE_URL } from '@/config';
 import Link from 'next/link';
+import { GoogleOAuthProvider, GoogleLogin, CredentialResponse } from '@react-oauth/google';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -40,7 +41,34 @@ export default function LoginPage() {
     }
   };
 
+  const handleGoogleSuccess = async (credentialResponse: CredentialResponse) => {
+    setIsLoading(true);
+    setError('');
+    
+    try {
+      const res = await fetch(`${API_BASE_URL}/api/auth/google/`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token: credentialResponse.credential })
+      });
+      const data = await res.json();
+      
+      if (res.ok) {
+        localStorage.setItem('student_token', data.token);
+        localStorage.setItem('student_id', data.student_id);
+        router.push('/?register=true');
+      } else {
+        setError(data.error || 'Google Login failed.');
+      }
+    } catch (err) {
+      setError('An error occurred during Google login.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
+    <GoogleOAuthProvider clientId="YOUR_GOOGLE_CLIENT_ID">
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f9fa', paddingTop: '100px', paddingBottom: '40px' }}>
       <div style={{ background: 'white', padding: '3rem', borderRadius: '12px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', width: '100%', maxWidth: '400px' }}>
         <div style={{ textAlign: 'center', marginBottom: '2rem' }}>
@@ -49,6 +77,26 @@ export default function LoginPage() {
         </div>
 
         {error && <div style={{ background: '#fff5f5', color: '#c53030', padding: '1rem', borderRadius: '8px', marginBottom: '1.5rem', fontSize: '0.9rem' }}>{error}</div>}
+
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '1.5rem' }}>
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={() => {
+              setError('Google login failed.');
+            }}
+            useOneTap
+            shape="rectangular"
+            theme="outline"
+            text="signin_with"
+            size="large"
+          />
+        </div>
+        
+        <div style={{ display: 'flex', alignItems: 'center', margin: '1.5rem 0' }}>
+          <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }}></div>
+          <span style={{ padding: '0 1rem', color: '#64748b', fontSize: '0.9rem', fontWeight: 500 }}>OR</span>
+          <div style={{ flex: 1, height: '1px', background: '#e2e8f0' }}></div>
+        </div>
 
         <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <div>
@@ -104,5 +152,6 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+    </GoogleOAuthProvider>
   );
 }

@@ -5,7 +5,10 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from django.db.models import Sum, Count
 from rest_framework.authtoken.models import Token
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from google.oauth2 import id_token
+from google.auth.transport import requests as google_requests
+from django.contrib.auth.models import User
 
 from .models import TierForm, FormField, Student, Submission
 from .serializers import (
@@ -228,6 +231,54 @@ class StudentLoginView(APIView):
             token, _ = Token.objects.get_or_create(user=user)
             return Response({"token": token.key, "student_id": user.student_profile.id})
         return Response({"error": "Invalid credentials."}, status=status.HTTP_401_UNAUTHORIZED)
+
+class StudentGoogleAuthView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        token = request.data.get('token')
+        if not token:
+            return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            # Note: The real Google Client ID goes here.
+            client_id = "YOUR_GOOGLE_CLIENT_ID"
+            
+            try:
+                # Verify the token using Google's public keys
+                idinfo = id_token.verify_oauth2_token(token, google_requests.Request(), client_id)
+            except ValueError as e:
+                # For example, if client_id doesn't match the token's audience (aud)
+                return Response({'error': f'Invalid token: {str(e)}'}, status=status.HTTP_401_UNAUTHORIZED)
+
+            email = idinfo['email']
+            name = idinfo.get('name', 'Google User')
+
+            user, created = User.objects.get_or_create(
+                username=email,
+                defaults={'email': email}
+            )
+            
+            if created:
+                user.set_unusable_password()
+                user.save()
+
+            student, _ = Student.objects.get_or_create(
+                user=user,
+                email=email,
+                defaults={'name': name}
+            )
+
+            auth_token, _ = Token.objects.get_or_create(user=user)
+
+            return Response({
+                "token": auth_token.key, 
+                "student_id": student.id,
+                "is_new": created
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class StudentMeView(APIView):

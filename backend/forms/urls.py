@@ -10,7 +10,8 @@ from .views import (
     AdminLoginView,
     StudentRegisterView,
     StudentLoginView,
-    StudentMeView
+    StudentMeView,
+    StudentGoogleAuthView
 )
 
 router = DefaultRouter()
@@ -29,5 +30,6 @@ urlpatterns = [
     path('admin-stats/', AdminDashboardStatsView.as_view(), name='admin-stats'),
     path('auth/register/', StudentRegisterView.as_view(), name='student-register'),
     path('auth/login/', StudentLoginView.as_view(), name='student-login'),
+    path('auth/google/', StudentGoogleAuthView.as_view(), name='student-google-auth'),
     path('auth/me/', StudentMeView.as_view(), name='student-me'),
 ]
