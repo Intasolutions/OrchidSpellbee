@@ -162,7 +162,7 @@ export default function Home() {
         <div style={{ position: 'absolute', top: '-10%', right: '-5%', width: '600px', height: '600px', background: 'radial-gradient(circle, rgba(255,184,0,0.08) 0%, rgba(255,184,0,0) 70%)', borderRadius: '50%', zIndex: 0 }}></div>
         
         {/* Left Content */}
-        <div className="hero-left" style={{ flex: '1', position: 'relative', zIndex: 1, paddingLeft: '2rem' }}>
+        <div className="hero-left reveal-left" style={{ flex: '1', position: 'relative', zIndex: 1, paddingLeft: '2rem' }}>
           <div className="animate-reveal-up" style={{ 
             padding: '0.5rem 1.5rem', 
             background: 'rgba(255,184,0,0.1)', 
@@ -319,20 +319,20 @@ export default function Home() {
             </button>
           </div>
           <div className="about-images reveal-right" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
-            <div className="about-img-large" style={{ 
+            <div className="about-img-large hover-lift" style={{ 
               background: 'url("/img/7.jpeg") center/cover', 
               height: '300px', 
               borderRadius: '12px', 
               gridRow: 'span 2',
               boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
             }}></div>
-            <div className="about-img-small" style={{ 
+            <div className="about-img-small hover-lift" style={{ 
               background: 'url("/img/8.jpeg") center/cover', 
               height: '140px', 
               borderRadius: '12px',
               boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
             }}></div>
-            <div className="about-img-small" style={{ 
+            <div className="about-img-small hover-lift" style={{ 
               background: 'url("/img/9.jpeg") center/cover', 
               height: '140px', 
               borderRadius: '12px',

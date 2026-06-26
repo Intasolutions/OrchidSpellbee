@@ -405,7 +405,7 @@ export default function TeamPage() {
             {team.map((member, i) => (
               <div
                 key={i}
-                className="reveal-up"
+                className={`reveal-up delay-${(i % 3) * 100 + 100}`}
                 style={{
                   background: "white",
                   border: "1px solid #f0f0f0",

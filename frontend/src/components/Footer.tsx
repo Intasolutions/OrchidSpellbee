@@ -8,7 +8,7 @@ export default function Footer() {
       <div className="container" style={{ display: 'flex', flexWrap: 'wrap', gap: '3rem', justifyContent: 'space-between', marginBottom: '3rem' }}>
         
         {/* Brand Logo */}
-        <div style={{ flex: '1.2 1 240px' }}>
+        <div className="reveal-up delay-0" style={{ flex: '1.2 1 240px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '1.2rem' }}>
             <img src="/img/logo.png" alt="Orchid SpellBee Logo" style={{ height: '45px', width: 'auto' }} />
             <div style={{ fontSize: '1.2rem', fontWeight: '800', letterSpacing: '-0.5px', lineHeight: 1.1, color: 'var(--color-text-heading)' }}>
@@ -22,7 +22,7 @@ export default function Footer() {
           </p>
         </div>
         {/* Address */}
-        <div style={{ flex: '1 1 200px' }}>
+        <div className="reveal-up delay-100" style={{ flex: '1 1 200px' }}>
            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-heading)', marginBottom: '1.5rem', fontWeight: '800' }}>
              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-orange)" strokeWidth="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
              Address
@@ -36,7 +36,7 @@ export default function Footer() {
         </div>
         
         {/* Contact */}
-        <div style={{ flex: '1 1 200px' }}>
+        <div className="reveal-up delay-200" style={{ flex: '1 1 200px' }}>
            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-heading)', marginBottom: '1.5rem', fontWeight: '800' }}>
              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-orange)" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
              Contact
@@ -48,7 +48,7 @@ export default function Footer() {
         </div>
         
         {/* Opening Hours */}
-        <div style={{ flex: '1 1 200px' }}>
+        <div className="reveal-up delay-300" style={{ flex: '1 1 200px' }}>
            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-heading)', marginBottom: '1.5rem', fontWeight: '800' }}>
              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-orange)" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
              Opening Hours
@@ -60,7 +60,7 @@ export default function Footer() {
         </div>
         
         {/* Follow Us */}
-        <div style={{ flex: '1 1 200px' }}>
+        <div className="reveal-up delay-400" style={{ flex: '1 1 200px' }}>
            <h4 style={{ color: 'var(--color-text-heading)', marginBottom: '1.5rem', fontWeight: '800' }}>Follow Us</h4>
            <div style={{ display: 'flex', gap: '1rem' }}>
              {[

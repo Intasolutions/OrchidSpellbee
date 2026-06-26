@@ -142,7 +142,7 @@ export default function ContactPage() {
           }}
         >
           {/* Left — Info */}
-          <div>
+          <div className="reveal-left">
             <h2 style={{ fontSize: "2rem", fontWeight: "800", color: "var(--color-text-heading)", marginBottom: "2rem" }}>
               We'd love to hear from you
             </h2>
@@ -252,6 +252,7 @@ export default function ContactPage() {
 
           {/* Right — Form */}
           <div
+            className="reveal-right"
             style={{
               background: "white", borderRadius: "24px", padding: "3rem",
               boxShadow: "0 10px 40px rgba(0,0,0,0.07)", border: "1px solid #f0f0f0",
@@ -379,7 +380,7 @@ export default function ContactPage() {
       </div>
 
       {/* Map */}
-      <div style={{ width: "100%", height: "420px", position: "relative" }}>
+      <div className="reveal-up" style={{ width: "100%", height: "420px", position: "relative" }}>
         <iframe
           src="https://maps.google.com/maps?q=Cochin%20University%20P.O,%20Kalamassery,%20Cochin&t=&z=14&ie=UTF8&iwloc=&output=embed"
           width="100%"

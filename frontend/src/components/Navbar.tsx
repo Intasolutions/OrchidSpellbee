@@ -18,7 +18,7 @@ export default function Navbar() {
   ];
 
   return (
-    <header style={{ 
+    <header className="animate-drop-down" style={{ 
       position: 'sticky', 
       top: '20px', 
       zIndex: 50, 

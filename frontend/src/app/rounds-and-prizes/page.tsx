@@ -255,7 +255,7 @@ export default function RoundsAndPrizesPage() {
             {rounds.map((round, i) => (
               <div
                 key={i}
-                className="reveal-up round-row"
+                className={`reveal-up round-row delay-${(i % 4) * 100}`}
                 style={{
                   display: "flex",
                   gap: "2.5rem",
@@ -385,7 +385,7 @@ export default function RoundsAndPrizesPage() {
             }}
           >
             {/* National Prizes */}
-            <div>
+            <div className="reveal-left delay-100">
               <div
                 style={{
                   display: "flex",
@@ -520,7 +520,7 @@ export default function RoundsAndPrizesPage() {
             </div>
 
             {/* State Prizes */}
-            <div>
+            <div className="reveal-right delay-200">
               <div
                 style={{
                   display: "flex",

@@ -23,7 +23,7 @@ body {
   font-family: var(--font-primary);
   min-height: 100vh;
   line-height: 1.6;
-  overflow-x: hidden;
+  /* overflow-x: hidden removed to fix framer-motion whileInView bug */
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -106,6 +106,26 @@ a {
   animation: fadeIn 0.8s ease-out forwards;
 }
 
+@keyframes dropDown {
+  from { opacity: 0; transform: translateY(-50px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-drop-down {
+  opacity: 0;
+  animation: dropDown 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: transform, opacity;
+}
+
+.hover-lift {
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+}
+
 /* Modal classes */
 .modal-overlay {
   position: fixed;
@@ -170,41 +190,38 @@ a {
   transform: translateY(0);
 }
 
-/* Revealing scroll animations with 3D perspective zoom & rotation */
+/* Revealing scroll animations with 3D perspective zoom & rotation, mimicking Framer Motion */
 .reveal-up {
   opacity: 0;
-  transform: perspective(1000px) translateY(50px) scale(0.92) rotateX(10deg);
-  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateY(50px) scale(0.95);
+  transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: opacity, transform;
-  transform-origin: center bottom;
 }
 .reveal-up.visible {
   opacity: 1;
-  transform: perspective(1000px) translateY(0) scale(1) rotateX(0);
+  transform: translateY(0) scale(1);
 }
 
 .reveal-left {
   opacity: 0;
-  transform: perspective(1000px) translateX(-70px) scale(0.94) rotateY(-12deg);
-  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(-60px) scale(0.95);
+  transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: opacity, transform;
-  transform-origin: left center;
 }
 .reveal-left.visible {
   opacity: 1;
-  transform: perspective(1000px) translateX(0) scale(1) rotateY(0);
+  transform: translateX(0) scale(1);
 }
 
 .reveal-right {
   opacity: 0;
-  transform: perspective(1000px) translateX(70px) scale(0.94) rotateY(12deg);
-  transition: opacity 1.2s cubic-bezier(0.16, 1, 0.3, 1), transform 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transform: translateX(60px) scale(0.95);
+  transition: opacity 1.2s cubic-bezier(0.22, 1, 0.36, 1), transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: opacity, transform;
-  transform-origin: right center;
 }
 .reveal-right.visible {
   opacity: 1;
-  transform: perspective(1000px) translateX(0) scale(1) rotateY(0);
+  transform: translateX(0) scale(1);
 }
 
 /* Page load reveal animations for Hero section with 3D scaling */

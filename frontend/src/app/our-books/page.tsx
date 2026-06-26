@@ -222,7 +222,7 @@ export default function OurBooksPage() {
             {books.map((book, i) => (
               <div
                 key={i}
-                className="reveal-up card"
+                className={`reveal-up card delay-${(i % 4) * 100 + 100}`}
                 style={{
                   background: "white",
                   borderRadius: "24px",
