@@ -7,7 +7,10 @@ from .views import (
     AdminTierFormViewSet,
     AdminStudentViewSet,
     AdminDashboardStatsView,
-    AdminLoginView
+    AdminLoginView,
+    StudentRegisterView,
+    StudentLoginView,
+    StudentMeView
 )
 
 router = DefaultRouter()
@@ -24,4 +27,7 @@ urlpatterns = [
     path('submit/', SubmitFormView.as_view(), name='submit-form'),
     path('admin-login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin-stats/', AdminDashboardStatsView.as_view(), name='admin-stats'),
+    path('auth/register/', StudentRegisterView.as_view(), name='student-register'),
+    path('auth/login/', StudentLoginView.as_view(), name='student-login'),
+    path('auth/me/', StudentMeView.as_view(), name='student-me'),
 ]

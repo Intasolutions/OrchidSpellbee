@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSubmissions, updateSubmissionPaymentStatus, deleteSubmission, getTierForms } from "../actions";
+import { getSubmissions, updateSubmissionPaymentStatus, deleteSubmission, getTierForms, updateSubmissionMarks } from "../actions";
 
 export default function RegistrationsManager() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -13,6 +13,7 @@ export default function RegistrationsManager() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedTier, setSelectedTier] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedResult, setSelectedResult] = useState("");
 
   useEffect(() => {
     Promise.all([getSubmissions(), getTierForms()]).then(([subsData, formsData]) => {
@@ -54,7 +55,13 @@ export default function RegistrationsManager() {
       (sub.student_code && sub.student_code.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesTier = selectedTier === "" || sub.form_name === selectedTier;
     const matchesStatus = selectedStatus === "" || sub.payment_status === selectedStatus;
-    return matchesSearch && matchesTier && matchesStatus;
+    
+    let matchesResult = true;
+    if (selectedResult === "PASSED") matchesResult = sub.is_passed === true;
+    if (selectedResult === "FAILED") matchesResult = sub.is_passed === false;
+    if (selectedResult === "PENDING") matchesResult = sub.is_passed === null;
+
+    return matchesSearch && matchesTier && matchesStatus && matchesResult;
   });
 
   const handleExportExcel = () => {
@@ -63,7 +70,7 @@ export default function RegistrationsManager() {
       return;
     }
     // Headers
-    const headers = ["Registration ID", "Student Code", "Student Name", "Student Email", "Level / Stage", "Payment Status", "Date Registered", "Dynamic Fields Data"];
+    const headers = ["Registration ID", "Student Code", "Student Name", "Student Email", "Level / Stage", "Payment Status", "Marks", "Result", "Date Registered", "Dynamic Fields Data"];
     
     // Rows mapping
     const rows = filteredSubmissions.map((sub: any) => {
@@ -79,6 +86,8 @@ export default function RegistrationsManager() {
         `"${sub.student_email.replace(/"/g, '""')}"`,
         `"${sub.form_name.replace(/"/g, '""')}"`,
         sub.payment_status,
+        sub.marks !== null ? sub.marks : "N/A",
+        sub.is_passed === true ? "Passed" : sub.is_passed === false ? "Failed" : "Pending",
         new Date(sub.submitted_at).toLocaleDateString(),
         `"${fieldsString.replace(/"/g, '""')}"`
       ];
@@ -168,6 +177,21 @@ export default function RegistrationsManager() {
           </select>
         </div>
 
+        {/* Result Status Filter */}
+        <div style={{ minWidth: "150px" }}>
+          <label style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.4rem" }}>Exam Result</label>
+          <select 
+            value={selectedResult}
+            onChange={(e) => setSelectedResult(e.target.value)}
+            style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem", background: "white", color: "#000" }}
+          >
+            <option value="">All Results</option>
+            <option value="PASSED">Passed</option>
+            <option value="FAILED">Failed</option>
+            <option value="PENDING">Pending Grading</option>
+          </select>
+        </div>
+
       </div>
 
       {/* Registrations List Table */}
@@ -179,6 +203,7 @@ export default function RegistrationsManager() {
                 <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Student details</th>
                 <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Spelling Level</th>
                 <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Payment State</th>
+                <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Marks & Result</th>
                 <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Date Registered</th>
                 <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase", textAlign: "right" }}>Actions</th>
               </tr>
@@ -228,6 +253,16 @@ export default function RegistrationsManager() {
                       title="Click to toggle status"
                     >
                       {sub.payment_status}
+                    </span>
+                  </td>
+                  <td style={{ padding: "1.2rem 1rem" }}>
+                    <div style={{ fontWeight: 600 }}>{sub.marks !== null ? sub.marks : "-"}</div>
+                    <span style={{ 
+                      fontSize: "0.7rem", 
+                      fontWeight: 700, 
+                      color: sub.is_passed === true ? "#16a34a" : sub.is_passed === false ? "#dc2626" : "#94a3b8" 
+                    }}>
+                      {sub.is_passed === true ? "PASSED" : sub.is_passed === false ? "FAILED" : "PENDING"}
                     </span>
                   </td>
                   <td style={{ padding: "1.2rem 1rem", color: "#64748b", fontSize: "0.85rem" }}>
@@ -316,6 +351,41 @@ export default function RegistrationsManager() {
                   >
                     Toggle payment
                   </button>
+                </div>
+              </div>
+
+              <div style={{ borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
+                <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>Exam Grading</span>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginTop: "0.25rem" }}>
+                  <input 
+                    type="number" 
+                    placeholder="Enter marks"
+                    defaultValue={selectedSub.marks !== null ? selectedSub.marks : ""}
+                    onBlur={async (e) => {
+                      const val = e.target.value;
+                      if (!val) return;
+                      const res = await updateSubmissionMarks(selectedSub.id, parseFloat(val));
+                      if (res.success) {
+                        // update local state
+                        setSubmissions(submissions.map(s => s.id === selectedSub.id ? { ...s, marks: parseFloat(val), is_passed: res.data.is_passed } : s));
+                        setSelectedSub({ ...selectedSub, marks: parseFloat(val), is_passed: res.data.is_passed });
+                        alert("Marks updated successfully!");
+                      } else {
+                        alert("Error: " + res.error);
+                      }
+                    }}
+                    style={{ padding: "0.4rem 0.6rem", borderRadius: "6px", border: "1px solid #cbd5e1", width: "120px" }}
+                  />
+                  <span style={{ 
+                      fontSize: "0.8rem", 
+                      fontWeight: 700, 
+                      padding: "0.2rem 0.5rem",
+                      borderRadius: "4px",
+                      background: selectedSub.is_passed === true ? "#dcfce7" : selectedSub.is_passed === false ? "#fee2e2" : "#f1f5f9",
+                      color: selectedSub.is_passed === true ? "#16a34a" : selectedSub.is_passed === false ? "#dc2626" : "#64748b" 
+                    }}>
+                      {selectedSub.is_passed === true ? "PASSED" : selectedSub.is_passed === false ? "FAILED" : "PENDING"}
+                  </span>
                 </div>
               </div>
 

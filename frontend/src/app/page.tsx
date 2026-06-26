@@ -13,22 +13,67 @@ export default function Home() {
   const [formData, setFormData] = useState<any>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitSuccess, setSubmitSuccess] = useState(false);
+  
+  const [student, setStudent] = useState<any>(null);
+  const [authChecked, setAuthChecked] = useState(false);
+  const [formStatus, setFormStatus] = useState<string>('loading');
+  const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
-    fetch(`${API_BASE_URL}/api/forms/active/`)
-      .then(res => res.json())
-      .then(data => {
-        if (!data.detail) {
+    const token = localStorage.getItem('student_token');
+    if (!token) {
+      setAuthChecked(true);
+      setFormStatus('ready');
+      return;
+    }
+
+    fetch(`${API_BASE_URL}/api/auth/me/`, {
+      headers: { 'Authorization': `Token ${token}` }
+    })
+      .then(res => {
+        if (res.ok) return res.json();
+        throw new Error('Auth failed');
+      })
+      .then(data => setStudent(data))
+      .catch(() => {
+        localStorage.removeItem('student_token');
+        localStorage.removeItem('student_id');
+      })
+      .finally(() => setAuthChecked(true));
+  }, []);
+
+  useEffect(() => {
+    if (!authChecked) return;
+    
+    const token = localStorage.getItem('student_token');
+    const headers: any = {};
+    if (token) {
+      headers['Authorization'] = `Token ${token}`;
+    }
+
+    fetch(`${API_BASE_URL}/api/forms/active/`, { headers })
+      .then(async res => {
+        const data = await res.json();
+        if (res.ok && !data.detail) {
           setActiveForm(data);
+          setFormStatus('ready');
           const initialData: any = {};
-          data.fields.forEach((f: any) => {
-            initialData[f.id] = '';
-          });
+          if (data.fields) {
+            data.fields.forEach((f: any) => {
+              initialData[f.id] = '';
+            });
+          }
           setFormData(initialData);
+        } else {
+          setFormStatus(data.status || 'error');
+          setStatusMessage(data.detail || 'No active forms.');
         }
       })
-      .catch(err => console.error("Failed to fetch form", err));
-  }, []);
+      .catch(err => {
+        console.error("Failed to fetch form", err);
+        setFormStatus('error');
+      });
+  }, [authChecked]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -76,10 +121,14 @@ export default function Home() {
       data: filteredFormData
     };
 
+    const token = localStorage.getItem('student_token');
+    const headers: any = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = `Token ${token}`;
+
     try {
       const res = await fetch(`${API_BASE_URL}/api/submit/`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers,
         body: JSON.stringify(payload)
       });
       if (res.ok) {
@@ -152,13 +201,24 @@ export default function Home() {
             Join thousands of students in a celebration of the English language. Improve your linguistic prowess and embark on a journey of self-improvement.
           </p>
           <div className="animate-reveal-up delay-300" style={{ display: 'flex', gap: '1rem' }}>
-            <button 
-              className="btn" 
-              style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '1rem 2.5rem', boxShadow: '0 10px 25px rgba(255,184,0,0.3)' }}
-              onClick={() => setIsModalOpen(true)}
-            >
-              Register Now
-            </button>
+            {student ? (
+              <button 
+                className="btn" 
+                style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '1rem 2.5rem', boxShadow: '0 10px 25px rgba(255,184,0,0.3)' }}
+                onClick={() => setIsModalOpen(true)}
+              >
+                Go to Dashboard
+              </button>
+            ) : (
+              <Link href="/login" style={{ textDecoration: 'none' }}>
+                <button 
+                  className="btn" 
+                  style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '1rem 2.5rem', boxShadow: '0 10px 25px rgba(255,184,0,0.3)' }}
+                >
+                  Login to Register
+                </button>
+              </Link>
+            )}
             <a href="https://wa.me/917560997700" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
               <button 
                 className="btn btn-outline" 
@@ -501,9 +561,9 @@ export default function Home() {
             >
               &times;
             </button>
-            <h2 style={{ textAlign: 'center', marginBottom: '1rem', color: 'var(--color-text-heading)' }}>Student Details</h2>
+            <h2 style={{ textAlign: 'center', marginBottom: '1rem', color: 'var(--color-text-heading)' }}>Student Dashboard</h2>
             <p style={{ textAlign: 'center', color: 'var(--color-text-secondary)', marginBottom: '2rem', fontSize: '0.9rem' }}>
-              Fill out your details to proceed to the payment step.
+              {student ? `Welcome back, ${student.name}` : "Please log in to register."}
             </p>
             
             {/* Dynamic Form Placeholder */}
@@ -512,6 +572,36 @@ export default function Home() {
               <h3 style={{ color: 'var(--color-accent-orange)' }}>Success!</h3>
               <p style={{ marginTop: '1rem', color: 'var(--color-text-secondary)' }}>Your registration has been received successfully.</p>
               <button className="btn" style={{ marginTop: '2rem' }} onClick={() => setIsModalOpen(false)}>Close</button>
+            </div>
+          ) : formStatus === 'awaiting_or_failed' || formStatus === 'completed' || formStatus === 'error' ? (
+            <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+              <div style={{ width: '60px', height: '60px', borderRadius: '50%', background: formStatus === 'completed' ? '#d4edda' : '#fff3cd', color: formStatus === 'completed' ? '#155724' : '#856404', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+              </div>
+              <h3 style={{ color: 'var(--color-text-heading)', marginBottom: '1rem' }}>Status Update</h3>
+              <p style={{ color: 'var(--color-text-secondary)' }}>{statusMessage}</p>
+              
+              {student && student.has_submission && (
+                <div style={{ marginTop: '2rem', padding: '1.5rem', background: '#f8f9fa', borderRadius: '8px', border: '1px solid #e2e8f0', textAlign: 'left' }}>
+                  <h4 style={{ marginBottom: '1rem', fontSize: '1rem' }}>Your Latest Exam</h4>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                    <span style={{ color: 'var(--color-text-secondary)' }}>Level:</span>
+                    <span style={{ fontWeight: 600 }}>{student.latest_tier}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem' }}>
+                    <span style={{ color: 'var(--color-text-secondary)' }}>Marks:</span>
+                    <span style={{ fontWeight: 600 }}>{student.marks !== null ? student.marks : 'Awaiting Grading'}</span>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
+                    <span style={{ color: 'var(--color-text-secondary)' }}>Result:</span>
+                    <span style={{ fontWeight: 600, color: student.is_passed === true ? '#38a169' : student.is_passed === false ? '#e53e3e' : '#d69e2e' }}>
+                      {student.is_passed === true ? 'Passed' : student.is_passed === false ? 'Failed' : 'Pending'}
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              <button className="btn" style={{ marginTop: '2rem' }} onClick={() => setIsModalOpen(false)}>Close Dashboard</button>
             </div>
           ) : activeForm ? (
             <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} onSubmit={handleSubmit}>

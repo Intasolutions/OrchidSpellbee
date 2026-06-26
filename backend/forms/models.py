@@ -1,11 +1,13 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 class TierForm(models.Model):
     name = models.CharField(max_length=100) # e.g., "School Level", "District Level"
     description = models.TextField(blank=True)
     entry_fee = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     is_active = models.BooleanField(default=True)
     order = models.IntegerField(default=0) # To define progression order
+    total_marks = models.IntegerField(default=100)
+    pass_percentage = models.IntegerField(default=40)
 
     def __str__(self):
         return self.name
@@ -33,6 +35,7 @@ class FormField(models.Model):
         return f"{self.form.name} - {self.label}"
 
 class Student(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='student_profile')
     name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
     current_tier = models.ForeignKey(TierForm, on_delete=models.SET_NULL, null=True, blank=True)
@@ -59,7 +62,17 @@ class Submission(models.Model):
     form = models.ForeignKey(TierForm, on_delete=models.CASCADE)
     data = models.JSONField(default=dict) # Stores the answers
     payment_status = models.CharField(max_length=20, default='PENDING', choices=[('PENDING', 'Pending'), ('PAID', 'Paid')])
+    marks = models.FloatField(null=True, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def is_passed(self):
+        if self.marks is None:
+            return None
+        if self.form.total_marks <= 0:
+            return True
+        percentage = (self.marks / self.form.total_marks) * 100
+        return percentage >= self.form.pass_percentage
 
     def __str__(self):
         return f"{self.student.name} - {self.form.name}"

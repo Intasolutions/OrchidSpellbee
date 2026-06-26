@@ -8,7 +8,7 @@ class FormFieldInline(admin.StackedInline):
 
 @admin.register(TierForm)
 class TierFormAdmin(admin.ModelAdmin):
-    list_display = ('name', 'entry_fee', 'is_active', 'order')
+    list_display = ('name', 'entry_fee', 'is_active', 'order', 'total_marks', 'pass_percentage')
     inlines = [FormFieldInline]
 
 @admin.register(Student)

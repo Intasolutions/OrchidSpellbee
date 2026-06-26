@@ -104,6 +104,22 @@ export async function updateSubmissionPaymentStatus(id: number, status: string) 
   }
 }
 
+export async function updateSubmissionMarks(id: number, marks: number) {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/submissions/${id}/update_marks/`, {
+      method: "PATCH",
+      headers: getAdminHeaders(),
+      body: JSON.stringify({ marks })
+    });
+    if (!res.ok) throw new Error("Failed to update marks");
+    return { success: true, data: await res.json() };
+  } catch (error: any) {
+    console.error("updateSubmissionMarks error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
 export async function deleteSubmission(id: number) {
   try {
     await verifySession();
