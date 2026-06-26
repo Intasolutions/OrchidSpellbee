@@ -6,7 +6,7 @@ class FormFieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FormField
-        fields = ['id', 'label', 'field_type', 'options', 'required', 'order']
+        fields = ['id', 'label', 'field_type', 'options', 'required', 'order', 'depends_on', 'depends_on_value']
 
 class TierFormSerializer(serializers.ModelSerializer):
     fields = FormFieldSerializer(many=True, read_only=True)

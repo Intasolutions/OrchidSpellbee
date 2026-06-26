@@ -55,11 +55,25 @@ export default function Home() {
       }
     });
 
+    const filteredFormData: any = {};
+    activeForm.fields.forEach((f: any) => {
+      let isVisible = true;
+      if (f.depends_on && f.depends_on_value) {
+        const parentField = activeForm.fields.find((pf: any) => pf.label === f.depends_on);
+        if (!parentField || formData[parentField.id] !== f.depends_on_value) {
+          isVisible = false;
+        }
+      }
+      if (isVisible) {
+        filteredFormData[f.id] = formData[f.id];
+      }
+    });
+
     const payload = {
       student_name: studentName,
       student_email: studentEmail,
       form_id: activeForm.id,
-      data: formData
+      data: filteredFormData
     };
 
     try {
@@ -502,8 +516,15 @@ export default function Home() {
           ) : activeForm ? (
             <form style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }} onSubmit={handleSubmit}>
 
-              {activeForm.fields.map((field: any) => (
-                <div key={field.id} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              {activeForm.fields.map((field: any) => {
+                if (field.depends_on && field.depends_on_value) {
+                  const parentField = activeForm.fields.find((f: any) => f.label === field.depends_on);
+                  if (!parentField || formData[parentField.id] !== field.depends_on_value) {
+                    return null;
+                  }
+                }
+                return (
+                  <div key={field.id} style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                   <label style={{ fontSize: '0.9rem', color: 'var(--color-text-heading)', fontWeight: 600 }}>{field.label}</label>
                   {field.field_type === 'select' ? (
                     <select 
@@ -528,7 +549,8 @@ export default function Home() {
                     />
                   )}
                 </div>
-              ))}
+                );
+              })}
               
               <div style={{ marginTop: '1rem', padding: '1rem', background: '#fffbeb', border: '1px solid #fbd38d', borderRadius: '8px', color: '#975a16' }}>
                 <strong>{activeForm.name} Entry Fee:</strong> ₹{activeForm.entry_fee}

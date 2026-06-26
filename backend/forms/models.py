@@ -23,6 +23,8 @@ class FormField(models.Model):
     options = models.TextField(blank=True, help_text="Comma separated options for dropdowns")
     required = models.BooleanField(default=True)
     order = models.IntegerField(default=0)
+    depends_on = models.CharField(max_length=100, null=True, blank=True, help_text="Label of the field this depends on")
+    depends_on_value = models.CharField(max_length=100, null=True, blank=True, help_text="Value the parent field must have")
 
     class Meta:
         ordering = ['order']
