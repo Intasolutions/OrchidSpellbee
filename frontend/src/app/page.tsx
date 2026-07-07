@@ -132,12 +132,73 @@ export default function Home() {
         body: JSON.stringify(payload)
       });
       if (res.ok) {
-        setSubmitSuccess(true);
+        const data = await res.json();
+        
+        if (data.razorpay_order_id) {
+          // Load Razorpay script dynamically
+          const script = document.createElement('script');
+          script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+          script.onload = () => {
+            const options = {
+                key: data.key_id,
+                amount: data.amount,
+                currency: "INR",
+                name: "Orchid Spellbee",
+                description: "Entry Fee",
+                order_id: data.razorpay_order_id,
+                handler: async function (response: any) {
+                    try {
+                        const verifyRes = await fetch(`${API_BASE_URL}/api/verify-payment/`, {
+                            method: 'POST',
+                            headers,
+                            body: JSON.stringify({
+                                razorpay_payment_id: response.razorpay_payment_id,
+                                razorpay_order_id: response.razorpay_order_id,
+                                razorpay_signature: response.razorpay_signature
+                            })
+                        });
+                        
+                        if (verifyRes.ok) {
+                            setSubmitSuccess(true);
+                        } else {
+                            const errText = await verifyRes.text();
+                            alert("Payment verification failed on server: " + errText);
+                        }
+                    } catch (err) {
+                        alert("Error verifying payment");
+                    }
+                },
+                prefill: {
+                    name: studentName,
+                    email: studentEmail
+                },
+                theme: {
+                    color: "#6c63ff"
+                }
+            };
+            
+            const rzp = new (window as any).Razorpay(options);
+            rzp.on('payment.failed', function (response: any) {
+                alert("Payment Failed: " + response.error.description);
+            });
+            rzp.open();
+          };
+          script.onerror = () => {
+             alert("Razorpay SDK failed to load. Are you online?");
+          };
+          document.body.appendChild(script);
+
+        } else {
+          setSubmitSuccess(true);
+        }
       } else {
-        console.error("Submission failed", await res.text());
+        const errorText = await res.text();
+        console.error("Submission failed", errorText);
+        alert("Submission failed: " + errorText);
       }
     } catch (err) {
       console.error(err);
+      alert("Error submitting form");
     } finally {
       setIsSubmitting(false);
     }
@@ -642,12 +703,22 @@ export default function Home() {
                 );
               })}
               
-              <div style={{ marginTop: '1rem', padding: '1rem', background: '#fffbeb', border: '1px solid #fbd38d', borderRadius: '8px', color: '#975a16' }}>
-                <strong>{activeForm.name} Entry Fee:</strong> ₹{activeForm.entry_fee}
-              </div>
+              {Number(activeForm.entry_fee) > 0 ? (
+                <div style={{ marginTop: '1rem', padding: '1rem', background: '#fffbeb', border: '1px solid #fbd38d', borderRadius: '8px', color: '#975a16' }}>
+                  <strong>{activeForm.name} Entry Fee:</strong> ₹{activeForm.entry_fee}
+                </div>
+              ) : (
+                <div style={{ marginTop: '1rem', padding: '1rem', background: '#e6fffa', border: '1px solid #b2f5ea', borderRadius: '8px', color: '#285e61' }}>
+                  <strong>{activeForm.name}:</strong> Free Registration
+                </div>
+              )}
 
               <button className="btn" style={{ width: '100%', marginTop: '1rem' }} type="submit" disabled={isSubmitting}>
-                {isSubmitting ? 'Processing...' : 'Proceed to Payment (Razorpay)'}
+                {isSubmitting 
+                  ? 'Processing...' 
+                  : Number(activeForm.entry_fee) > 0 
+                    ? 'Proceed to Payment (Razorpay)' 
+                    : 'Submit Registration'}
               </button>
             </form>
           ) : (

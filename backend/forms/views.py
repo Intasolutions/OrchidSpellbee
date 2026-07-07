@@ -9,6 +9,8 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 from django.contrib.auth.models import User
+from django.conf import settings
+import razorpay
 
 from .models import TierForm, FormField, Student, Submission
 from .serializers import (
@@ -59,12 +61,82 @@ class TierFormViewSet(viewsets.ReadOnlyModelViewSet):
 
 # Public form submission endpoint
 class SubmitFormView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request):
         serializer = SubmissionCreateSerializer(data=request.data, context={'request': request})
         if serializer.is_valid():
-            serializer.save()
-            return Response({"status": "success", "message": "Submission received successfully!"}, status=status.HTTP_201_CREATED)
+            submission = serializer.save()
+            
+            response_data = {
+                "status": "success",
+                "message": "Submission received successfully!",
+                "submission_id": submission.id
+            }
+            
+            # Check if tier has an entry fee
+            if submission.form.entry_fee > 0:
+                try:
+                    client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+                    amount_in_paise = int(submission.form.entry_fee * 100)
+                    
+                    order_data = {
+                        "amount": amount_in_paise,
+                        "currency": "INR",
+                        "receipt": f"receipt_{submission.id}"
+                    }
+                    
+                    razorpay_order = client.order.create(data=order_data)
+                    submission.razorpay_order_id = razorpay_order['id']
+                    submission.save()
+                    
+                    response_data['razorpay_order_id'] = razorpay_order['id']
+                    response_data['amount'] = amount_in_paise
+                    response_data['key_id'] = settings.RAZORPAY_KEY_ID
+                    
+                except Exception as e:
+                    return Response({"error": f"Failed to create Razorpay order: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                    
+            return Response(response_data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class VerifyPaymentView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        razorpay_payment_id = request.data.get('razorpay_payment_id')
+        razorpay_order_id = request.data.get('razorpay_order_id')
+        razorpay_signature = request.data.get('razorpay_signature')
+        
+        if not all([razorpay_payment_id, razorpay_order_id, razorpay_signature]):
+            return Response({"error": "Missing payment parameters"}, status=status.HTTP_400_BAD_REQUEST)
+            
+        try:
+            submission = Submission.objects.get(razorpay_order_id=razorpay_order_id, student=request.user.student_profile)
+        except Submission.DoesNotExist:
+            return Response({"error": "Invalid order id or unauthorized"}, status=status.HTTP_404_NOT_FOUND)
+            
+        client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+        
+        try:
+            client.utility.verify_payment_signature({
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': razorpay_payment_id,
+                'razorpay_signature': razorpay_signature
+            })
+            
+            # Signature matches
+            submission.razorpay_payment_id = razorpay_payment_id
+            submission.razorpay_signature = razorpay_signature
+            submission.payment_status = 'PAID'
+            submission.save()
+            
+            return Response({"status": "success", "message": "Payment verified successfully!"})
+            
+        except razorpay.errors.SignatureVerificationError:
+            return Response({"error": "Signature verification failed"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 # Admin submission viewset
 class SubmissionViewSet(viewsets.ModelViewSet):

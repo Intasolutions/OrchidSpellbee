@@ -11,7 +11,8 @@ from .views import (
     StudentRegisterView,
     StudentLoginView,
     StudentMeView,
-    StudentGoogleAuthView
+    StudentGoogleAuthView,
+    VerifyPaymentView
 )
 
 router = DefaultRouter()
@@ -32,4 +33,5 @@ urlpatterns = [
     path('auth/login/', StudentLoginView.as_view(), name='student-login'),
     path('auth/google/', StudentGoogleAuthView.as_view(), name='student-google-auth'),
     path('auth/me/', StudentMeView.as_view(), name='student-me'),
+    path('verify-payment/', VerifyPaymentView.as_view(), name='verify-payment'),
 ]

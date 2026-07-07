@@ -80,26 +80,19 @@ class StudentRegisterSerializer(serializers.Serializer):
         )
         return student
 class SubmissionCreateSerializer(serializers.Serializer):
-    student_name = serializers.CharField(max_length=200)
-    student_email = serializers.EmailField(required=False, allow_blank=True)
+    student_name = serializers.CharField(max_length=200, required=False) # Keep for compatibility, but ignored
+    student_email = serializers.EmailField(required=False, allow_blank=True) # Keep for compatibility, but ignored
     form_id = serializers.IntegerField()
     data = serializers.JSONField()
 
     def create(self, validated_data):
         request = self.context.get('request')
-        student = None
-        if request and request.user.is_authenticated and hasattr(request.user, 'student_profile'):
-            student = request.user.student_profile
-        else:
-            email = validated_data.get('student_email', '')
-            if not email:
-                import time
-                email = f"student_{int(time.time())}@example.com"
-                
-            student, _ = Student.objects.get_or_create(
-                email=email,
-                defaults={'name': validated_data.get('student_name', 'Unknown Student')}
-            )
+        
+        if not request or not request.user.is_authenticated or not hasattr(request.user, 'student_profile'):
+            raise serializers.ValidationError("Authentication required. You must be logged in as a student to submit this form.")
+            
+        student = request.user.student_profile
+
         try:
             tier_form = TierForm.objects.get(id=validated_data['form_id'])
         except TierForm.DoesNotExist:

@@ -62,6 +62,12 @@ class Submission(models.Model):
     form = models.ForeignKey(TierForm, on_delete=models.CASCADE)
     data = models.JSONField(default=dict) # Stores the answers
     payment_status = models.CharField(max_length=20, default='PENDING', choices=[('PENDING', 'Pending'), ('PAID', 'Paid')])
+    
+    # Razorpay Payment Fields
+    razorpay_order_id = models.CharField(max_length=100, null=True, blank=True)
+    razorpay_payment_id = models.CharField(max_length=100, null=True, blank=True)
+    razorpay_signature = models.CharField(max_length=255, null=True, blank=True)
+    
     marks = models.FloatField(null=True, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
 
