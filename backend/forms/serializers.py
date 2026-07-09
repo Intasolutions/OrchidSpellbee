@@ -101,10 +101,13 @@ class SubmissionCreateSerializer(serializers.Serializer):
         student.current_tier = tier_form
         student.save()
 
+        payment_status = 'PAID' if tier_form.entry_fee <= 0 else 'PENDING'
+
         submission = Submission.objects.create(
             student=student,
             form=tier_form,
-            data=validated_data['data']
+            data=validated_data['data'],
+            payment_status=payment_status
         )
         return submission
 
@@ -113,9 +116,10 @@ class SubmissionListSerializer(serializers.ModelSerializer):
     student_email = serializers.EmailField(source='student.email', read_only=True)
     student_code = serializers.CharField(source='student.student_code', read_only=True)
     form_name = serializers.CharField(source='form.name', read_only=True)
+    entry_fee = serializers.DecimalField(source='form.entry_fee', max_digits=10, decimal_places=2, read_only=True)
     is_passed = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Submission
-        fields = ['id', 'student_name', 'student_email', 'student_code', 'form_name', 'data', 'payment_status', 'marks', 'is_passed', 'submitted_at']
+        fields = ['id', 'student_name', 'student_email', 'student_code', 'form_name', 'entry_fee', 'data', 'payment_status', 'marks', 'is_passed', 'submitted_at']
 

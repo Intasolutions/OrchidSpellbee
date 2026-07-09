@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getStudents, getTierForms, promoteStudent, deleteStudent, restoreStudent } from "../actions";
+import { getStudents, getTierForms, promoteStudent, deleteStudent, restoreStudent, getStudentSubmissions, updateSubmissionMarks } from "../actions";
 
 export default function StudentsManager() {
   const [activeTab, setActiveTab] = useState<"active" | "trash">("active");
@@ -10,6 +10,12 @@ export default function StudentsManager() {
   const [tierForms, setTierForms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Profile Modal State
+  const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
+  const [studentSubmissions, setStudentSubmissions] = useState<any[]>([]);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const [markInputs, setMarkInputs] = useState<{[key: number]: string}>({});
 
   useEffect(() => {
     loadData();
@@ -82,18 +88,88 @@ export default function StudentsManager() {
     }
   };
 
-  const filteredStudents = students.filter((s: any) => 
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (s.student_code && s.student_code.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const openProfile = async (student: any) => {
+    setSelectedStudent(student);
+    setLoadingProfile(true);
+    const data = await getStudentSubmissions(student.id);
+    setStudentSubmissions(data || []);
+    
+    // Initialize marks input
+    const initialMarks: {[key: number]: string} = {};
+    data?.forEach((sub: any) => {
+      if (sub.marks !== null) initialMarks[sub.id] = sub.marks.toString();
+    });
+    setMarkInputs(initialMarks);
+    
+    setLoadingProfile(false);
+  };
 
-  const filteredTrashed = trashedStudents.filter((s: any) => 
-    s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (s.student_code && s.student_code.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const handleUpdateMarks = async (submissionId: number) => {
+    const marksValue = markInputs[submissionId];
+    if (marksValue === undefined || marksValue === "") {
+      alert("Please enter a valid mark.");
+      return;
+    }
+    
+    const res = await updateSubmissionMarks(submissionId, parseFloat(marksValue));
+    if (res.success) {
+      setStudentSubmissions(studentSubmissions.map(sub => 
+        sub.id === submissionId 
+          ? { ...sub, marks: parseFloat(marksValue), is_passed: res.data.is_passed } 
+          : sub
+      ));
+      alert("Marks updated successfully!");
+    } else {
+      alert("Failed to update marks: " + res.error);
+    }
+  };
 
+  const [filterLevel, setFilterLevel] = useState("All Levels");
+
+  const exportData = () => {
+    const dataToExport = activeTab === "active" ? filteredStudents : filteredTrashed;
+    if (dataToExport.length === 0) {
+      alert("No data to export!");
+      return;
+    }
+
+    const headers = ["Student Code", "Name", "Email", "Current Level", "Date Joined"];
+    const csvContent = [
+      headers.join(","),
+      ...dataToExport.map((s: any) => [
+        `"${s.student_code || ''}"`,
+        `"${s.name}"`,
+        `"${s.email}"`,
+        `"${s.current_tier_name || 'None'}"`,
+        `"${new Date(s.created_at).toLocaleDateString()}"`
+      ].join(","))
+    ].join("\n");
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement("a");
+    const url = URL.createObjectURL(blob);
+    link.setAttribute("href", url);
+    link.setAttribute("download", `students_export_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const applyFilters = (studentsList: any[]) => {
+    return studentsList.filter((s: any) => {
+      const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            s.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                            (s.student_code && s.student_code.toLowerCase().includes(searchQuery.toLowerCase()));
+      
+      const matchesLevel = filterLevel === "All Levels" || s.current_tier_name === filterLevel;
+
+      return matchesSearch && matchesLevel;
+    });
+  };
+
+  const filteredStudents = applyFilters(students);
+  const filteredTrashed = applyFilters(trashedStudents);
 
   const displayedList = activeTab === "active" ? filteredStudents : filteredTrashed;
 
@@ -198,6 +274,37 @@ export default function StudentsManager() {
             style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem" }}
           />
         </div>
+        
+        <div style={{ minWidth: "180px" }}>
+          <label style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.4rem" }}>
+            Filter by Level
+          </label>
+          <select 
+            value={filterLevel}
+            onChange={(e) => setFilterLevel(e.target.value)}
+            style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem", background: "white", color: "#000" }}
+          >
+            <option value="All Levels">All Levels</option>
+            {tierForms.map((tf) => (
+              <option key={tf.id} value={tf.name}>{tf.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ display: "flex", alignItems: "flex-end" }}>
+          <button 
+            onClick={exportData}
+            style={{ display: "flex", alignItems: "center", gap: "0.5rem", background: "#10b981", color: "white", border: "none", padding: "0.6rem 1.2rem", borderRadius: "6px", fontWeight: 700, fontSize: "0.9rem", cursor: "pointer", height: "42px", transition: "background 0.2s" }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M14 2v4a2 2 0 0 0 2 2h4"></path>
+              <path d="M21 11.5V14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9l5 5"></path>
+              <path d="M12 11v6"></path>
+              <path d="M9 14l3 3 3-3"></path>
+            </svg>
+            Export Excel / CSV
+          </button>
+        </div>
       </div>
 
       {/* Students List Table */}
@@ -268,12 +375,20 @@ export default function StudentsManager() {
                         {new Date(student.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
                       </td>
                       <td style={{ padding: "1.2rem 1rem", textAlign: "right" }}>
-                        <button 
-                          onClick={() => handleDeleteActive(student.id)}
-                          style={{ border: "none", background: "rgba(239, 68, 68, 0.1)", color: "#ef4444", padding: "0.5rem 1rem", borderRadius: "8px", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer", transition: "all 0.2s" }}
-                        >
-                          Delete Profile
-                        </button>
+                        <div style={{ display: "flex", gap: "0.5rem", justifyContent: "flex-end" }}>
+                          <button 
+                            onClick={() => openProfile(student)}
+                            style={{ border: "none", background: "rgba(30, 27, 75, 0.1)", color: "#1e1b4b", padding: "0.5rem 1rem", borderRadius: "8px", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer", transition: "all 0.2s" }}
+                          >
+                            View Profile
+                          </button>
+                          <button 
+                            onClick={() => handleDeleteActive(student.id)}
+                            style={{ border: "none", background: "rgba(239, 68, 68, 0.1)", color: "#ef4444", padding: "0.5rem 1rem", borderRadius: "8px", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer", transition: "all 0.2s" }}
+                          >
+                            Delete Profile
+                          </button>
+                        </div>
                       </td>
                     </>
                   ) : (
@@ -321,6 +436,127 @@ export default function StudentsManager() {
           </table>
         </div>
       </div>
+
+      {/* Profile Modal */}
+      {selectedStudent && (
+        <div style={{ position: "fixed", top: 0, left: 0, right: 0, bottom: 0, background: "rgba(15, 23, 42, 0.6)", display: "flex", justifyContent: "center", alignItems: "center", zIndex: 100, padding: "2rem" }}>
+          <div style={{ background: "white", borderRadius: "16px", width: "100%", maxWidth: "800px", maxHeight: "90vh", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 25px 50px -12px rgba(0,0,0,0.25)" }}>
+            
+            <div style={{ padding: "1.5rem", borderBottom: "1px solid #e2e8f0", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f8fafc" }}>
+              <div>
+                <h2 style={{ margin: 0, fontSize: "1.5rem", color: "#1e1b4b", fontWeight: 800 }}>{selectedStudent.name}</h2>
+                <div style={{ color: "#64748b", fontSize: "0.9rem", marginTop: "0.25rem", display: "flex", gap: "1rem", alignItems: "center" }}>
+                  <span>{selectedStudent.email}</span>
+                  {selectedStudent.student_code && (
+                    <span style={{ background: "rgba(255, 184, 0, 0.12)", color: "var(--color-accent-orange-hover)", fontSize: "0.75rem", padding: "0.2rem 0.5rem", borderRadius: "6px", fontWeight: 700 }}>
+                      {selectedStudent.student_code}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <button onClick={() => setSelectedStudent(null)} style={{ border: "none", background: "rgba(100, 116, 139, 0.1)", color: "#64748b", width: "36px", height: "36px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "all 0.2s" }}>
+                ✕
+              </button>
+            </div>
+
+            <div style={{ padding: "1.5rem", overflowY: "auto", flex: 1, background: "#f1f5f9" }}>
+              <h3 style={{ margin: "0 0 1rem 0", color: "#334155", fontSize: "1.1rem", fontWeight: 700 }}>Submission Timeline</h3>
+              
+              {loadingProfile ? (
+                <div style={{ textAlign: "center", padding: "2rem", color: "#64748b" }}>Loading timeline...</div>
+              ) : studentSubmissions.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "3rem", background: "white", borderRadius: "12px", border: "1px dashed #cbd5e1", color: "#94a3b8" }}>
+                  No submissions found for this student yet.
+                </div>
+              ) : (
+                <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+                  {studentSubmissions.map((sub: any, index: number) => (
+                    <div key={sub.id} style={{ background: "white", borderRadius: "12px", padding: "1.5rem", border: "1px solid #e2e8f0", boxShadow: "0 1px 3px rgba(0,0,0,0.05)", position: "relative" }}>
+                      
+                      {/* Connector Line (unless last) */}
+                      {index !== studentSubmissions.length - 1 && (
+                        <div style={{ position: "absolute", bottom: "-1rem", left: "2.5rem", width: "2px", height: "1rem", background: "#cbd5e1" }} />
+                      )}
+
+                      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "1rem", borderBottom: "1px solid #f1f5f9", paddingBottom: "1rem" }}>
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", marginBottom: "0.25rem" }}>
+                            <div style={{ background: "#1e1b4b", color: "white", width: "32px", height: "32px", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 700, fontSize: "0.9rem" }}>
+                              {studentSubmissions.length - index}
+                            </div>
+                            <h4 style={{ margin: 0, fontSize: "1.2rem", color: "#1e1b4b" }}>{sub.form_name}</h4>
+                          </div>
+                          <div style={{ color: "#64748b", fontSize: "0.85rem", marginLeft: "2.75rem" }}>
+                            Submitted: {new Date(sub.submitted_at).toLocaleString()}
+                          </div>
+                        </div>
+
+                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: "0.5rem" }}>
+                          <span style={{ 
+                            padding: "0.3rem 0.8rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 700,
+                            background: (sub.payment_status === "PAID" || sub.entry_fee == 0) ? "rgba(16, 185, 129, 0.1)" : "rgba(245, 158, 11, 0.1)",
+                            color: (sub.payment_status === "PAID" || sub.entry_fee == 0) ? "#10b981" : "#d97706"
+                          }}>
+                            {sub.entry_fee == 0 ? "NO PAYMENT" : (sub.payment_status === "PAID" ? `PAID ₹${sub.entry_fee || '0.00'}` : `PENDING PAYMENT (₹${sub.entry_fee || '0.00'})`)}
+                          </span>
+                          
+                          <span style={{ 
+                            padding: "0.3rem 0.8rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 700,
+                            background: sub.is_passed ? "rgba(16, 185, 129, 0.1)" : "rgba(100, 116, 139, 0.1)",
+                            color: sub.is_passed ? "#10b981" : "#64748b"
+                          }}>
+                            {sub.is_passed ? "PASSED" : "EVALUATION PENDING"}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div style={{ display: "flex", gap: "2rem" }}>
+                        <div style={{ flex: 2 }}>
+                          <h5 style={{ margin: "0 0 0.5rem 0", color: "#64748b", fontSize: "0.8rem", textTransform: "uppercase" }}>Form Responses</h5>
+                          <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
+                            {sub.data && Object.keys(sub.data).length > 0 ? (
+                              <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.75rem" }}>
+                                {Object.entries(sub.data).map(([key, value]) => (
+                                  <div key={key}>
+                                    <div style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{key}</div>
+                                    <div style={{ fontSize: "0.9rem", color: "#1e293b", fontWeight: 500 }}>{String(value)}</div>
+                                  </div>
+                                ))}
+                              </div>
+                            ) : (
+                              <div style={{ color: "#94a3b8", fontSize: "0.9rem", fontStyle: "italic" }}>No form data provided.</div>
+                            )}
+                          </div>
+                        </div>
+                        
+                        <div style={{ flex: 1, borderLeft: "1px solid #e2e8f0", paddingLeft: "2rem" }}>
+                          <h5 style={{ margin: "0 0 0.5rem 0", color: "#64748b", fontSize: "0.8rem", textTransform: "uppercase" }}>Assign Marks</h5>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                            <input 
+                              type="number" 
+                              placeholder="Enter marks"
+                              value={markInputs[sub.id] || ""}
+                              onChange={(e) => setMarkInputs({...markInputs, [sub.id]: e.target.value})}
+                              style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem", textAlign: "center", fontWeight: 600 }}
+                            />
+                            <button 
+                              onClick={() => handleUpdateMarks(sub.id)}
+                              style={{ border: "none", background: "#1e1b4b", color: "white", padding: "0.6rem 1rem", borderRadius: "6px", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer", transition: "all 0.2s" }}
+                            >
+                              Save Marks
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

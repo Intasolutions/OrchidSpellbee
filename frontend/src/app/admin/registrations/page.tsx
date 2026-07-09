@@ -54,8 +54,12 @@ export default function RegistrationsManager() {
       sub.student_email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (sub.student_code && sub.student_code.toLowerCase().includes(searchQuery.toLowerCase()));
     const matchesTier = selectedTier === "" || sub.form_name === selectedTier;
-    const matchesStatus = selectedStatus === "" || sub.payment_status === selectedStatus;
-    
+    let matchesStatus = true;
+    if (selectedStatus === "NO_PAYMENT") {
+      matchesStatus = sub.entry_fee == 0;
+    } else if (selectedStatus !== "") {
+      matchesStatus = sub.entry_fee > 0 && sub.payment_status === selectedStatus;
+    }
     let matchesResult = true;
     if (selectedResult === "PASSED") matchesResult = sub.is_passed === true;
     if (selectedResult === "FAILED") matchesResult = sub.is_passed === false;
@@ -174,6 +178,7 @@ export default function RegistrationsManager() {
             <option value="">All Statuses</option>
             <option value="PAID">Paid</option>
             <option value="PENDING">Pending</option>
+            <option value="NO_PAYMENT">No Payment</option>
           </select>
         </div>
 
@@ -241,8 +246,8 @@ export default function RegistrationsManager() {
                     <span 
                       onClick={() => handleTogglePayment(sub.id, sub.payment_status)}
                       style={{ 
-                        background: sub.payment_status === "PAID" ? "#e6f4ea" : "#fffbeb", 
-                        color: sub.payment_status === "PAID" ? "#137333" : "#b45309", 
+                        background: (sub.payment_status === "PAID" || sub.entry_fee == 0) ? "#e6f4ea" : "#fffbeb", 
+                        color: (sub.payment_status === "PAID" || sub.entry_fee == 0) ? "#137333" : "#b45309", 
                         padding: "0.3rem 0.6rem", 
                         borderRadius: "6px", 
                         fontSize: "0.75rem", 
@@ -252,7 +257,7 @@ export default function RegistrationsManager() {
                       }}
                       title="Click to toggle status"
                     >
-                      {sub.payment_status}
+                      {sub.entry_fee == 0 ? "NO PAYMENT" : (sub.payment_status === "PAID" ? `PAID ₹${sub.entry_fee}` : `PENDING ₹${sub.entry_fee}`)}
                     </span>
                   </td>
                   <td style={{ padding: "1.2rem 1rem" }}>

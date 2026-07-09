@@ -11,9 +11,8 @@ export default function Navbar() {
   const navLinks = [
     { name: 'HOME', path: '/' },
     { name: 'COMPETITIONS', path: '/competitions' },
-    { name: 'OUR BOOKS', path: '/our-books' },
     { name: 'ROUNDS & PRIZES', path: '/rounds-and-prizes' },
-    { name: 'TEAM', path: '/team' },
+    { name: 'OUR BOOKS', path: '/our-books' },
     { name: 'CONTACT', path: '/contact' }
   ];
 
@@ -44,26 +43,24 @@ export default function Navbar() {
         maxWidth: '1200px',
         position: 'relative'
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '3rem' }}>
-          <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
-            <img 
-              src="/img/logo.png" 
-              alt="Orchid SpellBee Logo" 
-              style={{ height: '52px', width: 'auto', display: 'block' }} 
-            />
-          </Link>
-          
-          <div className="nav-links" style={{ display: 'flex', gap: '1.5rem', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
-            {navLinks.map((link) => (
-              <Link 
-                key={link.path} 
-                href={link.path} 
-                className={`nav-link ${pathname === link.path ? 'active' : ''}`}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </div>
+        <Link href="/" style={{ textDecoration: 'none', display: 'flex', alignItems: 'center' }}>
+          <img 
+            src="/img/logo.png" 
+            alt="Orchid SpellBee Logo" 
+            style={{ height: '52px', width: 'auto', display: 'block' }} 
+          />
+        </Link>
+        
+        <div className="nav-links" style={{ display: 'flex', gap: '2rem', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px' }}>
+          {navLinks.map((link) => (
+            <Link 
+              key={link.path} 
+              href={link.path} 
+              className={`nav-link ${pathname === link.path ? 'active' : ''}`}
+            >
+              {link.name}
+            </Link>
+          ))}
         </div>
 
         {/* Mobile Menu Button */}

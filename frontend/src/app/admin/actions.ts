@@ -88,6 +88,21 @@ export async function getSubmissions() {
   }
 }
 
+export async function getStudentSubmissions(studentId: number) {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/submissions/?student_id=${studentId}`, {
+      headers: getAdminHeaders(),
+      cache: "no-store"
+    });
+    if (!res.ok) throw new Error("Failed to fetch student submissions");
+    return await res.json();
+  } catch (error: any) {
+    console.error("getStudentSubmissions error:", error);
+    return [];
+  }
+}
+
 export async function updateSubmissionPaymentStatus(id: number, status: string) {
   try {
     await verifySession();

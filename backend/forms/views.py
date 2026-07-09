@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
-from django.db.models import Sum, Count
+from django.db.models import Sum, Count, Q
 from rest_framework.authtoken.models import Token
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from google.oauth2 import id_token
@@ -145,6 +145,13 @@ class SubmissionViewSet(viewsets.ModelViewSet):
     queryset = Submission.objects.filter(student__is_deleted=False).order_by('-submitted_at')
     serializer_class = SubmissionListSerializer
 
+    def get_queryset(self):
+        qs = super().get_queryset()
+        student_id = self.request.query_params.get('student_id')
+        if student_id:
+            qs = qs.filter(student_id=student_id)
+        return qs
+
     @action(detail=True, methods=['patch'])
     def update_marks(self, request, pk=None):
         submission = self.get_object()
@@ -225,8 +232,15 @@ class AdminDashboardStatsView(APIView):
 
     def get(self, request):
         total_submissions = Submission.objects.filter(student__is_deleted=False).count()
-        total_paid_submissions = Submission.objects.filter(student__is_deleted=False, payment_status='PAID').count()
-        total_pending_submissions = Submission.objects.filter(student__is_deleted=False, payment_status='PENDING').count()
+        total_paid_submissions = Submission.objects.filter(
+            Q(student__is_deleted=False) & 
+            (Q(payment_status='PAID') | Q(form__entry_fee__lte=0))
+        ).count()
+        total_pending_submissions = Submission.objects.filter(
+            student__is_deleted=False, 
+            payment_status='PENDING', 
+            form__entry_fee__gt=0
+        ).count()
         total_students = Student.objects.filter(is_deleted=False).count()
         
         # Calculate revenue (entry_fee is stored on TierForm)
@@ -313,8 +327,7 @@ class StudentGoogleAuthView(APIView):
             return Response({'error': 'Token is required'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            # Note: The real Google Client ID goes here.
-            client_id = "YOUR_GOOGLE_CLIENT_ID"
+            client_id = settings.GOOGLE_CLIENT_ID
             
             try:
                 # Verify the token using Google's public keys
