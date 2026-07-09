@@ -57,7 +57,21 @@ export default function Footer() {
              <strong>Mon-Sat:</strong> 10AM - 5PM<br/>
              <strong>Sunday:</strong> Closed
            </p>
-        </div>
+         </div>
+         
+         {/* Legal */}
+         <div className="reveal-up delay-350" style={{ flex: '1 1 200px' }}>
+            <h4 style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--color-text-heading)', marginBottom: '1.5rem', fontWeight: '800' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent-orange)" strokeWidth="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+              Legal
+            </h4>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+              <Link href="/terms" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', textDecoration: 'none' }}>Terms and Conditions</Link>
+              <Link href="/privacy" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', textDecoration: 'none' }}>Privacy Policy</Link>
+              <Link href="/refund" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', textDecoration: 'none' }}>Refund Policy</Link>
+              <Link href="/shipping" style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', textDecoration: 'none' }}>Shipping Policy</Link>
+            </div>
+         </div>
         
         {/* Follow Us */}
         <div className="reveal-up delay-400" style={{ flex: '1 1 200px' }}>
