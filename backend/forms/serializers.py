@@ -118,8 +118,18 @@ class SubmissionListSerializer(serializers.ModelSerializer):
     form_name = serializers.CharField(source='form.name', read_only=True)
     entry_fee = serializers.DecimalField(source='form.entry_fee', max_digits=10, decimal_places=2, read_only=True)
     is_passed = serializers.BooleanField(read_only=True)
+    labeled_data = serializers.SerializerMethodField()
 
     class Meta:
         model = Submission
-        fields = ['id', 'student_name', 'student_email', 'student_code', 'form_name', 'entry_fee', 'data', 'payment_status', 'marks', 'is_passed', 'submitted_at']
+        fields = ['id', 'student_name', 'student_email', 'student_code', 'form_name', 'entry_fee', 'data', 'labeled_data', 'payment_status', 'marks', 'is_passed', 'submitted_at']
+
+    def get_labeled_data(self, obj):
+        # Build a map of field_id (as string) -> label from the form's fields
+        field_map = {str(field.id): field.label for field in obj.form.fields.all()}
+        result = {}
+        for key, value in obj.data.items():
+            label = field_map.get(str(key), str(key))  # fallback to raw key if not found
+            result[label] = value
+        return result
 

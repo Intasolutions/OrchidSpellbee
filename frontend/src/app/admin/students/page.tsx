@@ -514,9 +514,9 @@ export default function StudentsManager() {
                         <div style={{ flex: 2 }}>
                           <h5 style={{ margin: "0 0 0.5rem 0", color: "#64748b", fontSize: "0.8rem", textTransform: "uppercase" }}>Form Responses</h5>
                           <div style={{ background: "#f8fafc", padding: "1rem", borderRadius: "8px", border: "1px solid #e2e8f0" }}>
-                            {sub.data && Object.keys(sub.data).length > 0 ? (
+                            {sub.labeled_data && Object.keys(sub.labeled_data).length > 0 ? (
                               <div style={{ display: "grid", gridTemplateColumns: "1fr", gap: "0.75rem" }}>
-                                {Object.entries(sub.data).map(([key, value]) => (
+                                {Object.entries(sub.labeled_data).map(([key, value]) => (
                                   <div key={key}>
                                     <div style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 600 }}>{key}</div>
                                     <div style={{ fontSize: "0.9rem", color: "#1e293b", fontWeight: 500 }}>{String(value)}</div>
