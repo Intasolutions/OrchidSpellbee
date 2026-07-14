@@ -3,7 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import { API_BASE_URL } from "@/config";
+import PrizeScrollSection from "@/app/components/PrizeScrollSection";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -87,6 +89,20 @@ export default function Home() {
       if (params.get("register") === "true") {
         setIsModalOpen(true);
       }
+
+      // Set up scroll animations
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1, rootMargin: "0px 0px -50px 0px" });
+
+      const elements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .fade-up');
+      elements.forEach(el => observer.observe(el));
+
+      return () => observer.disconnect();
     }
   }, []);
 
@@ -535,9 +551,9 @@ export default function Home() {
             <div style={{ width: '80px', height: '3px', background: 'var(--color-accent-orange)', margin: '0 auto' }}></div>
           </div>
           
-          <div className="awards-inner" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem', alignItems: 'center' }}>
-            {/* Left Content */}
-            <div className="reveal-left" style={{ paddingRight: '2rem' }}>
+          <div className="awards-inner" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '4rem', alignItems: 'flex-start' }}>
+            {/* Left Content (Sticky) */}
+            <div className="reveal-left" style={{ paddingRight: '2rem', position: 'sticky', top: '120px' }}>
               <div style={{ color: '#a0aec0', textTransform: 'uppercase', fontSize: '0.75rem', fontWeight: '700', letterSpacing: '1.5px', marginBottom: '1rem' }}>PRIZES AND RECOGNITIONS</div>
               <h3 style={{ fontSize: '2.2rem', color: '#1a202c', margin: '0 0 1.5rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: '800' }}>
                 Rounds and Prizes
@@ -545,9 +561,6 @@ export default function Home() {
               </h3>
               <p style={{ color: '#718096', fontSize: '0.95rem', lineHeight: '1.7', marginBottom: '1.5rem', fontStyle: 'italic' }}>
                 The competition offers students a platform to enhance their spelling skills and showcase their talents at various levels, ranging from school to national. We believe in nurturing not only their spelling capabilities but also their confidence and presentation skills. With each tier of the competition, students will have the opportunity to demonstrate their knowledge, poise, and ability to perform under pressure. Our goal is to provide a holistic learning experience that prepares participants to excel both in academics and beyond.
-              </p>
-              <p style={{ color: '#718096', fontSize: '0.95rem', lineHeight: '1.7', marginBottom: '2rem', fontStyle: 'italic' }}>
-                The competition is structured into four tiers: school, district, state, and national. Each level acts as a stepping stone to the next, with students needing to qualify at one level to advance to the next. At the school level, participants will undergo a written test to showcase their spelling skills. Those who qualify will move on to the district level, where oral rounds will commence and continue through to the national level.
               </p>
               <div style={{ display: 'flex', gap: '1rem' }}>
                 <Link href="/rounds-and-prizes" style={{ textDecoration: 'none' }}>
@@ -575,34 +588,10 @@ export default function Home() {
                 )}
               </div>
             </div>
-            
-            {/* Right Card / Table */}
-            <div className="reveal-right" style={{ position: 'relative', maxWidth: '500px', margin: '0 auto', width: '100%' }}>
-               {/* Decorative background cards to create stacked effect */}
-               <div style={{ position: 'absolute', top: '6px', right: '-6px', bottom: '-6px', left: '6px', background: '#4c3a99', borderRadius: '12px', zIndex: 1 }}></div>
-               
-               {/* Main Card */}
-               <div style={{ background: '#251c4d', borderRadius: '12px', padding: '3rem 2.5rem', position: 'relative', zIndex: 2, color: 'white', boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}>
-                 <h4 style={{ color: 'white', textAlign: 'center', fontSize: '1.1rem', marginBottom: '2rem', fontWeight: '800' }}>National Level</h4>
-                 
-                 <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem', fontWeight: '700', letterSpacing: '0.5px' }}>
-                   <tbody>
-                     {[
-                       { rank: "1ST PRIZE:", detail: "Rs. 25000 + MEMENTO + CERTIFICATE" },
-                       { rank: "2ND PRIZE:", detail: "Rs. 20000 + MEMENTO + CERTIFICATE" },
-                       { rank: "3RD PRIZE:", detail: "Rs. 15000 + MEMENTO + CERTIFICATE" },
-                       { rank: "4TH PRIZE:", detail: "Rs. 10000 + MEMENTO + CERTIFICATE" },
-                       { rank: "5TH PRIZE:", detail: "Rs. 5000 + MEMENTO + CERTIFICATE" },
-                       { rank: "6TH - 10TH PRIZE:", detail: "Rs. 2000 + MEMENTO + CERTIFICATE" },
-                     ].map((prize, i) => (
-                       <tr key={i}>
-                         <td style={{ border: '1px solid rgba(255,255,255,0.3)', padding: '0.7rem 1rem', color: 'white', width: '30%' }}>{prize.rank}</td>
-                         <td style={{ border: '1px solid rgba(255,255,255,0.3)', padding: '0.7rem 1rem', color: 'white' }}>{prize.detail}</td>
-                       </tr>
-                     ))}
-                   </tbody>
-                 </table>
-               </div>
+
+            {/* Right Cards Overlay Stack */}
+            <div style={{ width: '100%' }}>
+              <PrizeScrollSection />
             </div>
           </div>
         </div>

@@ -434,7 +434,6 @@ export default function RoundsAndPrizesPage() {
                   National Level
                 </h3>
               </div>
-              </div>
               <div
                 style={{
                   background: "linear-gradient(135deg, #251c4d, #1a1438)",
@@ -878,8 +877,9 @@ export default function RoundsAndPrizesPage() {
               </div>
             </div>
           </div>
+          </div>
 
-              {/* All participants note */}
+          {/* All participants note */}
               <div
                 style={{
                   marginTop: "1.5rem",
@@ -932,9 +932,6 @@ export default function RoundsAndPrizesPage() {
                 </div>
               </div>
             </div>
-          </div>
-        </div>
-      </div>
 
       {/* Call to Action */}
       {isRegistrationActive && (
