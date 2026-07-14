@@ -123,7 +123,7 @@ export default function SchoolsPage() {
         <div style={{ flex: 1, minWidth: "220px" }}>
           <input
             type="text"
-            placeholder="🔍  Search schools by name..."
+            placeholder="Search schools by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem", boxSizing: "border-box" }}
@@ -147,7 +147,12 @@ export default function SchoolsPage() {
         <div style={{ textAlign: "center", padding: "4rem", color: "#64748b", fontSize: "1rem" }}>Loading schools...</div>
       ) : filtered.length === 0 ? (
         <div style={{ textAlign: "center", padding: "4rem", background: "white", borderRadius: "16px", border: "1px dashed #cbd5e1" }}>
-          <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🏫</div>
+          <div style={{ width: "56px", height: "56px", margin: "0 auto 1rem", background: "#f1f5f9", borderRadius: "14px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+              <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+          </div>
           <div style={{ fontWeight: 700, color: "#1e1b4b", fontSize: "1.1rem" }}>No schools found</div>
           <div style={{ color: "#64748b", fontSize: "0.9rem", marginTop: "0.5rem" }}>
             Schools will appear here automatically once students register and enter their school name.
