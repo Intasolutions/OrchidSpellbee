@@ -34,10 +34,28 @@ class FormField(models.Model):
     def __str__(self):
         return f"{self.form.name} - {self.label}"
 
+class Agent(models.Model):
+    name = models.CharField(max_length=200)
+    email = models.EmailField(unique=True)
+    phone = models.CharField(max_length=20, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+class School(models.Model):
+    name = models.CharField(max_length=200, unique=True)
+    agent = models.ForeignKey(Agent, on_delete=models.SET_NULL, null=True, blank=True, related_name='schools')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='student_profile')
     name = models.CharField(max_length=200)
     email = models.EmailField(unique=True)
+    school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True, blank=True, related_name='students')
     current_tier = models.ForeignKey(TierForm, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_deleted = models.BooleanField(default=False)
@@ -55,8 +73,6 @@ class Student(models.Model):
     def __str__(self):
         return self.name
 
-
-
 class Submission(models.Model):
     student = models.ForeignKey(Student, related_name='submissions', on_delete=models.CASCADE)
     form = models.ForeignKey(TierForm, on_delete=models.CASCADE)
@@ -70,6 +86,25 @@ class Submission(models.Model):
     
     marks = models.FloatField(null=True, blank=True)
     submitted_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        # Check if submission has school name in data
+        if self.data and isinstance(self.data, dict):
+            school_val = None
+            for key, val in self.data.items():
+                if 'school' in key.lower():
+                    school_val = str(val).strip()
+                    break
+            if school_val:
+                school_obj = School.objects.filter(name__iexact=school_val).first()
+                if not school_obj:
+                    school_obj = School.objects.create(name=school_val)
+                
+                student = self.student
+                if student.school != school_obj:
+                    student.school = school_obj
+                    student.save(update_fields=['school'])
 
     @property
     def is_passed(self):

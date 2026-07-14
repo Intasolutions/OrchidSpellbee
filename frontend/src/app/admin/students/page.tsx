@@ -1,15 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { getStudents, getTierForms, promoteStudent, deleteStudent, restoreStudent, getStudentSubmissions, updateSubmissionMarks } from "../actions";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import { getStudents, getTierForms, promoteStudent, deleteStudent, restoreStudent, getStudentSubmissions, updateSubmissionMarks, getAgents } from "../actions";
 
-export default function StudentsManager() {
+function StudentsManager() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const schoolFromUrl = searchParams.get("school") || "";
+
   const [activeTab, setActiveTab] = useState<"active" | "trash">("active");
   const [students, setStudents] = useState<any[]>([]);
   const [trashedStudents, setTrashedStudents] = useState<any[]>([]);
   const [tierForms, setTierForms] = useState<any[]>([]);
+  const [agents, setAgents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(schoolFromUrl);
+  const [filterLevel, setFilterLevel] = useState("All Levels");
+  const [filterAgent, setFilterAgent] = useState("All Agents");
+
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
 
   // Profile Modal State
   const [selectedStudent, setSelectedStudent] = useState<any | null>(null);
@@ -21,16 +33,23 @@ export default function StudentsManager() {
     loadData();
   }, []);
 
+  // Update search when URL param changes
+  useEffect(() => {
+    if (schoolFromUrl) setSearchQuery(schoolFromUrl);
+  }, [schoolFromUrl]);
+
   const loadData = async () => {
     setLoading(true);
-    const [studentsData, trashData, formsData] = await Promise.all([
+    const [studentsData, trashData, formsData, agentsData] = await Promise.all([
       getStudents(false),
       getStudents(true),
-      getTierForms()
+      getTierForms(),
+      getAgents()
     ]);
     if (Array.isArray(studentsData)) setStudents(studentsData);
     if (Array.isArray(trashData)) setTrashedStudents(trashData);
     if (Array.isArray(formsData)) setTierForms(formsData);
+    if (Array.isArray(agentsData)) setAgents(agentsData);
     setLoading(false);
   };
 
@@ -124,7 +143,10 @@ export default function StudentsManager() {
     }
   };
 
-  const [filterLevel, setFilterLevel] = useState("All Levels");
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, filterLevel, filterAgent, activeTab]);
 
   const exportData = () => {
     const dataToExport = activeTab === "active" ? filteredStudents : filteredTrashed;
@@ -133,13 +155,15 @@ export default function StudentsManager() {
       return;
     }
 
-    const headers = ["Student Code", "Name", "Email", "Current Level", "Date Joined"];
+    const headers = ["Student Code", "Name", "Email", "School Name", "Assigned Agent", "Current Level", "Date Joined"];
     const csvContent = [
       headers.join(","),
       ...dataToExport.map((s: any) => [
         `"${s.student_code || ''}"`,
         `"${s.name}"`,
         `"${s.email}"`,
+        `"${s.school_name || ''}"`,
+        `"${s.agent_name || ''}"`,
         `"${s.current_tier_name || 'None'}"`,
         `"${new Date(s.created_at).toLocaleDateString()}"`
       ].join(","))
@@ -160,11 +184,15 @@ export default function StudentsManager() {
     return studentsList.filter((s: any) => {
       const matchesSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                             s.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                            (s.student_code && s.student_code.toLowerCase().includes(searchQuery.toLowerCase()));
+                            (s.student_code && s.student_code.toLowerCase().includes(searchQuery.toLowerCase())) ||
+                            (s.school_name && s.school_name.toLowerCase().includes(searchQuery.toLowerCase()));
       
       const matchesLevel = filterLevel === "All Levels" || s.current_tier_name === filterLevel;
+      const matchesAgent = filterAgent === "All Agents" ||
+                           (filterAgent === "Unassigned" && !s.agent_name) ||
+                           (s.agent_name && s.agent_name === filterAgent);
 
-      return matchesSearch && matchesLevel;
+      return matchesSearch && matchesLevel && matchesAgent;
     });
   };
 
@@ -172,6 +200,9 @@ export default function StudentsManager() {
   const filteredTrashed = applyFilters(trashedStudents);
 
   const displayedList = activeTab === "active" ? filteredStudents : filteredTrashed;
+  const totalItems = displayedList.length;
+  const totalPages = Math.ceil(totalItems / pageSize) || 1;
+  const paginatedList = displayedList.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   return (
     <div>
@@ -181,6 +212,28 @@ export default function StudentsManager() {
           Monitor student accounts, promote them through competition tiers, and manage deleted profiles.
         </p>
       </div>
+
+      {/* School Filter Banner */}
+      {schoolFromUrl && (
+        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", background: "rgba(30,27,75,0.06)", border: "1px solid rgba(30,27,75,0.15)", borderRadius: "10px", padding: "0.75rem 1.25rem", marginBottom: "1.5rem" }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1e1b4b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" /><polyline points="9 22 9 12 15 12 15 22" />
+          </svg>
+          <span style={{ fontWeight: 700, color: "#1e1b4b", fontSize: "0.9rem" }}>
+            Filtering by school: <span style={{ color: "#4338ca" }}>{schoolFromUrl}</span>
+          </span>
+          <span style={{ color: "#64748b", fontSize: "0.85rem" }}>— {filteredStudents.length} student{filteredStudents.length !== 1 ? "s" : ""} found</span>
+          <button
+            onClick={() => {
+              setSearchQuery("");
+              router.replace("/admin/students");
+            }}
+            style={{ marginLeft: "auto", background: "white", color: "#ef4444", padding: "0.3rem 0.75rem", borderRadius: "6px", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer", border: "1px solid #fca5a5" }}
+          >
+            ✕ Clear Filter
+          </button>
+        </div>
+      )}
 
       {/* Tabs Switcher */}
       <div style={{ display: "flex", gap: "0.5rem", marginBottom: "1.5rem", borderBottom: "1px solid #e2e8f0", paddingBottom: "0.5rem" }}>
@@ -268,7 +321,7 @@ export default function StudentsManager() {
           </label>
           <input 
             type="text" 
-            placeholder="Search by student name or email..." 
+            placeholder="Search by student name, email, code or school..." 
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem" }}
@@ -287,6 +340,23 @@ export default function StudentsManager() {
             <option value="All Levels">All Levels</option>
             {tierForms.map((tf) => (
               <option key={tf.id} value={tf.name}>{tf.name}</option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ minWidth: "180px" }}>
+          <label style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.4rem" }}>
+            Filter by Agent
+          </label>
+          <select 
+            value={filterAgent}
+            onChange={(e) => setFilterAgent(e.target.value)}
+            style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem", background: "white", color: "#000" }}
+          >
+            <option value="All Agents">All Agents</option>
+            <option value="Unassigned">Unassigned (No Agent)</option>
+            {agents.map((a) => (
+              <option key={a.id} value={a.name}>{a.name}</option>
             ))}
           </select>
         </div>
@@ -310,19 +380,23 @@ export default function StudentsManager() {
       {/* Students List Table */}
       <div style={{ background: "white", borderRadius: "16px", padding: "1.5rem", border: "1px solid #e2e8f0", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)" }}>
         <div style={{ overflowX: "auto" }}>
-          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "800px" }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", textAlign: "left", minWidth: "900px" }}>
             <thead>
               <tr style={{ borderBottom: "2px solid #f1f5f9", paddingBottom: "1rem" }}>
                 <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Student Name & Email</th>
                 {activeTab === "active" ? (
                   <>
-                    <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Active Level / Stage</th>
-                    <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Promote / Advance Level</th>
+                    <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Active Level</th>
+                    <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>School Name</th>
+                    <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Assigned Agent</th>
+                    <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Promote / Advance</th>
                     <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Date Joined</th>
                   </>
                 ) : (
                   <>
                     <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Last Active Level</th>
+                    <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>School Name</th>
+                    <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Assigned Agent</th>
                     <th style={{ padding: "1rem", color: "#64748b", fontWeight: 700, fontSize: "0.8rem", textTransform: "uppercase" }}>Date Deleted</th>
                   </>
                 )}
@@ -332,11 +406,11 @@ export default function StudentsManager() {
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={activeTab === "active" ? 5 : 4} style={{ padding: "3rem", textAlign: "center", color: "#64748b", fontWeight: 600 }}>
+                  <td colSpan={activeTab === "active" ? 7 : 6} style={{ padding: "3rem", textAlign: "center", color: "#64748b", fontWeight: 600 }}>
                     Loading database...
                   </td>
                 </tr>
-              ) : displayedList.map((student: any) => (
+              ) : paginatedList.map((student: any) => (
                 <tr key={student.id} style={{ borderBottom: "1px solid #f1f5f9" }}>
                   <td style={{ padding: "1.2rem 1rem" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
@@ -350,14 +424,24 @@ export default function StudentsManager() {
                     <div style={{ fontSize: "0.8rem", color: "#64748b", marginTop: "0.15rem" }}>{student.email}</div>
                   </td>
 
-
-                  
                   {activeTab === "active" ? (
                     <>
                       <td style={{ padding: "1.2rem 1rem" }}>
                         <span style={{ background: "rgba(30, 27, 117, 0.08)", color: "#1e1b4b", padding: "0.3rem 0.6rem", borderRadius: "6px", fontSize: "0.8rem", fontWeight: 700 }}>
                           {student.current_tier_name || "None"}
                         </span>
+                      </td>
+                      <td style={{ padding: "1.2rem 1rem", fontSize: "0.85rem", color: "#1e293b", fontWeight: 500 }}>
+                        {student.school_name || <span style={{ color: "#94a3b8", fontStyle: "italic" }}>None</span>}
+                      </td>
+                      <td style={{ padding: "1.2rem 1rem", fontSize: "0.85rem" }}>
+                        {student.agent_name ? (
+                          <span style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10b981", padding: "0.3rem 0.6rem", borderRadius: "6px", fontWeight: 700 }}>
+                            {student.agent_name}
+                          </span>
+                        ) : (
+                          <span style={{ color: "#94a3b8", fontStyle: "italic" }}>Unassigned</span>
+                        )}
                       </td>
                       <td style={{ padding: "1.2rem 1rem" }}>
                         <select
@@ -398,6 +482,18 @@ export default function StudentsManager() {
                           {student.current_tier_name || "None"}
                         </span>
                       </td>
+                      <td style={{ padding: "1.2rem 1rem", fontSize: "0.85rem", color: "#1e293b", fontWeight: 500 }}>
+                        {student.school_name || <span style={{ color: "#94a3b8", fontStyle: "italic" }}>None</span>}
+                      </td>
+                      <td style={{ padding: "1.2rem 1rem", fontSize: "0.85rem" }}>
+                        {student.agent_name ? (
+                          <span style={{ background: "rgba(16, 185, 129, 0.1)", color: "#10b981", padding: "0.3rem 0.6rem", borderRadius: "6px", fontWeight: 700 }}>
+                            {student.agent_name}
+                          </span>
+                        ) : (
+                          <span style={{ color: "#94a3b8", fontStyle: "italic" }}>Unassigned</span>
+                        )}
+                      </td>
                       <td style={{ padding: "1.2rem 1rem", color: "#64748b", fontSize: "0.85rem" }}>
                         {student.deleted_at 
                           ? new Date(student.deleted_at).toLocaleString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" })
@@ -423,9 +519,9 @@ export default function StudentsManager() {
                   )}
                 </tr>
               ))}
-              {!loading && displayedList.length === 0 && (
+              {!loading && paginatedList.length === 0 && (
                 <tr>
-                  <td colSpan={activeTab === "active" ? 5 : 4} style={{ padding: "3rem", textAlign: "center", color: "#64748b" }}>
+                  <td colSpan={activeTab === "active" ? 7 : 6} style={{ padding: "3rem", textAlign: "center", color: "#64748b" }}>
                     {activeTab === "active" 
                       ? "No active students registered in the database." 
                       : "Trash is empty."}
@@ -436,6 +532,70 @@ export default function StudentsManager() {
           </table>
         </div>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.5rem", padding: "0.75rem 1rem", background: "white", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+          <div style={{ fontSize: "0.9rem", color: "#64748b", display: "flex", alignItems: "center", gap: "1rem" }}>
+            <span>
+              Showing <span style={{ fontWeight: 600, color: "#1e1b4b" }}>{((currentPage - 1) * pageSize) + 1}</span> to <span style={{ fontWeight: 600, color: "#1e1b4b" }}>{Math.min(currentPage * pageSize, totalItems)}</span> of <span style={{ fontWeight: 600, color: "#1e1b4b" }}>{totalItems}</span> entries
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+              <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Rows per page:</span>
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(parseInt(e.target.value));
+                  setCurrentPage(1);
+                }}
+                style={{ padding: "0.2rem 0.4rem", borderRadius: "4px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.8rem", background: "white" }}
+              >
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+                <option value={200}>200</option>
+              </select>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              style={{
+                padding: "0.4rem 0.8rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                background: currentPage === 1 ? "#f1f5f9" : "white",
+                color: currentPage === 1 ? "#94a3b8" : "#1e1b4b",
+                fontWeight: 600,
+                fontSize: "0.85rem",
+                cursor: currentPage === 1 ? "not-allowed" : "pointer"
+              }}
+            >
+              Previous
+            </button>
+            <div style={{ display: "flex", alignItems: "center", padding: "0 0.5rem", fontSize: "0.85rem", fontWeight: 600, color: "#1e1b4b" }}>
+              Page {currentPage} of {totalPages}
+            </div>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              style={{
+                padding: "0.4rem 0.8rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                background: currentPage === totalPages ? "#f1f5f9" : "white",
+                color: currentPage === totalPages ? "#94a3b8" : "#1e1b4b",
+                fontWeight: 600,
+                fontSize: "0.85rem",
+                cursor: currentPage === totalPages ? "not-allowed" : "pointer"
+              }}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Profile Modal */}
       {selectedStudent && (
@@ -558,5 +718,13 @@ export default function StudentsManager() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function StudentsManagerPage() {
+  return (
+    <Suspense fallback={<div style={{ padding: "4rem", textAlign: "center", color: "#64748b" }}>Loading...</div>}>
+      <StudentsManager />
+    </Suspense>
   );
 }

@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import razorpay
 
-from .models import TierForm, FormField, Student, Submission, SiteSettings
+from .models import TierForm, FormField, Student, Submission, SiteSettings, Agent, School
 from .serializers import (
     TierFormSerializer, 
     AdminTierFormSerializer,
@@ -22,7 +22,9 @@ from .serializers import (
     StudentRegisterSerializer,
     SiteSettingsSerializer,
     AdminRegistrationCreateSerializer,
-    AdminBulkRegistrationSerializer
+    AdminBulkRegistrationSerializer,
+    AgentSerializer,
+    SchoolSerializer
 )
 from .permissions import IsAdminOrSecretToken
 
@@ -222,6 +224,20 @@ class AdminBulkRegistrationView(APIView):
                 return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+# Admin Agent viewset
+class AdminAgentViewSet(viewsets.ModelViewSet):
+    """Admin CRUD endpoint for Agents"""
+    permission_classes = [IsAdminOrSecretToken]
+    queryset = Agent.objects.all().order_by('-created_at')
+    serializer_class = AgentSerializer
+
+# Admin School viewset
+class AdminSchoolViewSet(viewsets.ModelViewSet):
+    """Admin CRUD endpoint for Schools"""
+    permission_classes = [IsAdminOrSecretToken]
+    queryset = School.objects.all().select_related('agent').order_by('name')
+    serializer_class = SchoolSerializer
+
 # Admin TierForm (Levels) viewset
 class AdminTierFormViewSet(viewsets.ModelViewSet):
     """Admin CRUD endpoint for TierForms"""
@@ -239,12 +255,13 @@ class AdminStudentViewSet(viewsets.ModelViewSet):
         # For list requests, differentiate between active and trash lists
         if self.action == 'list':
             trash = self.request.query_params.get('trash', 'false').lower() == 'true'
+            queryset = Student.objects.select_related('school', 'school__agent').prefetch_related('submissions', 'submissions__form')
             if trash:
-                return Student.objects.filter(is_deleted=True).order_by('-deleted_at')
-            return Student.objects.filter(is_deleted=False).order_by('-created_at')
+                return queryset.filter(is_deleted=True).order_by('-deleted_at')
+            return queryset.filter(is_deleted=False).order_by('-created_at')
         
         # For detail views (retrieve, update, destroy, custom actions), search all
-        return Student.objects.all()
+        return Student.objects.all().select_related('school', 'school__agent').prefetch_related('submissions', 'submissions__form')
 
     def destroy(self, request, *args, **kwargs):
         student = self.get_object()

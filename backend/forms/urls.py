@@ -6,6 +6,8 @@ from .views import (
     SubmissionViewSet, 
     AdminTierFormViewSet,
     AdminStudentViewSet,
+    AdminAgentViewSet,
+    AdminSchoolViewSet,
     AdminDashboardStatsView,
     AdminLoginView,
     StudentRegisterView,
@@ -26,6 +28,8 @@ router.register(r'forms', TierFormViewSet, basename='forms')
 # Admin endpoints
 router.register(r'admin/forms', AdminTierFormViewSet, basename='admin-forms')
 router.register(r'admin/students', AdminStudentViewSet, basename='admin-students')
+router.register(r'admin/agents', AdminAgentViewSet, basename='admin-agents')
+router.register(r'admin/schools', AdminSchoolViewSet, basename='admin-schools')
 router.register(r'submissions', SubmissionViewSet, basename='submissions')
 
 urlpatterns = [

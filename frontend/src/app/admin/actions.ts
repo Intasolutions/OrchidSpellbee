@@ -331,3 +331,105 @@ export async function deleteStudent(id: number) {
     return { success: false, error: error.message };
   }
 }
+
+export async function getAgents() {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/admin/agents/`, {
+      headers: getAdminHeaders(),
+      cache: "no-store"
+    });
+    if (!res.ok) throw new Error("Failed to fetch agents");
+    return await res.json();
+  } catch (error: any) {
+    console.error("getAgents error:", error);
+    return [];
+  }
+}
+
+export async function saveAgent(id: number | null, data: any) {
+  try {
+    await verifySession();
+    const url = id 
+      ? `${API_BASE_URL}/api/admin/agents/${id}/` 
+      : `${API_BASE_URL}/api/admin/agents/`;
+    const method = id ? "PUT" : "POST";
+
+    const res = await fetch(url, {
+      method,
+      headers: getAdminHeaders(),
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error("Failed to save agent");
+    return { success: true, data: await res.json() };
+  } catch (error: any) {
+    console.error("saveAgent error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteAgent(id: number) {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/admin/agents/${id}/`, {
+      method: "DELETE",
+      headers: getAdminHeaders()
+    });
+    if (!res.ok) throw new Error("Failed to delete agent");
+    return { success: true };
+  } catch (error: any) {
+    console.error("deleteAgent error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function getSchools() {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/admin/schools/`, {
+      headers: getAdminHeaders(),
+      cache: "no-store"
+    });
+    if (!res.ok) throw new Error("Failed to fetch schools");
+    return await res.json();
+  } catch (error: any) {
+    console.error("getSchools error:", error);
+    return [];
+  }
+}
+
+export async function saveSchool(id: number | null, data: any) {
+  try {
+    await verifySession();
+    const url = id 
+      ? `${API_BASE_URL}/api/admin/schools/${id}/` 
+      : `${API_BASE_URL}/api/admin/schools/`;
+    const method = id ? "PUT" : "POST";
+
+    const res = await fetch(url, {
+      method,
+      headers: getAdminHeaders(),
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) throw new Error("Failed to save school");
+    return { success: true, data: await res.json() };
+  } catch (error: any) {
+    console.error("saveSchool error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function deleteSchool(id: number) {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/admin/schools/${id}/`, {
+      method: "DELETE",
+      headers: getAdminHeaders()
+    });
+    if (!res.ok) throw new Error("Failed to delete school");
+    return { success: true };
+  } catch (error: any) {
+    console.error("deleteSchool error:", error);
+    return { success: false, error: error.message };
+  }
+}

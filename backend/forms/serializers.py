@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import TierForm, FormField, Student, Submission, SiteSettings
+from .models import TierForm, FormField, Student, Submission, SiteSettings, Agent, School
 
 class SiteSettingsSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,12 +56,41 @@ class AdminTierFormSerializer(serializers.ModelSerializer):
             
         return instance
 
+class AgentSerializer(serializers.ModelSerializer):
+    schools_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Agent
+        fields = ['id', 'name', 'email', 'phone', 'schools_count', 'created_at']
+
+    def get_schools_count(self, obj):
+        return obj.schools.count()
+
+class SchoolSerializer(serializers.ModelSerializer):
+    agent_name = serializers.CharField(source='agent.name', read_only=True)
+    students_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = School
+        fields = ['id', 'name', 'agent', 'agent_name', 'students_count', 'created_at']
+
+    def get_students_count(self, obj):
+        return obj.students.filter(is_deleted=False).count()
+
 class StudentSerializer(serializers.ModelSerializer):
     current_tier_name = serializers.CharField(source='current_tier.name', read_only=True)
+    school_name = serializers.CharField(source='school.name', read_only=True)
+    agent_id = serializers.IntegerField(source='school.agent.id', read_only=True, allow_null=True)
+    agent_name = serializers.CharField(source='school.agent.name', read_only=True, allow_null=True)
 
     class Meta:
         model = Student
-        fields = ['id', 'name', 'email', 'student_code', 'current_tier', 'current_tier_name', 'created_at', 'is_deleted', 'deleted_at']
+        fields = [
+            'id', 'name', 'email', 'student_code', 
+            'school', 'school_name', 'agent_id', 'agent_name',
+            'current_tier', 'current_tier_name', 'created_at', 
+            'is_deleted', 'deleted_at'
+        ]
 
 class StudentRegisterSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=200)
