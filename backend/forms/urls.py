@@ -12,7 +12,11 @@ from .views import (
     StudentLoginView,
     StudentMeView,
     StudentGoogleAuthView,
-    VerifyPaymentView
+    VerifyPaymentView,
+    SiteSettingsView,
+    AdminSiteSettingsView,
+    AdminRegistrationCreateView,
+    AdminBulkRegistrationView
 )
 
 router = DefaultRouter()
@@ -26,6 +30,10 @@ router.register(r'submissions', SubmissionViewSet, basename='submissions')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('settings/', SiteSettingsView.as_view(), name='site-settings'),
+    path('admin/settings/', AdminSiteSettingsView.as_view(), name='admin-settings'),
+    path('admin/registrations/add/', AdminRegistrationCreateView.as_view(), name='admin-registrations-add'),
+    path('admin/registrations/bulk-add/', AdminBulkRegistrationView.as_view(), name='admin-registrations-bulk-add'),
     path('submit/', SubmitFormView.as_view(), name='submit-form'),
     path('admin-login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin-stats/', AdminDashboardStatsView.as_view(), name='admin-stats'),

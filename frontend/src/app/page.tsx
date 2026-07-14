@@ -18,8 +18,14 @@ export default function Home() {
   const [authChecked, setAuthChecked] = useState(false);
   const [formStatus, setFormStatus] = useState<string>('loading');
   const [statusMessage, setStatusMessage] = useState('');
+  const [isRegistrationActive, setIsRegistrationActive] = useState(true);
 
   useEffect(() => {
+    fetch(`${API_BASE_URL}/api/settings/`)
+      .then(res => res.json())
+      .then(data => setIsRegistrationActive(data.is_registration_active))
+      .catch(() => setIsRegistrationActive(true));
+
     const token = localStorage.getItem('student_token');
     if (!token) {
       setAuthChecked(true);
@@ -262,23 +268,25 @@ export default function Home() {
             Join thousands of students in a celebration of the English language. Improve your linguistic prowess and embark on a journey of self-improvement.
           </p>
           <div className="animate-reveal-up delay-300" style={{ display: 'flex', gap: '1rem' }}>
-            {student ? (
-              <button 
-                className="btn" 
-                style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '1rem 2.5rem', boxShadow: '0 10px 25px rgba(255,184,0,0.3)' }}
-                onClick={() => setIsModalOpen(true)}
-              >
-                Go to Dashboard
-              </button>
-            ) : (
-              <Link href="/login" style={{ textDecoration: 'none' }}>
+            {isRegistrationActive && (
+              student ? (
                 <button 
                   className="btn" 
                   style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '1rem 2.5rem', boxShadow: '0 10px 25px rgba(255,184,0,0.3)' }}
+                  onClick={() => setIsModalOpen(true)}
                 >
-                  Login to Register
+                  Login to register
                 </button>
-              </Link>
+              ) : (
+                <Link href="/login" style={{ textDecoration: 'none' }}>
+                  <button 
+                    className="btn" 
+                    style={{ fontSize: '1.1rem', borderRadius: '8px', padding: '1rem 2.5rem', boxShadow: '0 10px 25px rgba(255,184,0,0.3)' }}
+                  >
+                    Login to Register
+                  </button>
+                </Link>
+              )
             )}
             <a href="https://wa.me/917560997700" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
               <button 
@@ -371,13 +379,35 @@ export default function Home() {
             <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>
               At Orchid Spell Bee, we believe that the path to mastery is as important as the destination. Our competition emphasizes the learning process, where each participant embarks on a journey of self-improvement and personal growth.
             </p>
-            <button 
-              className="btn" 
-              style={{ borderRadius: '4px', cursor: 'pointer' }}
-              onClick={() => document.getElementById('why-us')?.scrollIntoView({ behavior: 'smooth' })}
-            >
-              Why Orchid Spell Bee ↓
-            </button>
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <button 
+                className="btn btn-outline" 
+                style={{ borderRadius: '4px', cursor: 'pointer' }}
+                onClick={() => document.getElementById('why-us')?.scrollIntoView({ behavior: 'smooth' })}
+              >
+                Why Orchid Spell Bee ↓
+              </button>
+              {isRegistrationActive && (
+                student ? (
+                  <button 
+                    className="btn" 
+                    style={{ borderRadius: '4px', cursor: 'pointer' }}
+                    onClick={() => setIsModalOpen(true)}
+                  >
+                    Login to register
+                  </button>
+                ) : (
+                  <Link href="/login" style={{ textDecoration: 'none' }}>
+                    <button 
+                      className="btn" 
+                      style={{ borderRadius: '4px', cursor: 'pointer' }}
+                    >
+                      Login to Register
+                    </button>
+                  </Link>
+                )
+              )}
+            </div>
           </div>
           <div className="about-images reveal-right" style={{ flex: 1, display: 'grid', gap: '1rem', gridTemplateColumns: '1fr 1fr' }}>
             <div className="about-img-large hover-lift" style={{ 
@@ -519,9 +549,31 @@ export default function Home() {
               <p style={{ color: '#718096', fontSize: '0.95rem', lineHeight: '1.7', marginBottom: '2rem', fontStyle: 'italic' }}>
                 The competition is structured into four tiers: school, district, state, and national. Each level acts as a stepping stone to the next, with students needing to qualify at one level to advance to the next. At the school level, participants will undergo a written test to showcase their spelling skills. Those who qualify will move on to the district level, where oral rounds will commence and continue through to the national level.
               </p>
-              <Link href="/rounds-and-prizes" style={{ textDecoration: 'none' }}>
-                <button className="btn" style={{ borderRadius: '6px', padding: '0.7rem 1.8rem', fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }}>Check the Prizes →</button>
-              </Link>
+              <div style={{ display: 'flex', gap: '1rem' }}>
+                <Link href="/rounds-and-prizes" style={{ textDecoration: 'none' }}>
+                  <button className="btn btn-outline" style={{ borderRadius: '6px', padding: '0.7rem 1.8rem', fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }}>Check the Prizes →</button>
+                </Link>
+                {isRegistrationActive && (
+                  student ? (
+                    <button 
+                      className="btn" 
+                      style={{ borderRadius: '6px', padding: '0.7rem 1.8rem', fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }}
+                      onClick={() => setIsModalOpen(true)}
+                    >
+                      Login to register
+                    </button>
+                  ) : (
+                    <Link href="/login" style={{ textDecoration: 'none' }}>
+                      <button 
+                        className="btn" 
+                        style={{ borderRadius: '6px', padding: '0.7rem 1.8rem', fontWeight: 'bold', fontSize: '0.95rem', cursor: 'pointer' }}
+                      >
+                        Login to Register
+                      </button>
+                    </Link>
+                  )
+                )}
+              </div>
             </div>
             
             {/* Right Card / Table */}

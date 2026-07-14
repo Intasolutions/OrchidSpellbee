@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/config";
 
 // Professional SVG icons for each level
 const SchoolIcon = ({ size = 28, color = "currentColor" }: { size?: number; color?: string }) => (
@@ -38,6 +39,14 @@ const TrophyIcon = ({ size = 28, color = "currentColor" }: { size?: number; colo
 
 export default function CompetitionsPage() {
   const [activeTab, setActiveTab] = useState(0);
+  const [isRegistrationActive, setIsRegistrationActive] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/settings/`)
+      .then(res => res.json())
+      .then(data => setIsRegistrationActive(data.is_registration_active))
+      .catch(() => setIsRegistrationActive(true));
+  }, []);
 
   const levels = [
     {
@@ -538,9 +547,10 @@ export default function CompetitionsPage() {
       </div>
 
       {/* CTA Section */}
-      <div
-        style={{
-          background: "linear-gradient(135deg, #251c4d 0%, #1a1438 100%)",
+      {isRegistrationActive && (
+        <div
+          style={{
+            background: "linear-gradient(135deg, #251c4d 0%, #1a1438 100%)",
           padding: "6rem 3rem",
           textAlign: "center",
           position: "relative",
@@ -595,6 +605,7 @@ export default function CompetitionsPage() {
           </Link>
         </div>
       </div>
+      )}
     </div>
   );
 }

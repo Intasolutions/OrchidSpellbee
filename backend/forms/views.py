@@ -12,16 +12,43 @@ from django.contrib.auth.models import User
 from django.conf import settings
 import razorpay
 
-from .models import TierForm, FormField, Student, Submission
+from .models import TierForm, FormField, Student, Submission, SiteSettings
 from .serializers import (
     TierFormSerializer, 
     AdminTierFormSerializer,
     StudentSerializer, 
     SubmissionCreateSerializer, 
     SubmissionListSerializer,
-    StudentRegisterSerializer
+    StudentRegisterSerializer,
+    SiteSettingsSerializer,
+    AdminRegistrationCreateSerializer,
+    AdminBulkRegistrationSerializer
 )
 from .permissions import IsAdminOrSecretToken
+
+# Public view for settings
+class SiteSettingsView(APIView):
+    permission_classes = [AllowAny]
+    def get(self, request):
+        settings_obj = SiteSettings.load()
+        serializer = SiteSettingsSerializer(settings_obj)
+        return Response(serializer.data)
+
+class AdminSiteSettingsView(APIView):
+    permission_classes = [IsAdminOrSecretToken]
+    
+    def get(self, request):
+        settings_obj = SiteSettings.load()
+        serializer = SiteSettingsSerializer(settings_obj)
+        return Response(serializer.data)
+        
+    def patch(self, request):
+        settings_obj = SiteSettings.load()
+        serializer = SiteSettingsSerializer(settings_obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Public view set for active forms
 class TierFormViewSet(viewsets.ReadOnlyModelViewSet):
@@ -161,6 +188,39 @@ class SubmissionViewSet(viewsets.ModelViewSet):
             submission.save()
             return Response({"status": "success", "is_passed": submission.is_passed})
         return Response({"error": "Marks not provided"}, status=status.HTTP_400_BAD_REQUEST)
+
+class AdminRegistrationCreateView(APIView):
+    permission_classes = [IsAdminOrSecretToken]
+
+    def post(self, request):
+        serializer = AdminRegistrationCreateSerializer(data=request.data)
+        if serializer.is_valid():
+            submission = serializer.save()
+            return Response({
+                "status": "success", 
+                "message": "Student registered successfully.",
+                "submission_id": submission.id
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+from django.db import transaction
+
+class AdminBulkRegistrationView(APIView):
+    permission_classes = [IsAdminOrSecretToken]
+
+    def post(self, request):
+        serializer = AdminBulkRegistrationSerializer(data={'registrations': request.data})
+        if serializer.is_valid():
+            try:
+                with transaction.atomic():
+                    submissions = serializer.save()
+                return Response({
+                    "status": "success", 
+                    "message": f"Successfully registered {len(submissions)} students."
+                }, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 # Admin TierForm (Levels) viewset
 class AdminTierFormViewSet(viewsets.ModelViewSet):

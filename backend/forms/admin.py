@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import TierForm, FormField, Student, Submission
+from .models import TierForm, FormField, Student, Submission, SiteSettings
 
 class FormFieldInline(admin.StackedInline):
     model = FormField
@@ -27,3 +27,13 @@ class SubmissionAdmin(admin.ModelAdmin):
             return "Pending Grading"
         return "Passed" if obj.is_passed else "Failed"
     is_passed_status.short_description = "Result"
+
+@admin.register(SiteSettings)
+class SiteSettingsAdmin(admin.ModelAdmin):
+    list_display = ('__str__', 'is_registration_active')
+
+    def has_add_permission(self, request):
+        return not SiteSettings.objects.exists()
+
+    def has_delete_permission(self, request, obj=None):
+        return False

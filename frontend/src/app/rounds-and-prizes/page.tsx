@@ -1,8 +1,18 @@
 "use client";
 
 import Link from "next/link";
+import { useState, useEffect } from "react";
+import { API_BASE_URL } from "@/config";
 
 export default function RoundsAndPrizesPage() {
+  const [isRegistrationActive, setIsRegistrationActive] = useState(true);
+
+  useEffect(() => {
+    fetch(`${API_BASE_URL}/api/settings/`)
+      .then(res => res.json())
+      .then(data => setIsRegistrationActive(data.is_registration_active))
+      .catch(() => setIsRegistrationActive(true));
+  }, []);
   const rounds = [
     {
       num: "01",
@@ -39,49 +49,35 @@ export default function RoundsAndPrizesPage() {
   ];
 
   const nationalPrizes = [
-    {
-      rank: "1st Prize",
-      amount: "₹25,000",
-      extras: "Trophy + Certificate + Medal",
-      highlight: true,
-    },
-    {
-      rank: "2nd Prize",
-      amount: "₹20,000",
-      extras: "Trophy + Certificate + Medal",
-      highlight: false,
-    },
-    {
-      rank: "3rd Prize",
-      amount: "₹15,000",
-      extras: "Trophy + Certificate",
-      highlight: false,
-    },
-    {
-      rank: "4th Prize",
-      amount: "₹10,000",
-      extras: "Memento + Certificate",
-      highlight: false,
-    },
-    {
-      rank: "5th Prize",
-      amount: "₹5,000",
-      extras: "Memento + Certificate",
-      highlight: false,
-    },
-    {
-      rank: "6th – 10th",
-      amount: "₹2,000",
-      extras: "Memento + Certificate",
-      highlight: false,
-    },
+    { rank: "1st Prize", amount: "₹25000", extras: "+MEMENTO+CERTIFICATE", highlight: true },
+    { rank: "2nd Prize", amount: "₹20000", extras: "+MEMENTO+CERTIFICATE", highlight: false },
+    { rank: "3rd Prize", amount: "₹15000", extras: "+MEMENTO+CERTIFICATE", highlight: false },
+    { rank: "4th Prize", amount: "₹10000", extras: "+MEMENTO+CERTIFICATE", highlight: false },
+    { rank: "5th Prize", amount: "₹5000", extras: "+MEMENTO+CERTIFICATE", highlight: false },
+    { rank: "6th-10th Prizes", amount: "₹2000", extras: "+MEMENTO+CERTIFICATE", highlight: false },
   ];
 
   const statePrizes = [
-    { rank: "1st", amount: "₹5,000", extras: "Trophy + Certificate" },
-    { rank: "2nd", amount: "₹3,000", extras: "Trophy + Certificate" },
-    { rank: "3rd", amount: "₹2,000", extras: "Trophy + Certificate" },
-    { rank: "4th – 10th", amount: "₹1,000", extras: "Certificate" },
+    { rank: "1st Prize", amount: "₹15000", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "2nd Prize", amount: "₹10000", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "3rd Prize", amount: "₹5000", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "4th Prize", amount: "₹3000", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "5th Prize", amount: "₹2000", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "6th-10th Prizes", amount: "₹1000", extras: "+MEMENTO+CERTIFICATE" },
+  ];
+
+  const districtPrizes = [
+    { rank: "1st Prize", amount: "₹5000", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "2nd Prize", amount: "₹3000", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "3rd Prize", amount: "₹1500", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "4th Prize", amount: "₹1000", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "5th Prize", amount: "₹750", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "6th-10th Prizes", amount: "₹500", extras: "+MEMENTO+CERTIFICATE" },
+  ];
+
+  const schoolPrizes = [
+    { rank: "1st Prize", amount: "", extras: "MEMENTO+CERTIFICATE" },
+    { rank: "2nd Prize", amount: "", extras: "MEMENTO+CERTIFICATE" },
   ];
 
   return (
@@ -438,6 +434,7 @@ export default function RoundsAndPrizesPage() {
                   National Level
                 </h3>
               </div>
+              </div>
               <div
                 style={{
                   background: "linear-gradient(135deg, #251c4d, #1a1438)",
@@ -516,6 +513,10 @@ export default function RoundsAndPrizesPage() {
                     </div>
                   </div>
                 ))}
+                
+                <div style={{ padding: "1.2rem 2rem", borderTop: "2px dashed rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.02)", textAlign: "center", fontStyle: "italic", fontSize: "0.85rem", color: "rgba(255,255,255,0.8)" }}>
+                  REGISTRATION FEE FOR SELECTED CANDIDATES: <b>₹2000</b>
+                </div>
               </div>
             </div>
 
@@ -640,7 +641,243 @@ export default function RoundsAndPrizesPage() {
                     </div>
                   </div>
                 ))}
+                
+                <div style={{ padding: "1.2rem 2rem", borderTop: "2px dashed #e2e8f0", background: "#f8fafc", textAlign: "center", fontStyle: "italic", fontSize: "0.85rem", color: "#475569" }}>
+                  REGISTRATION FEE FOR SELECTED CANDIDATES: <b>₹1000</b><br/>
+                  <span style={{fontSize: "0.75rem"}}>Including text Book</span>
+                </div>
               </div>
+            </div>
+
+            {/* District Prizes */}
+            <div className="reveal-left delay-300">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <div
+                  style={{
+                    width: "44px",
+                    height: "44px",
+                    background: "rgba(124,58,237,0.1)",
+                    borderRadius: "12px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#7c3aed" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                  </svg>
+                </div>
+                <h3
+                  style={{
+                    fontSize: "1.4rem",
+                    fontWeight: "800",
+                    color: "var(--color-text-heading)",
+                    margin: 0,
+                  }}
+                >
+                  District Level
+                </h3>
+              </div>
+              <div
+                style={{
+                  background: "#f8f9fa",
+                  borderRadius: "20px",
+                  overflow: "hidden",
+                  border: "1px solid #e2e8f0",
+                }}
+              >
+                {districtPrizes.map((p, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "1.4rem 2rem",
+                      borderBottom:
+                        i < districtPrizes.length - 1
+                          ? "1px solid #e2e8f0"
+                          : "none",
+                      background: "white",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                      <div
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          background: "rgba(124,58,237,0.1)",
+                          color: "#7c3aed",
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "0.75rem",
+                          fontWeight: "800",
+                        }}
+                      >
+                        {i + 1}
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            color: "var(--color-text-heading)",
+                            fontWeight: "700",
+                          }}
+                        >
+                          {p.rank}
+                        </div>
+                        <div
+                          style={{
+                            color: "var(--color-text-secondary)",
+                            fontSize: "0.75rem",
+                          }}
+                        >
+                          {p.extras}
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "1.2rem",
+                        fontWeight: "800",
+                        color: "#7c3aed",
+                      }}
+                    >
+                      {p.amount}
+                    </div>
+                  </div>
+                ))}
+                
+                <div style={{ padding: "1.2rem 2rem", borderTop: "2px dashed #e2e8f0", background: "#f8fafc", textAlign: "center", fontStyle: "italic", fontSize: "0.85rem", color: "#475569" }}>
+                  REGISTRATION FEE FOR SELECTED CANDIDATES: <b>₹500</b><br/>
+                  <span style={{fontSize: "0.75rem"}}>Including text Book</span>
+                </div>
+              </div>
+            </div>
+
+            {/* School Prizes */}
+            <div className="reveal-right delay-400">
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "1rem",
+                  marginBottom: "1.5rem",
+                }}
+              >
+                <div
+                  style={{
+                    width: "44px",
+                    height: "44px",
+                    background: "rgba(16,185,129,0.1)",
+                    borderRadius: "12px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
+                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
+                  </svg>
+                </div>
+                <h3
+                  style={{
+                    fontSize: "1.4rem",
+                    fontWeight: "800",
+                    color: "var(--color-text-heading)",
+                    margin: 0,
+                  }}
+                >
+                  School Level
+                </h3>
+              </div>
+              <div
+                style={{
+                  background: "#f8f9fa",
+                  borderRadius: "20px",
+                  overflow: "hidden",
+                  border: "1px solid #e2e8f0",
+                }}
+              >
+                {schoolPrizes.map((p, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      padding: "1.4rem 2rem",
+                      borderBottom:
+                        i < schoolPrizes.length - 1
+                          ? "1px solid #e2e8f0"
+                          : "none",
+                      background: "white",
+                    }}
+                  >
+                    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                      <div
+                        style={{
+                          width: "32px",
+                          height: "32px",
+                          background: "rgba(16,185,129,0.1)",
+                          color: "#10b981",
+                          borderRadius: "50%",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontSize: "0.75rem",
+                          fontWeight: "800",
+                        }}
+                      >
+                        {i + 1}
+                      </div>
+                      <div>
+                        <div
+                          style={{
+                            color: "var(--color-text-heading)",
+                            fontWeight: "700",
+                          }}
+                        >
+                          {p.rank}
+                        </div>
+                        <div
+                          style={{
+                            color: "var(--color-text-secondary)",
+                            fontSize: "0.75rem",
+                          }}
+                        >
+                          {p.extras}
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "1.2rem",
+                        fontWeight: "800",
+                        color: "#10b981",
+                      }}
+                    >
+                      {p.amount}
+                    </div>
+                  </div>
+                ))}
+                
+                <div style={{ padding: "1.2rem 2rem", borderTop: "2px dashed #e2e8f0", background: "#f8fafc", textAlign: "center", fontStyle: "italic", fontSize: "0.85rem", color: "#475569" }}>
+                  REGISTRATION FEE: <b>₹100</b><br/>
+                  <span style={{fontSize: "0.75rem"}}>Including text Book</span>
+                </div>
+              </div>
+            </div>
+          </div>
 
               {/* All participants note */}
               <div
@@ -699,64 +936,51 @@ export default function RoundsAndPrizesPage() {
         </div>
       </div>
 
-      {/* CTA */}
-      <div
-        style={{
-          background: "linear-gradient(135deg, #251c4d 0%, #1a1438 100%)",
-          padding: "6rem 3rem",
-          textAlign: "center",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+      {/* Call to Action */}
+      {isRegistrationActive && (
         <div
           style={{
-            position: "absolute",
-            top: "-40%",
-            left: "10%",
-            width: "500px",
-            height: "500px",
-            background:
-              "radial-gradient(circle, rgba(255,184,0,0.1) 0%, transparent 70%)",
-            borderRadius: "50%",
+            background: "linear-gradient(135deg, #1e1b4b 0%, #0f172a 100%)",
+            padding: "6rem 3rem",
+            textAlign: "center",
+            position: "relative",
+            overflow: "hidden",
           }}
-        />
-        <div style={{ position: "relative", zIndex: 1 }}>
-          <h2
+        >
+          <div
             style={{
-              fontSize: "2.5rem",
-              color: "white",
-              fontWeight: "800",
-              marginBottom: "1rem",
+              position: "absolute",
+              top: "-40%",
+              left: "10%",
+              width: "500px",
+              height: "500px",
+              background:
+                "radial-gradient(circle, rgba(255,184,0,0.1) 0%, transparent 70%)",
+              borderRadius: "50%",
             }}
-          >
-            Start Your Spelling Journey
-          </h2>
-          <p
-            style={{
-              color: "rgba(255,255,255,0.7)",
-              marginBottom: "2.5rem",
-              fontSize: "1.05rem",
-            }}
-          >
-            Register for the school level today — your path to national glory
-            begins with a single word.
-          </p>
-          <Link href="/?register=true" style={{ textDecoration: 'none', display: 'inline-block' }}>
-            <button
-              className="btn"
+          />
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <h2
               style={{
-                fontSize: "1.05rem",
-                padding: "1rem 3rem",
-                borderRadius: "50px",
-                cursor: "pointer",
+                fontSize: "2.5rem",
+                color: "white",
+                fontWeight: "800",
+                marginBottom: "1rem",
               }}
             >
-              Register Now →
-            </button>
-          </Link>
+              Start Your Spelling Journey
+            </h2>
+            <p style={{ color: "rgba(255,255,255,0.7)", marginBottom: "2.5rem", fontSize: "1.1rem" }}>
+              Register for the school level today — your path to national glory begins with a single word.
+            </p>
+            <Link href="/?register=true" style={{ textDecoration: 'none', display: 'inline-block' }}>
+              <button className="btn" style={{ fontSize: "1.05rem", padding: "1rem 3rem", borderRadius: "50px", cursor: "pointer" }}>
+                Register Now →
+              </button>
+            </Link>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

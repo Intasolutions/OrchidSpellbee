@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSubmissions, updateSubmissionPaymentStatus, deleteSubmission, getTierForms, updateSubmissionMarks } from "../actions";
+import { getSubmissions, updateSubmissionPaymentStatus, deleteSubmission, getTierForms, updateSubmissionMarks, adminAddRegistration, adminBulkAddRegistrations } from "../actions";
 
 export default function RegistrationsManager() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -14,6 +14,20 @@ export default function RegistrationsManager() {
   const [selectedTier, setSelectedTier] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedResult, setSelectedResult] = useState("");
+
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [showBulkModal, setShowBulkModal] = useState(false);
+  
+  const [addName, setAddName] = useState("");
+  const [addEmail, setAddEmail] = useState("");
+  const [addFormId, setAddFormId] = useState("");
+  const [addPaymentStatus, setAddPaymentStatus] = useState("PAID");
+  const [addCustomData, setAddCustomData] = useState<any>({});
+  const [addLoading, setAddLoading] = useState(false);
+
+  const [bulkFile, setBulkFile] = useState<File | null>(null);
+  const [bulkFormId, setBulkFormId] = useState("");
+  const [bulkLoading, setBulkLoading] = useState(false);
 
   useEffect(() => {
     Promise.all([getSubmissions(), getTierForms()]).then(([subsData, formsData]) => {
@@ -79,7 +93,7 @@ export default function RegistrationsManager() {
     // Rows mapping
     const rows = filteredSubmissions.map((sub: any) => {
       // Stringify custom fields dynamically
-      const fieldsString = Object.entries(sub.data)
+      const fieldsString = Object.entries(sub.labeled_data || sub.data)
         .map(([key, val]) => `${key}: ${val}`)
         .join(" | ");
 
@@ -108,6 +122,111 @@ export default function RegistrationsManager() {
     document.body.removeChild(link);
   };
 
+  const handleManualAdd = async () => {
+    if (!addName || !addEmail || !addFormId) return alert("Please fill Name, Email, and Form ID");
+    setAddLoading(true);
+    const res = await adminAddRegistration({
+      name: addName,
+      email: addEmail,
+      form_id: parseInt(addFormId),
+      payment_status: addPaymentStatus,
+      data: addCustomData
+    });
+    setAddLoading(false);
+    if (res.success) {
+      alert("Student registered successfully!");
+      setShowAddModal(false);
+      window.location.reload();
+    } else {
+      alert("Error adding student: " + res.error);
+    }
+  };
+
+  const handleBulkUpload = async () => {
+    if (!bulkFile) return alert("Please select a CSV file");
+    setBulkLoading(true);
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const text = e.target?.result as string;
+        const rows = text.split("\n").filter(r => r.trim());
+        const headers = rows[0].split(",").map(h => h.trim().toLowerCase());
+        
+        const registrations = [];
+        for (let i = 1; i < rows.length; i++) {
+          const values = rows[i].split(",").map(v => v.trim());
+          if (values.length >= 3) {
+            const formId = parseInt(values[headers.indexOf("form_id")]);
+            const tf = tierForms.find(t => t.id === formId);
+            const customData: any = {};
+            
+            if (tf) {
+              headers.forEach((h, idx) => {
+                if (["name", "email", "form_id", "payment_status"].includes(h)) return;
+                const field = tf.fields.find((f: any) => f.label.toLowerCase() === h);
+                if (field) {
+                  customData[field.id] = values[idx];
+                }
+              });
+            }
+
+            registrations.push({
+              name: values[headers.indexOf("name")],
+              email: values[headers.indexOf("email")],
+              form_id: formId,
+              payment_status: headers.includes("payment_status") ? (values[headers.indexOf("payment_status")] || "PAID") : "PAID",
+              data: customData
+            });
+          }
+        }
+        
+        const res = await adminBulkAddRegistrations(registrations);
+        if (res.success) {
+          alert(res.data.message || "Bulk upload successful!");
+          setShowBulkModal(false);
+          window.location.reload();
+        } else {
+          alert("Error in bulk upload: " + res.error);
+        }
+      } catch (err) {
+        alert("Error parsing CSV. Please check the format.");
+      }
+      setBulkLoading(false);
+    };
+    reader.readAsText(bulkFile);
+  };
+
+  const downloadTemplate = () => {
+    let headers = ["name", "email", "form_id", "payment_status"];
+    let dummyData1: string[] = [];
+    let dummyData2: string[] = [];
+    
+    if (bulkFormId) {
+      const selectedTier = tierForms.find(tf => tf.id.toString() === bulkFormId);
+      if (selectedTier && selectedTier.fields) {
+        selectedTier.fields.forEach((f: any) => {
+          headers.push(f.label);
+          dummyData1.push(`Sample ${f.label}`);
+          dummyData2.push(`Sample ${f.label}`);
+        });
+      }
+    }
+
+    const row1 = `John Doe,john@example.com,${bulkFormId || "1"},PAID${dummyData1.length ? "," + dummyData1.join(",") : ""}`;
+    const row2 = `Jane Smith,jane@example.com,${bulkFormId || "1"},PENDING${dummyData2.length ? "," + dummyData2.join(",") : ""}`;
+
+    const csvContent = headers.join(",") + "\n" + row1 + "\n" + row2;
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `bulk_upload_template${bulkFormId ? "_level_" + bulkFormId : ""}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+
 
   return (
     <div>
@@ -116,25 +235,43 @@ export default function RegistrationsManager() {
           <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "#1e1b4b", margin: 0 }}>Registrations Manager</h1>
           <p style={{ color: "#64748b", margin: "0.25rem 0 0 0", fontSize: "0.95rem" }}>View, filter, and export student registration details and payment states.</p>
         </div>
-        <button 
-          onClick={handleExportExcel}
-          style={{ 
-            background: "#16a34a", 
-            color: "white", 
-            border: "none", 
-            padding: "0.75rem 1.5rem", 
-            borderRadius: "8px", 
-            fontWeight: 700, 
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            boxShadow: "0 4px 10px rgba(22, 163, 74, 0.2)"
-          }}
-        >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-          Export Excel / CSV
-        </button>
+        <div style={{ display: "flex", gap: "1rem" }}>
+          <button 
+            onClick={() => setShowAddModal(true)}
+            style={{ 
+              background: "#3b82f6", color: "white", border: "none", padding: "0.75rem 1.5rem", borderRadius: "8px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem"
+            }}
+          >
+            Add Student
+          </button>
+          <button 
+            onClick={() => setShowBulkModal(true)}
+            style={{ 
+              background: "#8b5cf6", color: "white", border: "none", padding: "0.75rem 1.5rem", borderRadius: "8px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem"
+            }}
+          >
+            Bulk Upload
+          </button>
+          <button 
+            onClick={handleExportExcel}
+            style={{ 
+              background: "#16a34a", 
+              color: "white", 
+              border: "none", 
+              padding: "0.75rem 1.5rem", 
+              borderRadius: "8px", 
+              fontWeight: 700, 
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              boxShadow: "0 4px 10px rgba(22, 163, 74, 0.2)"
+            }}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            Export Excel / CSV
+          </button>
+        </div>
       </div>
 
       {/* Filters Bar */}
@@ -394,20 +531,12 @@ export default function RegistrationsManager() {
                 </div>
               </div>
 
-              <div>
-                <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.5rem" }}>Custom Form Answers</span>
-                <div style={{ background: "#f8fafc", border: "1px solid #e2e8f0", borderRadius: "10px", padding: "1rem", display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                  {Object.entries(selectedSub.data).map(([label, val]: any) => (
-                    <div key={label} style={{ display: "flex", flexDirection: "column" }}>
-                      <span style={{ fontSize: "0.75rem", color: "#64748b", fontWeight: 700 }}>{label}</span>
-                      <span style={{ fontSize: "0.9rem", color: "#1e293b", fontWeight: 600 }}>{val || "-"}</span>
-                    </div>
-                  ))}
-                  {Object.keys(selectedSub.data).length === 0 && (
-                    <span style={{ color: "#94a3b8", fontSize: "0.85rem", fontStyle: "italic" }}>No answers submitted.</span>
-                  )}
+              {Object.entries(selectedSub.labeled_data || selectedSub.data).map(([label, val]: any) => (
+                <div key={label} style={{ borderBottom: "1px solid #f1f5f9", paddingBottom: "0.75rem" }}>
+                  <span style={{ fontSize: "0.7rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase" }}>{label}</span>
+                  <div style={{ fontSize: "0.95rem", fontWeight: 600, color: "#1e1b4b", marginTop: "0.15rem" }}>{val || "-"}</div>
                 </div>
-              </div>
+              ))}
 
             </div>
 
@@ -424,6 +553,108 @@ export default function RegistrationsManager() {
               >
                 Done
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Manual Add Modal */}
+      {showAddModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: "white", borderRadius: "16px", padding: "2.5rem", width: "100%", maxWidth: "500px", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)", position: "relative", color: "#000" }}>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#1e1b4b", marginBottom: "1.5rem", margin: 0 }}>Manual Add Student</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <div>
+                <label style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", display: "block", marginBottom: "0.4rem" }}>Name</label>
+                <input type="text" value={addName} onChange={e => setAddName(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
+              </div>
+              <div>
+                <label style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", display: "block", marginBottom: "0.4rem" }}>Email (Username)</label>
+                <input type="email" value={addEmail} onChange={e => setAddEmail(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
+              </div>
+              <div>
+                <label style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", display: "block", marginBottom: "0.4rem" }}>Level</label>
+                <select value={addFormId} onChange={e => { setAddFormId(e.target.value); setAddCustomData({}); }} style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", background: "white" }}>
+                  <option value="">Select Level...</option>
+                  {tierForms.map(tf => <option key={tf.id} value={tf.id}>{tf.name}</option>)}
+                </select>
+              </div>
+
+              {/* Dynamic Custom Fields Rendering */}
+              {addFormId && (() => {
+                const selectedTier = tierForms.find(tf => tf.id.toString() === addFormId);
+                if (!selectedTier || !selectedTier.fields || selectedTier.fields.length === 0) return null;
+                return (
+                  <>
+                    {selectedTier.fields.map((f: any) => (
+                      <div key={f.id}>
+                        <label style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", display: "block", marginBottom: "0.4rem" }}>{f.label} {f.required && "*"}</label>
+                        <input 
+                          type="text" 
+                          value={addCustomData[f.id] || ""} 
+                          onChange={e => setAddCustomData({ ...addCustomData, [f.id]: e.target.value })} 
+                          style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }} 
+                          placeholder={`Enter ${f.label.toLowerCase()}`}
+                        />
+                      </div>
+                    ))}
+                  </>
+                );
+              })()}
+
+              <div>
+                <label style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", display: "block", marginBottom: "0.4rem" }}>Payment Status</label>
+                <select value={addPaymentStatus} onChange={e => setAddPaymentStatus(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", background: "white" }}>
+                  <option value="PAID">PAID</option>
+                  <option value="PENDING">PENDING</option>
+                  <option value="NO_PAYMENT">NO PAYMENT</option>
+                </select>
+              </div>
+              <p style={{ fontSize: "0.8rem", color: "#64748b", margin: 0 }}>Note: Default password is <b>Orchid@123</b></p>
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "2rem", gap: "1rem" }}>
+              <button onClick={() => setShowAddModal(false)} style={{ background: "none", border: "1px solid #cbd5e1", padding: "0.6rem 1.2rem", borderRadius: "8px", fontWeight: 700, cursor: "pointer", color: "#475569" }}>Cancel</button>
+              <button onClick={handleManualAdd} disabled={addLoading} style={{ background: "#3b82f6", color: "white", border: "none", padding: "0.6rem 1.2rem", borderRadius: "8px", fontWeight: 700, cursor: addLoading ? "not-allowed" : "pointer" }}>{addLoading ? "Saving..." : "Add Student"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Upload Modal */}
+      {showBulkModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: "white", borderRadius: "16px", padding: "2.5rem", width: "100%", maxWidth: "500px", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)", position: "relative", color: "#000" }}>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#1e1b4b", marginBottom: "1.5rem", margin: 0 }}>Bulk Upload Registrations</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <p style={{ fontSize: "0.9rem", color: "#475569", margin: 0 }}>
+                <b>Step 1:</b> Select the Level you want to upload students for. This will generate a CSV template with the correct custom fields (School, Class, etc.) for that Level.
+              </p>
+              
+              <div>
+                <label style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", display: "block", marginBottom: "0.4rem" }}>Select Level for Template</label>
+                <select value={bulkFormId} onChange={e => setBulkFormId(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", background: "white" }}>
+                  <option value="">Select Level...</option>
+                  {tierForms.map(tf => <option key={tf.id} value={tf.id}>{tf.name}</option>)}
+                </select>
+              </div>
+
+              <button onClick={downloadTemplate} disabled={!bulkFormId} style={{ background: bulkFormId ? "#3b82f6" : "#cbd5e1", color: "white", border: "none", padding: "0.5rem 1rem", borderRadius: "6px", cursor: bulkFormId ? "pointer" : "not-allowed", fontWeight: 600, alignSelf: "flex-start" }}>
+                Download CSV Template
+              </button>
+
+              <hr style={{ width: "100%", border: "none", borderTop: "1px solid #e2e8f0", margin: "0.5rem 0" }} />
+
+              <p style={{ fontSize: "0.9rem", color: "#475569", margin: 0 }}>
+                <b>Step 2:</b> Fill out the downloaded CSV and upload it here.
+              </p>
+
+              <div>
+                <input type="file" accept=".csv" onChange={(e) => setBulkFile(e.target.files?.[0] || null)} />
+              </div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "2rem", gap: "1rem" }}>
+              <button onClick={() => setShowBulkModal(false)} style={{ background: "none", border: "1px solid #cbd5e1", padding: "0.6rem 1.2rem", borderRadius: "8px", fontWeight: 700, cursor: "pointer", color: "#475569" }}>Cancel</button>
+              <button onClick={handleBulkUpload} disabled={bulkLoading || !bulkFile} style={{ background: "#8b5cf6", color: "white", border: "none", padding: "0.6rem 1.2rem", borderRadius: "8px", fontWeight: 700, cursor: (bulkLoading || !bulkFile) ? "not-allowed" : "pointer" }}>{bulkLoading ? "Uploading..." : "Upload CSV"}</button>
             </div>
           </div>
         </div>

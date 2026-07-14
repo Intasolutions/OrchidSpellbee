@@ -1,21 +1,38 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getDashboardStats } from "./actions";
+import { getDashboardStats, getSiteSettings, updateSiteSettings } from "./actions";
 import Link from "next/link";
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [settings, setSettings] = useState({ is_registration_active: true });
+  const [updatingSettings, setUpdatingSettings] = useState(false);
 
   useEffect(() => {
-    getDashboardStats().then((data) => {
-      if (data && !data.error) {
-        setStats(data);
+    Promise.all([getDashboardStats(), getSiteSettings()]).then(([statsData, settingsData]) => {
+      if (statsData && !statsData.error) {
+        setStats(statsData);
+      }
+      if (settingsData && !settingsData.error) {
+        setSettings(settingsData);
       }
       setLoading(false);
     });
   }, []);
+
+  const handleToggleRegistration = async () => {
+    setUpdatingSettings(true);
+    const newStatus = !settings.is_registration_active;
+    const res = await updateSiteSettings(newStatus);
+    if (res.success) {
+      setSettings({ ...settings, is_registration_active: newStatus });
+    } else {
+      alert("Failed to update settings");
+    }
+    setUpdatingSettings(false);
+  };
 
   if (loading) {
     return (
@@ -39,9 +56,45 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <div style={{ marginBottom: "2rem" }}>
-        <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "#1e1b4b", margin: 0 }}>Dashboard Overview</h1>
-        <p style={{ color: "#64748b", margin: "0.25rem 0 0 0", fontSize: "0.95rem" }}>Overview of registrations, dynamic tiers, and student progression stats.</p>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
+        <div>
+          <h1 style={{ fontSize: "2rem", fontWeight: 800, color: "#1e1b4b", margin: 0 }}>Dashboard Overview</h1>
+          <p style={{ color: "#64748b", margin: "0.25rem 0 0 0", fontSize: "0.95rem" }}>Overview of registrations, dynamic tiers, and student progression stats.</p>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'white', padding: '1rem', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#1e1b4b' }}>Global Registration</span>
+            <span style={{ fontSize: '0.75rem', color: settings.is_registration_active ? '#10b981' : '#ef4444' }}>
+              {settings.is_registration_active ? 'Active' : 'Deactivated'}
+            </span>
+          </div>
+          <button 
+            onClick={handleToggleRegistration}
+            disabled={updatingSettings}
+            style={{
+              width: '50px',
+              height: '26px',
+              borderRadius: '13px',
+              background: settings.is_registration_active ? '#10b981' : '#e2e8f0',
+              position: 'relative',
+              cursor: updatingSettings ? 'not-allowed' : 'pointer',
+              border: 'none',
+              transition: 'background 0.3s'
+            }}
+          >
+            <div style={{
+              width: '22px',
+              height: '22px',
+              background: 'white',
+              borderRadius: '50%',
+              position: 'absolute',
+              top: '2px',
+              left: settings.is_registration_active ? '26px' : '2px',
+              transition: 'left 0.3s',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+            }}></div>
+          </button>
+        </div>
       </div>
 
       {/* Grid of Stats Cards */}

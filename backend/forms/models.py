@@ -82,3 +82,25 @@ class Submission(models.Model):
 
     def __str__(self):
         return f"{self.student.name} - {self.form.name}"
+
+class SiteSettings(models.Model):
+    is_registration_active = models.BooleanField(default=True, help_text="Toggle global registration on/off")
+
+    class Meta:
+        verbose_name = "Site Setting"
+        verbose_name_plural = "Site Settings"
+
+    def save(self, *args, **kwargs):
+        self.pk = 1
+        super(SiteSettings, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        pass
+
+    @classmethod
+    def load(cls):
+        obj, created = cls.objects.get_or_create(pk=1)
+        return obj
+
+    def __str__(self):
+        return "Global Site Settings"

@@ -1,6 +1,12 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from .models import TierForm, FormField, Student, Submission
+from .models import TierForm, FormField, Student, Submission, SiteSettings
+
+class SiteSettingsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = SiteSettings
+        fields = ['is_registration_active']
+
 
 class FormFieldSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(required=False)
@@ -79,6 +85,72 @@ class StudentRegisterSerializer(serializers.Serializer):
             email=validated_data['email']
         )
         return student
+
+class AdminRegistrationCreateSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=200)
+    email = serializers.EmailField()
+    form_id = serializers.IntegerField()
+    payment_status = serializers.ChoiceField(choices=['PENDING', 'PAID', 'FAILED', 'NO PAYMENT'], default='PAID')
+    password = serializers.CharField(required=False, allow_blank=True) # allow overriding default
+    data = serializers.JSONField(required=False, default=dict)
+
+    def create(self, validated_data):
+        email = validated_data['email']
+        name = validated_data['name']
+        form_id = validated_data['form_id']
+        payment_status = validated_data.get('payment_status', 'PAID')
+        password = validated_data.get('password') or 'Orchid@123'
+        
+        try:
+            tier_form = TierForm.objects.get(id=form_id)
+        except TierForm.DoesNotExist:
+            raise serializers.ValidationError({"form_id": "Invalid form_id"})
+
+        # Get or create User
+        user, created_user = User.objects.get_or_create(
+            username=email,
+            defaults={'email': email}
+        )
+        if created_user:
+            user.set_password(password)
+            user.save()
+
+        # Get or create Student profile
+        student, created_student = Student.objects.get_or_create(
+            user=user,
+            defaults={
+                'name': name,
+                'email': email,
+                'current_tier': tier_form
+            }
+        )
+        if not created_student:
+            student.current_tier = tier_form
+            student.save()
+
+        # Create Submission
+        submission = Submission.objects.create(
+            student=student,
+            form=tier_form,
+            data=validated_data.get('data', {}),
+            payment_status=payment_status
+        )
+        return submission
+
+class AdminBulkRegistrationSerializer(serializers.Serializer):
+    registrations = AdminRegistrationCreateSerializer(many=True)
+
+    def create(self, validated_data):
+        created_submissions = []
+        for reg_data in validated_data['registrations']:
+            # Call the inner serializer's create directly
+            # This is okay because we're inside a transaction at the view level
+            serializer = AdminRegistrationCreateSerializer(data=reg_data)
+            if serializer.is_valid():
+                sub = serializer.save()
+                created_submissions.append(sub)
+        return created_submissions
+
 class SubmissionCreateSerializer(serializers.Serializer):
     student_name = serializers.CharField(max_length=200, required=False) # Keep for compatibility, but ignored
     student_email = serializers.EmailField(required=False, allow_blank=True) # Keep for compatibility, but ignored

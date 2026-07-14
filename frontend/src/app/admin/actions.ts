@@ -73,6 +73,36 @@ export async function getDashboardStats() {
   }
 }
 
+export async function getSiteSettings() {
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/settings/`, {
+      cache: "no-store"
+    });
+    if (!res.ok) throw new Error("Failed to fetch settings");
+    return await res.json();
+  } catch (error: any) {
+    console.error("getSiteSettings error:", error);
+    return { is_registration_active: true }; // default fallback
+  }
+}
+
+export async function updateSiteSettings(isActive: boolean) {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/admin-settings/`, {
+      method: "PATCH",
+      headers: getAdminHeaders(),
+      body: JSON.stringify({ is_registration_active: isActive }),
+      cache: "no-store"
+    });
+    if (!res.ok) throw new Error("Failed to update settings");
+    return { success: true, data: await res.json() };
+  } catch (error: any) {
+    console.error("updateSiteSettings error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
 export async function getSubmissions() {
   try {
     await verifySession();
@@ -146,6 +176,44 @@ export async function deleteSubmission(id: number) {
     return { success: true };
   } catch (error: any) {
     console.error("deleteSubmission error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function adminAddRegistration(data: any) {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/admin/registrations/add/`, {
+      method: "POST",
+      headers: getAdminHeaders(),
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(JSON.stringify(errorData));
+    }
+    return { success: true, data: await res.json() };
+  } catch (error: any) {
+    console.error("adminAddRegistration error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function adminBulkAddRegistrations(registrations: any[]) {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/admin/registrations/bulk-add/`, {
+      method: "POST",
+      headers: getAdminHeaders(),
+      body: JSON.stringify(registrations)
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(JSON.stringify(errorData));
+    }
+    return { success: true, data: await res.json() };
+  } catch (error: any) {
+    console.error("adminBulkAddRegistrations error:", error);
     return { success: false, error: error.message };
   }
 }

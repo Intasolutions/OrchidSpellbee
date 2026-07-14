@@ -2,11 +2,24 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { API_BASE_URL } from '@/config';
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isRegistrationActive, setIsRegistrationActive] = useState(true);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      setIsLoggedIn(!!localStorage.getItem('student_token'));
+    }
+    fetch(`${API_BASE_URL}/api/settings/`)
+      .then(res => res.json())
+      .then(data => setIsRegistrationActive(data.is_registration_active))
+      .catch(() => setIsRegistrationActive(true));
+  }, []);
 
   const navLinks = [
     { name: 'HOME', path: '/' },
@@ -63,29 +76,40 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Mobile Menu Button */}
-        <button 
-          className="mobile-menu-btn" 
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          style={{
-            display: 'none',
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            color: 'var(--color-text-heading)',
-            padding: '0.5rem',
-            outline: 'none'
-          }}
-          aria-label="Toggle navigation menu"
-        >
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            {isMobileMenuOpen ? (
-              <path d="M18 6L6 18M6 6l12 12" />
-            ) : (
-              <path d="M4 6h16M4 12h16M4 18h16" />
+          {/* Desktop Right Side - Button & Mobile Toggle */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            {isRegistrationActive && (
+              <Link href={isLoggedIn ? "/?register=true" : "/login"} style={{ textDecoration: 'none' }} className="desktop-login-btn">
+                <button className="btn" style={{ borderRadius: '25px', padding: '0.5rem 1.2rem', fontWeight: 'bold', fontSize: '0.8rem', cursor: 'pointer' }}>
+                  {isLoggedIn ? "Login to register" : "Login to Register"}
+                </button>
+              </Link>
             )}
-          </svg>
-        </button>
+
+            {/* Mobile Menu Button */}
+            <button 
+              className="mobile-menu-btn" 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              style={{
+                display: 'none',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                color: 'var(--color-text-heading)',
+                padding: '0.5rem',
+                outline: 'none'
+              }}
+              aria-label="Toggle navigation menu"
+            >
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                {isMobileMenuOpen ? (
+                  <path d="M18 6L6 18M6 6l12 12" />
+                ) : (
+                  <path d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+          </div>
 
         {/* Mobile Menu Drawer */}
         {isMobileMenuOpen && (
@@ -119,6 +143,17 @@ export default function Navbar() {
                 {link.name}
               </Link>
             ))}
+            {isRegistrationActive && (
+              <Link 
+                href={isLoggedIn ? "/?register=true" : "/login"} 
+                style={{ textDecoration: 'none', marginTop: '0.5rem' }}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <button className="btn" style={{ width: '100%', borderRadius: '12px', padding: '0.85rem', fontWeight: 'bold', fontSize: '0.9rem', cursor: 'pointer' }}>
+                  {isLoggedIn ? "Login to register" : "Login to Register"}
+                </button>
+              </Link>
+            )}
           </div>
         )}
       </nav>
