@@ -269,14 +269,15 @@ export default function SchoolsPage() {
                       {school.name}
                     </h3>
                     {school.agent_name ? (
-                    <span style={{ background: "rgba(16,185,129,0.1)", color: "#10b981", padding: "0.25rem 0.65rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 700, whiteSpace: "nowrap", flexShrink: 0 }}>
-                      {school.agent_name}
-                    </span>
-                  ) : (
-                    <span style={{ background: "#f1f5f9", color: "#94a3b8", padding: "0.25rem 0.65rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
-                      No Agent
-                    </span>
-                  )}
+                      <span style={{ background: "rgba(16,185,129,0.1)", color: "#10b981", padding: "0.25rem 0.65rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 700, whiteSpace: "nowrap", flexShrink: 0 }}>
+                        {school.agent_name}
+                      </span>
+                    ) : (
+                      <span style={{ background: "#f1f5f9", color: "#94a3b8", padding: "0.25rem 0.65rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>
+                        No Agent
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div style={{ marginTop: "0.6rem", display: "flex", alignItems: "center", gap: "0.4rem", color: "#64748b", fontSize: "0.85rem" }}>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
