@@ -89,20 +89,29 @@ class Submission(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        # Check if submission has school name in data
+        # Check if submission has school name in data.
+        # data keys are FormField IDs (e.g. {'7': 'John', '5': 'My School'})
         if self.data and isinstance(self.data, dict):
             school_val = None
-            for key, val in self.data.items():
-                if 'school' in key.lower():
-                    school_val = str(val).strip()
-                    break
+            for field_id, val in self.data.items():
+                try:
+                    field = FormField.objects.get(id=int(field_id))
+                    if 'school' in field.label.lower() and val:
+                        school_val = str(val).strip()
+                        break
+                except (FormField.DoesNotExist, ValueError, TypeError):
+                    # Fallback: if key itself contains "school" (legacy label-based data)
+                    if 'school' in str(field_id).lower() and val:
+                        school_val = str(val).strip()
+                        break
+
             if school_val:
                 school_obj = School.objects.filter(name__iexact=school_val).first()
                 if not school_obj:
                     school_obj = School.objects.create(name=school_val)
-                
+
                 student = self.student
-                if student.school != school_obj:
+                if student and student.school != school_obj:
                     student.school = school_obj
                     student.save(update_fields=['school'])
 
