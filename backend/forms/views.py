@@ -469,3 +469,58 @@ class StudentMeView(APIView):
             status_data["is_passed"] = latest_sub.is_passed
             
         return Response(status_data)
+
+
+class AdminBackfillSchoolsView(APIView):
+    """
+    One-time endpoint to backfill School records from all existing Submission data.
+    Protected by admin token. Call: GET /api/admin/backfill-schools/
+    """
+    permission_classes = [IsAdminOrSecretToken]
+
+    def get(self, request):
+        field_label_cache = {str(f.id): f.label for f in FormField.objects.all()}
+
+        created = 0
+        linked = 0
+        skipped = 0
+        log = []
+
+        for sub in Submission.objects.select_related("student").all():
+            if not sub.data or not isinstance(sub.data, dict):
+                skipped += 1
+                continue
+
+            school_val = None
+            for field_id, val in sub.data.items():
+                label = field_label_cache.get(str(field_id), "")
+                if "school" in label.lower() and val:
+                    school_val = str(val).strip()
+                    break
+
+            if not school_val:
+                skipped += 1
+                continue
+
+            school_obj = School.objects.filter(name__iexact=school_val).first()
+            if not school_obj:
+                school_obj = School.objects.create(name=school_val)
+                created += 1
+                log.append(f"Created school: {school_obj.name}")
+
+            student = sub.student
+            if student and student.school != school_obj:
+                student.school = school_obj
+                student.save(update_fields=["school"])
+                linked += 1
+                log.append(f"Linked: {student.name} → {school_obj.name}")
+
+        return Response({
+            "status": "done",
+            "schools_created": created,
+            "students_linked": linked,
+            "skipped": skipped,
+            "log": log,
+            "field_map": field_label_cache,
+        })
+

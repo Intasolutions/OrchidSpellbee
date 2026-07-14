@@ -18,7 +18,8 @@ from .views import (
     SiteSettingsView,
     AdminSiteSettingsView,
     AdminRegistrationCreateView,
-    AdminBulkRegistrationView
+    AdminBulkRegistrationView,
+    AdminBackfillSchoolsView
 )
 
 router = DefaultRouter()
@@ -46,4 +47,5 @@ urlpatterns = [
     path('auth/google/', StudentGoogleAuthView.as_view(), name='student-google-auth'),
     path('auth/me/', StudentMeView.as_view(), name='student-me'),
     path('verify-payment/', VerifyPaymentView.as_view(), name='verify-payment'),
+    path('admin/backfill-schools/', AdminBackfillSchoolsView.as_view(), name='admin-backfill-schools'),
 ]
