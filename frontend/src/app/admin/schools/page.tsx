@@ -18,6 +18,11 @@ export default function SchoolsPage() {
   const [formData, setFormData] = useState({ name: "", agent: "" });
   const [saving, setSaving] = useState(false);
 
+  // Bulk Assign
+  const [selectedSchools, setSelectedSchools] = useState<number[]>([]);
+  const [bulkAgent, setBulkAgent] = useState("");
+  const [bulkSaving, setBulkSaving] = useState(false);
+
   useEffect(() => { loadData(); }, []);
 
   const loadData = async () => {
@@ -73,6 +78,43 @@ export default function SchoolsPage() {
     return matchSearch && matchAgent;
   });
 
+  const handleSelectAll = () => {
+    if (selectedSchools.length === filtered.length && filtered.length > 0) {
+      setSelectedSchools([]);
+    } else {
+      setSelectedSchools(filtered.map(s => s.id));
+    }
+  };
+
+  const handleToggleSelect = (id: number) => {
+    setSelectedSchools(prev => prev.includes(id) ? prev.filter(sId => sId !== id) : [...prev, id]);
+  };
+
+  const handleBulkAssign = async () => {
+    if (!bulkAgent || selectedSchools.length === 0) return;
+    setBulkSaving(true);
+    let successCount = 0;
+    
+    // Loop through selected and save
+    const agentId = bulkAgent === "unassign" ? null : parseInt(bulkAgent);
+    
+    for (const id of selectedSchools) {
+      const school = schools.find(s => s.id === id);
+      if (school) {
+        const payload = { name: school.name, agent: agentId };
+        const res = await saveSchool(id, payload);
+        if (res.success) successCount++;
+      }
+    }
+    
+    setBulkSaving(false);
+    setSelectedSchools([]);
+    setBulkAgent("");
+    if (successCount > 0) {
+      loadData();
+    }
+  };
+
   const totalStudents = schools.reduce((sum: number, s: any) => sum + (s.students_count || 0), 0);
 
   return (
@@ -119,7 +161,16 @@ export default function SchoolsPage() {
       </div>
 
       {/* Filters */}
-      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem", background: "white", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+      <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "1.5rem", background: "white", padding: "1rem 1.25rem", borderRadius: "12px", border: "1px solid #e2e8f0", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", paddingRight: "1rem", borderRight: "1px solid #e2e8f0" }}>
+          <input
+            type="checkbox"
+            checked={filtered.length > 0 && selectedSchools.length === filtered.length}
+            onChange={handleSelectAll}
+            style={{ width: "1.1rem", height: "1.1rem", cursor: "pointer", accentColor: "#1e1b4b" }}
+          />
+          <span style={{ fontSize: "0.9rem", fontWeight: 700, color: "#1e1b4b" }}>Select All</span>
+        </div>
         <div style={{ flex: 1, minWidth: "220px" }}>
           <input
             type="text"
@@ -141,6 +192,40 @@ export default function SchoolsPage() {
           </select>
         </div>
       </div>
+
+      {/* Bulk Action Bar */}
+      {selectedSchools.length > 0 && (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", background: "#f8fafc", padding: "1rem 1.5rem", borderRadius: "12px", border: "1px solid #cbd5e1", marginBottom: "1.5rem" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <span style={{ fontWeight: 800, color: "#1e1b4b", fontSize: "1.1rem" }}>{selectedSchools.length}</span>
+            <span style={{ color: "#64748b", fontWeight: 600, fontSize: "0.95rem" }}>schools selected</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <select
+              value={bulkAgent}
+              onChange={(e) => setBulkAgent(e.target.value)}
+              style={{ width: "200px", padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem", background: "white", color: "#1e1b4b" }}
+            >
+              <option value="">Select Agent to Assign...</option>
+              <option value="unassign">-- Remove Agent (Unassign) --</option>
+              {agents.map((a: any) => <option key={a.id} value={a.id.toString()}>{a.name}</option>)}
+            </select>
+            <button
+              onClick={handleBulkAssign}
+              disabled={!bulkAgent || bulkSaving}
+              style={{ padding: "0.6rem 1.25rem", background: !bulkAgent || bulkSaving ? "#cbd5e1" : "#1e1b4b", color: "white", border: "none", borderRadius: "8px", fontWeight: 700, fontSize: "0.9rem", cursor: !bulkAgent || bulkSaving ? "not-allowed" : "pointer", transition: "all 0.2s" }}
+            >
+              {bulkSaving ? "Assigning..." : "Apply Bulk Assign"}
+            </button>
+            <button
+              onClick={() => setSelectedSchools([])}
+              style={{ padding: "0.6rem 1rem", background: "transparent", color: "#64748b", border: "1px solid #cbd5e1", borderRadius: "8px", fontWeight: 700, fontSize: "0.9rem", cursor: "pointer" }}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Schools Grid */}
       {loading ? (
@@ -172,11 +257,18 @@ export default function SchoolsPage() {
             >
               {/* School name + agent badge */}
               <div>
-                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.5rem" }}>
-                  <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 800, color: "#1e1b4b", lineHeight: 1.3 }}>
-                    {school.name}
-                  </h3>
-                  {school.agent_name ? (
+                <div style={{ display: "flex", justifyContent: "flex-start", alignItems: "flex-start", gap: "0.75rem" }}>
+                  <input
+                    type="checkbox"
+                    checked={selectedSchools.includes(school.id)}
+                    onChange={() => handleToggleSelect(school.id)}
+                    style={{ width: "1.2rem", height: "1.2rem", marginTop: "0.15rem", cursor: "pointer", accentColor: "#1e1b4b", flexShrink: 0 }}
+                  />
+                  <div style={{ flex: 1, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "0.5rem" }}>
+                    <h3 style={{ margin: 0, fontSize: "1.05rem", fontWeight: 800, color: "#1e1b4b", lineHeight: 1.3 }}>
+                      {school.name}
+                    </h3>
+                    {school.agent_name ? (
                     <span style={{ background: "rgba(16,185,129,0.1)", color: "#10b981", padding: "0.25rem 0.65rem", borderRadius: "20px", fontSize: "0.75rem", fontWeight: 700, whiteSpace: "nowrap", flexShrink: 0 }}>
                       {school.agent_name}
                     </span>
