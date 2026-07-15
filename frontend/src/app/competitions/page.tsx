@@ -239,9 +239,7 @@ export default function CompetitionsPage() {
               margin: "0 auto",
             }}
           >
-            Our competition is designed to nurture every participant from the
-            classroom to the national stage — a journey of growth, confidence,
-            and linguistic mastery.
+            The competition features a progressive four-tier structure. Advancement to each subsequent stage is contingent upon qualifying in the preceding round:
           </p>
         </div>
       </div>
@@ -296,6 +294,40 @@ export default function CompetitionsPage() {
         style={{ background: "#f8f9fa", padding: "6rem 0" }}
       >
         <div className="container" style={{ maxWidth: "1100px", margin: "0 auto" }}>
+        
+          {/* New Assessment & Awards Section */}
+          <div className="reveal-up" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "3rem", marginBottom: "5rem" }}>
+            
+            {/* Assessment Format */}
+            <div style={{ background: "white", padding: "2.5rem", borderRadius: "24px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)", border: "1px solid #f0f0f0" }}>
+              <h3 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-text-heading)", marginBottom: "1.5rem" }}>Assessment Format</h3>
+              <div style={{ marginBottom: "1.5rem" }}>
+                <h4 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--color-accent-orange)", marginBottom: "0.5rem" }}>School & District Levels</h4>
+                <p style={{ color: "var(--color-text-secondary)", lineHeight: "1.6", margin: 0 }}>Participants will undergo a standardized written examination.</p>
+              </div>
+              <div>
+                <h4 style={{ fontSize: "1.1rem", fontWeight: 700, color: "var(--color-accent-orange)", marginBottom: "0.5rem" }}>State & National Levels</h4>
+                <ul style={{ color: "var(--color-text-secondary)", lineHeight: "1.6", paddingLeft: "1.2rem", margin: 0 }}>
+                  <li style={{ marginBottom: "0.5rem" }}><strong>Phase 1 (Written Test):</strong> All qualifying candidates from the previous tier will sit for a preliminary written examination.</li>
+                  <li><strong>Phase 2 (Oral Rounds):</strong> Selected candidates who successfully pass the written test will advance to compete in the live oral evaluation rounds.</li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Awards & Recognitions */}
+            <div style={{ background: "white", padding: "2.5rem", borderRadius: "24px", boxShadow: "0 10px 30px rgba(0,0,0,0.05)", border: "1px solid #f0f0f0" }}>
+              <h3 style={{ fontSize: "1.5rem", fontWeight: 800, color: "var(--color-text-heading)", marginBottom: "1.5rem" }}>Awards & Recognitions</h3>
+              <p style={{ color: "var(--color-text-secondary)", fontWeight: 700, marginBottom: "1rem" }}>Tiered Rewards Summary</p>
+              <ul style={{ color: "var(--color-text-secondary)", lineHeight: "1.8", listStyle: "none", padding: 0, margin: 0 }}>
+                <li style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}><span style={{ color: "var(--color-accent-orange)" }}>✓</span> <span><strong>School Level:</strong> Memento & Certificate of Participation</span></li>
+                <li style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}><span style={{ color: "var(--color-accent-orange)" }}>✓</span> <span><strong>District Level:</strong> Cash Award, Memento & Certificate</span></li>
+                <li style={{ display: "flex", gap: "0.5rem", marginBottom: "1rem" }}><span style={{ color: "var(--color-accent-orange)" }}>✓</span> <span><strong>State Level:</strong> Cash Award, Memento & Certificate</span></li>
+                <li style={{ display: "flex", gap: "0.5rem" }}><span style={{ color: "var(--color-accent-orange)" }}>✓</span> <span><strong>National Level:</strong> Cash Award, Medal, Memento & Certificate</span></li>
+              </ul>
+            </div>
+
+          </div>
+
           <div className="reveal-up" style={{ textAlign: "center", marginBottom: "4rem" }}>
             <h2
               style={{
