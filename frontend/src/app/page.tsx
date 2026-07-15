@@ -389,11 +389,11 @@ export default function Home() {
           <div className="reveal-left" style={{ flex: 1 }}>
             <h4 style={{ color: '#a0aec0', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', fontSize: '0.9rem' }}>WHO WE ARE</h4>
             <h3 style={{ fontSize: '2rem', marginBottom: '1.5rem', color: 'var(--color-text-heading)' }}>Welcome to Orchid Spell Bee</h3>
-            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem', fontStyle: 'italic' }}>
-              where we engage children in the enriching practice of English language skills. Based in Thrissur, we are dedicated to fostering a love for language and enhancing linguistic abilities in young minds.
+            <p style={{ color: 'var(--color-text-secondary)', marginBottom: '1.5rem' }}>
+              The art of spelling extends far beyond a simple demonstration of linguistic proficiency; it is a celebration of the richness and complexity of the English language. Spelling bees serve as a testament to the enduring value we place on language mastery and academic excellence. This competition transcends winning—it is about the journey of learning, the discipline of rigorous preparation, and the fulfillment of achieving personal milestones.
             </p>
             <p style={{ color: 'var(--color-text-secondary)', marginBottom: '2rem' }}>
-              At Orchid Spell Bee, we believe that the path to mastery is as important as the destination. Our competition emphasizes the learning process, where each participant embarks on a journey of self-improvement and personal growth.
+              The Orchid Spell Bee promises to be a thrilling and inspiring event. Participants will be challenged with vocabulary designed to test their memory, comprehension, and composure under pressure. As the competition unfolds, we look forward to witnessing moments of triumph, resilience, and remarkable talent.
             </p>
             <div style={{ display: 'flex', gap: '1rem' }}>
               <button 
