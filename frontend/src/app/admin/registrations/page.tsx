@@ -233,7 +233,11 @@ export default function RegistrationsManager() {
         
         const res = await adminBulkUploadMarks(marksData);
         if (res.success) {
-          alert(`Success! Updated ${res.data.updated} marks. Skipped ${res.data.skipped}.`);
+          let msg = `Success! Updated ${res.data.updated} marks. Skipped ${res.data.skipped}.`;
+          if (res.data.skipped > 0 && res.data.log && res.data.log.length > 0) {
+            msg += "\n\nDetails:\n" + res.data.log.join("\n");
+          }
+          alert(msg);
           setShowBulkMarksModal(false);
           window.location.reload();
         } else {
@@ -248,7 +252,8 @@ export default function RegistrationsManager() {
   };
 
   const downloadMarksTemplate = () => {
-    const csv = "Registration ID,Mark,Level\nOSB-2026-0001,85,School\nOSB-2026-0002,92,School";
+    const levelName = tierForms.length > 0 ? tierForms[0].name : "School Level";
+    const csv = `Registration ID,Mark,Level\nOSB-2026-0001,85,${levelName}\nOSB-2026-0002,92,${levelName}`;
     const blob = new Blob([csv], { type: "text/csv" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
