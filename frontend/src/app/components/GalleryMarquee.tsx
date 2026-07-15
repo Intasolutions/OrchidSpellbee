@@ -24,8 +24,9 @@ export default function GalleryMarquee() {
 
   if (items.length === 0) return null;
 
-  // We duplicate the items to create a seamless infinite scrolling effect
-  const marqueeItems = [...items, ...items, ...items];
+  // Only animate and duplicate if we have enough items to fill the screen
+  const isMarquee = items.length >= 5;
+  const displayItems = isMarquee ? [...items, ...items, ...items] : items;
 
   return (
     <div style={{ background: "#ffffff", padding: "6rem 0", overflow: "hidden" }}>
@@ -46,16 +47,17 @@ export default function GalleryMarquee() {
         }}
       >
         <div 
-          className="marquee-container"
+          className={isMarquee ? "marquee-container" : ""}
           ref={scrollRef}
           style={{
             display: "flex",
             gap: "1.5rem",
-            animation: "scroll 35s linear infinite",
+            animation: isMarquee ? "scroll 35s linear infinite" : "none",
             width: "max-content",
+            margin: isMarquee ? "0" : "0 auto",
           }}
         >
-          {marqueeItems.map((item, index) => (
+          {displayItems.map((item, index) => (
             <div 
               key={`${item.id}-${index}`}
               style={{
