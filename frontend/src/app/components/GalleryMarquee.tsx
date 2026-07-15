@@ -71,7 +71,7 @@ export default function GalleryMarquee() {
             >
               {item.is_video ? (
                 <video
-                  src={`${API_BASE_URL}${item.media_file}`}
+                  src={item.media_file}
                   autoPlay
                   loop
                   muted
@@ -80,7 +80,7 @@ export default function GalleryMarquee() {
                 />
               ) : (
                 <img
-                  src={`${API_BASE_URL}${item.media_file}`}
+                  src={item.media_file}
                   alt={item.title || "Gallery image"}
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
