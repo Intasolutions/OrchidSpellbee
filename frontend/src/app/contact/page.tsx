@@ -156,8 +156,8 @@ export default function ContactPage() {
               },
               {
                 icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.21 12 19.79 19.79 0 0 1 1.14 3.36 2 2 0 0 1 3.12 1.14h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>,
-                label: "Call / WhatsApp",
-                lines: ["756 09 97 700", "Mon–Sat: 10AM – 5PM"],
+                label: "Helpline",
+                lines: ["+91 7560 99 77 00", "+91 8606 69 88 24", "+91 63662 22500", "+91 98863 30905"],
                 color: "#25d366",
               },
               {
@@ -165,6 +165,12 @@ export default function ContactPage() {
                 label: "Email Us",
                 lines: ["info@orchidspellbee.com"],
                 color: "#0ea5e9",
+              },
+              {
+                icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>,
+                label: "Website",
+                lines: ["www.orchidspellbee.com"],
+                color: "#8b5cf6",
               },
             ].map((item, i) => (
               <div

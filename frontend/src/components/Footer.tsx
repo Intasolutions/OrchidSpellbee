@@ -42,8 +42,10 @@ export default function Footer() {
              Contact
            </h4>
            <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: '1.8', margin: 0 }}>
-             <strong>Phone:</strong> 756 09 97 700<br/>
-             <strong>Email:</strong> info@orchidspellbee.com
+             <strong>Helpline:</strong> +91 7560 99 77 00 | +91 8606 69 88 24<br/>
+             <strong>Helpline:</strong> +91 63662 22500 | +91 98863 30905<br/>
+             <strong>Email:</strong> info@orchidspellbee.com<br/>
+             <strong>Website:</strong> www.orchidspellbee.com
            </p>
         </div>
         
