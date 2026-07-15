@@ -268,14 +268,17 @@ export default function RegistrationsManager() {
     let headers = ["name", "email", "form_id", "payment_status"];
     let dummyData1: string[] = [];
     let dummyData2: string[] = [];
-    
     if (bulkFormId) {
       const selectedTier = tierForms.find(tf => tf.id.toString() === bulkFormId);
       if (selectedTier && selectedTier.fields) {
         selectedTier.fields.forEach((f: any) => {
-          headers.push(f.label);
-          dummyData1.push(`Sample ${f.label}`);
-          dummyData2.push(`Sample ${f.label}`);
+          const label = (f.label || "").trim();
+          // Skip blank labels or labels that duplicate existing base headers
+          if (!label) return;
+          if (headers.map(h => h.toLowerCase()).includes(label.toLowerCase())) return;
+          headers.push(label);
+          dummyData1.push(`Sample ${label}`);
+          dummyData2.push(`Sample ${label}`);
         });
       }
     }
