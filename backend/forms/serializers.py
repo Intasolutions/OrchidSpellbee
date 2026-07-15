@@ -234,3 +234,11 @@ class SubmissionListSerializer(serializers.ModelSerializer):
             result[label] = value
         return result
 
+
+class AdminMarksUpdateSerializer(serializers.Serializer):
+    osb_id = serializers.CharField(max_length=100)
+    mark = serializers.FloatField()
+    level = serializers.CharField(max_length=200)
+
+class AdminBulkMarksUploadSerializer(serializers.Serializer):
+    marks = AdminMarksUpdateSerializer(many=True)

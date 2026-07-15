@@ -24,7 +24,8 @@ from .serializers import (
     AdminRegistrationCreateSerializer,
     AdminBulkRegistrationSerializer,
     AgentSerializer,
-    SchoolSerializer
+    SchoolSerializer,
+    AdminBulkMarksUploadSerializer
 )
 from .permissions import IsAdminOrSecretToken
 
@@ -524,3 +525,47 @@ class AdminBackfillSchoolsView(APIView):
             "field_map": field_label_cache,
         })
 
+
+class AdminBulkMarksUploadView(APIView):
+    permission_classes = [IsAdminOrSecretToken]
+
+    def post(self, request):
+        serializer = AdminBulkMarksUploadSerializer(data={'marks': request.data})
+        if serializer.is_valid():
+            marks_data = serializer.validated_data['marks']
+            updated = 0
+            skipped = 0
+            log = []
+
+            for row in marks_data:
+                osb_id = row['osb_id'].strip()
+                mark = row['mark']
+                level_name = row['level'].strip()
+
+                student = Student.objects.filter(student_code__iexact=osb_id, is_deleted=False).first()
+                if not student:
+                    skipped += 1
+                    log.append(f"Skipped: Student not found for ID '{osb_id}'")
+                    continue
+                
+                # Find the submission for this student and level
+                submission = Submission.objects.filter(student=student, form__name__iexact=level_name).first()
+                if not submission:
+                    skipped += 1
+                    log.append(f"Skipped: Level '{level_name}' not found for student '{osb_id}'")
+                    continue
+
+                submission.marks = float(mark)
+                submission.save()
+                updated += 1
+                log.append(f"Updated: '{osb_id}' - {level_name} - Mark: {mark}")
+
+            return Response({
+                "status": "success",
+                "message": f"Successfully updated {updated} marks. Skipped {skipped}.",
+                "updated": updated,
+                "skipped": skipped,
+                "log": log
+            }, status=status.HTTP_200_OK)
+            
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

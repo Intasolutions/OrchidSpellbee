@@ -19,7 +19,8 @@ from .views import (
     AdminSiteSettingsView,
     AdminRegistrationCreateView,
     AdminBulkRegistrationView,
-    AdminBackfillSchoolsView
+    AdminBackfillSchoolsView,
+    AdminBulkMarksUploadView
 )
 
 router = DefaultRouter()
@@ -39,6 +40,7 @@ urlpatterns = [
     path('admin/settings/', AdminSiteSettingsView.as_view(), name='admin-settings'),
     path('admin/registrations/add/', AdminRegistrationCreateView.as_view(), name='admin-registrations-add'),
     path('admin/registrations/bulk-add/', AdminBulkRegistrationView.as_view(), name='admin-registrations-bulk-add'),
+    path('admin/registrations/bulk-marks/', AdminBulkMarksUploadView.as_view(), name='admin-registrations-bulk-marks'),
     path('submit/', SubmitFormView.as_view(), name='submit-form'),
     path('admin-login/', AdminLoginView.as_view(), name='admin-login'),
     path('admin-stats/', AdminDashboardStatsView.as_view(), name='admin-stats'),

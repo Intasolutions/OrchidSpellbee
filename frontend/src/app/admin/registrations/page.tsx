@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSubmissions, updateSubmissionPaymentStatus, deleteSubmission, getTierForms, updateSubmissionMarks, adminAddRegistration, adminBulkAddRegistrations } from "../actions";
+import { getSubmissions, updateSubmissionPaymentStatus, deleteSubmission, getTierForms, updateSubmissionMarks, adminAddRegistration, adminBulkAddRegistrations, adminBulkUploadMarks } from "../actions";
 
 export default function RegistrationsManager() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -17,6 +17,7 @@ export default function RegistrationsManager() {
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);
+  const [showBulkMarksModal, setShowBulkMarksModal] = useState(false);
   
   const [addName, setAddName] = useState("");
   const [addEmail, setAddEmail] = useState("");
@@ -28,6 +29,9 @@ export default function RegistrationsManager() {
   const [bulkFile, setBulkFile] = useState<File | null>(null);
   const [bulkFormId, setBulkFormId] = useState("");
   const [bulkLoading, setBulkLoading] = useState(false);
+
+  const [bulkMarksFile, setBulkMarksFile] = useState<File | null>(null);
+  const [bulkMarksLoading, setBulkMarksLoading] = useState(false);
 
   useEffect(() => {
     Promise.all([getSubmissions(), getTierForms()]).then(([subsData, formsData]) => {
@@ -196,6 +200,65 @@ export default function RegistrationsManager() {
     reader.readAsText(bulkFile);
   };
 
+  const handleBulkMarksUpload = async () => {
+    if (!bulkMarksFile) return alert("Please select a CSV file");
+    setBulkMarksLoading(true);
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+      try {
+        const text = e.target?.result as string;
+        const rows = text.split("\n").filter(r => r.trim());
+        const headers = rows[0].split(",").map(h => h.trim().toLowerCase());
+        
+        // Match columns flexibly
+        const idIdx = headers.findIndex(h => h.includes("registration") || h.includes("osb"));
+        const markIdx = headers.findIndex(h => h.includes("mark") || h.includes("score"));
+        const levelIdx = headers.findIndex(h => h.includes("level") || h.includes("tier"));
+
+        if (idIdx === -1 || markIdx === -1 || levelIdx === -1) {
+          throw new Error("CSV must contain columns: 'Registration ID', 'Mark', 'Level'");
+        }
+
+        const marksData = [];
+        for (let i = 1; i < rows.length; i++) {
+          const values = rows[i].split(",").map(v => v.trim());
+          if (values.length >= 3 && values[idIdx] && values[markIdx]) {
+            marksData.push({
+              osb_id: values[idIdx],
+              mark: parseFloat(values[markIdx]),
+              level: values[levelIdx]
+            });
+          }
+        }
+        
+        const res = await adminBulkUploadMarks(marksData);
+        if (res.success) {
+          alert(`Success! Updated ${res.data.updated} marks. Skipped ${res.data.skipped}.`);
+          setShowBulkMarksModal(false);
+          window.location.reload();
+        } else {
+          alert("Error in bulk upload: " + res.error);
+        }
+      } catch (err: any) {
+        alert(err.message || "Error parsing CSV. Please check the format.");
+      }
+      setBulkMarksLoading(false);
+    };
+    reader.readAsText(bulkMarksFile);
+  };
+
+  const downloadMarksTemplate = () => {
+    const csv = "Registration ID,Mark,Level\nOSB-2026-0001,85,School\nOSB-2026-0002,92,School";
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `Orchid_Spellbee_MarksTemplate.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const downloadTemplate = () => {
     let headers = ["name", "email", "form_id", "payment_status"];
     let dummyData1: string[] = [];
@@ -251,6 +314,14 @@ export default function RegistrationsManager() {
             }}
           >
             Bulk Upload
+          </button>
+          <button 
+            onClick={() => setShowBulkMarksModal(true)}
+            style={{ 
+              background: "#1e1b4b", color: "white", border: "none", padding: "0.75rem 1.5rem", borderRadius: "8px", fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: "0.5rem"
+            }}
+          >
+            Upload Marks
           </button>
           <button 
             onClick={handleExportExcel}
@@ -655,6 +726,38 @@ export default function RegistrationsManager() {
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "2rem", gap: "1rem" }}>
               <button onClick={() => setShowBulkModal(false)} style={{ background: "none", border: "1px solid #cbd5e1", padding: "0.6rem 1.2rem", borderRadius: "8px", fontWeight: 700, cursor: "pointer", color: "#475569" }}>Cancel</button>
               <button onClick={handleBulkUpload} disabled={bulkLoading || !bulkFile} style={{ background: "#8b5cf6", color: "white", border: "none", padding: "0.6rem 1.2rem", borderRadius: "8px", fontWeight: 700, cursor: (bulkLoading || !bulkFile) ? "not-allowed" : "pointer" }}>{bulkLoading ? "Uploading..." : "Upload CSV"}</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bulk Upload Marks Modal */}
+      {showBulkMarksModal && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
+          <div style={{ background: "white", borderRadius: "16px", padding: "2.5rem", width: "100%", maxWidth: "500px", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)", position: "relative", color: "#000" }}>
+            <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#1e1b4b", marginBottom: "1.5rem", margin: 0 }}>Bulk Upload Marks</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <p style={{ fontSize: "0.9rem", color: "#475569", margin: 0 }}>
+                <b>Step 1:</b> Download the template CSV file.
+              </p>
+              
+              <button onClick={downloadMarksTemplate} style={{ background: "#3b82f6", color: "white", border: "none", padding: "0.5rem 1rem", borderRadius: "6px", cursor: "pointer", fontWeight: 600, alignSelf: "flex-start" }}>
+                Download CSV Template
+              </button>
+
+              <hr style={{ width: "100%", border: "none", borderTop: "1px solid #e2e8f0", margin: "0.5rem 0" }} />
+
+              <p style={{ fontSize: "0.9rem", color: "#475569", margin: 0 }}>
+                <b>Step 2:</b> Fill out the downloaded CSV and upload it here. Ensure it has <b>Registration ID</b>, <b>Mark</b>, and <b>Level</b>.
+              </p>
+
+              <div>
+                <input type="file" accept=".csv" onChange={(e) => setBulkMarksFile(e.target.files?.[0] || null)} />
+              </div>
+            </div>
+            <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "2rem", gap: "1rem" }}>
+              <button onClick={() => setShowBulkMarksModal(false)} style={{ background: "none", border: "1px solid #cbd5e1", padding: "0.6rem 1.2rem", borderRadius: "8px", fontWeight: 700, cursor: "pointer", color: "#475569" }}>Cancel</button>
+              <button onClick={handleBulkMarksUpload} disabled={bulkMarksLoading || !bulkMarksFile} style={{ background: "#1e1b4b", color: "white", border: "none", padding: "0.6rem 1.2rem", borderRadius: "8px", fontWeight: 700, cursor: (bulkMarksLoading || !bulkMarksFile) ? "not-allowed" : "pointer" }}>{bulkMarksLoading ? "Uploading..." : "Upload Marks"}</button>
             </div>
           </div>
         </div>

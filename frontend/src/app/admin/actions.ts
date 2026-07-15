@@ -218,6 +218,25 @@ export async function adminBulkAddRegistrations(registrations: any[]) {
   }
 }
 
+export async function adminBulkUploadMarks(marksData: any[]) {
+  try {
+    await verifySession();
+    const res = await fetch(`${API_BASE_URL}/api/admin/registrations/bulk-marks/`, {
+      method: "POST",
+      headers: getAdminHeaders(),
+      body: JSON.stringify(marksData)
+    });
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(JSON.stringify(errorData));
+    }
+    return { success: true, data: await res.json() };
+  } catch (error: any) {
+    console.error("adminBulkUploadMarks error:", error);
+    return { success: false, error: error.message };
+  }
+}
+
 export async function getTierForms() {
   try {
     await verifySession();
