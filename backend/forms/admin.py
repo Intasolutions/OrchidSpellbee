@@ -37,3 +37,11 @@ class SiteSettingsAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+from .models import GalleryItem
+
+@admin.register(GalleryItem)
+class GalleryItemAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'is_video', 'is_active', 'order', 'created_at')
+    list_editable = ('is_active', 'order')
+    list_filter = ('is_active', 'is_video')

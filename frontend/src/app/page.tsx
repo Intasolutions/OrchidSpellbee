@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { API_BASE_URL } from "@/config";
 import PrizeScrollSection from "@/app/components/PrizeScrollSection";
+import GalleryMarquee from "@/app/components/GalleryMarquee";
 
 export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -448,6 +449,9 @@ export default function Home() {
           </div>
         </div>
       </div>
+      
+      {/* Gallery Section */}
+      <GalleryMarquee />
 
       {/* Why Orchid Spell Bee Section */}
       <div id="why-us" style={{ background: '#f8f9fa', padding: '6rem 0' }}>

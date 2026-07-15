@@ -25,8 +25,10 @@ from .serializers import (
     AdminBulkRegistrationSerializer,
     AgentSerializer,
     SchoolSerializer,
-    AdminBulkMarksUploadSerializer
+    AdminBulkMarksUploadSerializer,
+    GalleryItemSerializer
 )
+from .models import TierForm, FormField, Student, Submission, SiteSettings, Agent, School, GalleryItem
 from .permissions import IsAdminOrSecretToken
 
 # Public view for settings
@@ -569,3 +571,11 @@ class AdminBulkMarksUploadView(APIView):
             }, status=status.HTTP_200_OK)
             
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class GalleryListView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        items = GalleryItem.objects.filter(is_active=True)
+        serializer = GalleryItemSerializer(items, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)

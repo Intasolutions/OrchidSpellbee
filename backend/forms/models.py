@@ -148,3 +148,17 @@ class SiteSettings(models.Model):
 
     def __str__(self):
         return "Global Site Settings"
+
+class GalleryItem(models.Model):
+    title = models.CharField(max_length=200, blank=True, null=True, help_text="Optional title or alt text")
+    media_file = models.FileField(upload_to='gallery/')
+    is_video = models.BooleanField(default=False, help_text="Check if this is a video file (mp4, webm)")
+    is_active = models.BooleanField(default=True)
+    order = models.IntegerField(default=0, help_text="Order in which it appears")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['order', '-created_at']
+
+    def __str__(self):
+        return self.title or f"Gallery Media {self.id}"

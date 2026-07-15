@@ -242,3 +242,10 @@ class AdminMarksUpdateSerializer(serializers.Serializer):
 
 class AdminBulkMarksUploadSerializer(serializers.Serializer):
     marks = AdminMarksUpdateSerializer(many=True)
+
+from .models import GalleryItem
+
+class GalleryItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = GalleryItem
+        fields = ['id', 'title', 'media_file', 'is_video', 'order']

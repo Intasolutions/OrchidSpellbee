@@ -20,7 +20,8 @@ from .views import (
     AdminRegistrationCreateView,
     AdminBulkRegistrationView,
     AdminBackfillSchoolsView,
-    AdminBulkMarksUploadView
+    AdminBulkMarksUploadView,
+    GalleryListView
 )
 
 router = DefaultRouter()
@@ -50,4 +51,5 @@ urlpatterns = [
     path('auth/me/', StudentMeView.as_view(), name='student-me'),
     path('verify-payment/', VerifyPaymentView.as_view(), name='verify-payment'),
     path('admin/backfill-schools/', AdminBackfillSchoolsView.as_view(), name='admin-backfill-schools'),
+    path('gallery/', GalleryListView.as_view(), name='gallery-list'),
 ]
