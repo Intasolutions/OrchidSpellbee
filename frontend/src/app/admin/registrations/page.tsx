@@ -268,14 +268,22 @@ export default function RegistrationsManager() {
     let headers = ["name", "email", "form_id", "payment_status"];
     let dummyData1: string[] = [];
     let dummyData2: string[] = [];
+
+    // Base fields that are already captured — skip form fields that match these semantically
+    const baseFieldKeywords = ["name", "email"];
+
     if (bulkFormId) {
       const selectedTier = tierForms.find(tf => tf.id.toString() === bulkFormId);
       if (selectedTier && selectedTier.fields) {
         selectedTier.fields.forEach((f: any) => {
           const label = (f.label || "").trim();
-          // Skip blank labels or labels that duplicate existing base headers
+          // Skip blank labels
           if (!label) return;
+          // Skip exact duplicates (case-insensitive)
           if (headers.map(h => h.toLowerCase()).includes(label.toLowerCase())) return;
+          // Skip labels that are semantically the same as base fields (e.g. "Email id" ~ "email")
+          const labelLower = label.toLowerCase().replace(/\s+/g, "");
+          if (baseFieldKeywords.some(kw => labelLower === kw || labelLower === kw + "id" || labelLower === kw + "address")) return;
           headers.push(label);
           dummyData1.push(`Sample ${label}`);
           dummyData2.push(`Sample ${label}`);
