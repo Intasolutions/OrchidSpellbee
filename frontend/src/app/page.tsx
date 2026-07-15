@@ -281,7 +281,7 @@ export default function Home() {
             maxWidth: '520px',
             lineHeight: '1.7'
           }}>
-            Join thousands of students in a celebration of the English language. Improve your linguistic prowess and embark on a journey of self-improvement.
+            Inspire young minds to strengthen their spelling, vocabulary, and pronunciation skills, enabling them to achieve greater proficiency in the English language.
           </p>
           <div className="animate-reveal-up delay-300" style={{ display: 'flex', gap: '1rem' }}>
             {isRegistrationActive && (
