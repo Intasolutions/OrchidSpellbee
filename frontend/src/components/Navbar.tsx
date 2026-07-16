@@ -79,11 +79,21 @@ export default function Navbar() {
           {/* Desktop Right Side - Button & Mobile Toggle */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             {isRegistrationActive && (
-              <Link href={isLoggedIn ? "/?register=true" : "/login"} style={{ textDecoration: 'none' }} className="desktop-login-btn">
-                <button className="btn" style={{ borderRadius: '25px', padding: '0.5rem 1.2rem', fontWeight: 'bold', fontSize: '0.8rem', cursor: 'pointer' }}>
-                  {isLoggedIn ? "Login to register" : "Login to Register"}
+              isLoggedIn && pathname === '/' ? (
+                <button 
+                  onClick={() => window.dispatchEvent(new CustomEvent('openRegisterModal'))} 
+                  className="btn desktop-login-btn" 
+                  style={{ borderRadius: '25px', padding: '0.5rem 1.2rem', fontWeight: 'bold', fontSize: '0.8rem', cursor: 'pointer' }}
+                >
+                  Login to register
                 </button>
-              </Link>
+              ) : (
+                <Link href={isLoggedIn ? "/?register=true" : "/login"} style={{ textDecoration: 'none' }} className="desktop-login-btn">
+                  <button className="btn" style={{ borderRadius: '25px', padding: '0.5rem 1.2rem', fontWeight: 'bold', fontSize: '0.8rem', cursor: 'pointer' }}>
+                    {isLoggedIn ? "Login to register" : "Login to Register"}
+                  </button>
+                </Link>
+              )
             )}
 
             {/* Mobile Menu Button */}
@@ -144,15 +154,28 @@ export default function Navbar() {
               </Link>
             ))}
             {isRegistrationActive && (
-              <Link 
-                href={isLoggedIn ? "/?register=true" : "/login"} 
-                style={{ textDecoration: 'none', marginTop: '0.5rem' }}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <button className="btn" style={{ width: '100%', borderRadius: '12px', padding: '0.85rem', fontWeight: 'bold', fontSize: '0.9rem', cursor: 'pointer' }}>
-                  {isLoggedIn ? "Login to register" : "Login to Register"}
+              isLoggedIn && pathname === '/' ? (
+                <button 
+                  onClick={() => {
+                    setIsMobileMenuOpen(false);
+                    window.dispatchEvent(new CustomEvent('openRegisterModal'));
+                  }} 
+                  className="btn" 
+                  style={{ width: '100%', borderRadius: '12px', padding: '0.85rem', fontWeight: 'bold', fontSize: '0.9rem', cursor: 'pointer', marginTop: '0.5rem' }}
+                >
+                  Dashboard / Register
                 </button>
-              </Link>
+              ) : (
+                <Link 
+                  href={isLoggedIn ? "/?register=true" : "/login"} 
+                  style={{ textDecoration: 'none', marginTop: '0.5rem' }}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <button className="btn" style={{ width: '100%', borderRadius: '12px', padding: '0.85rem', fontWeight: 'bold', fontSize: '0.9rem', cursor: 'pointer' }}>
+                    {isLoggedIn ? "Dashboard / Register" : "Login to Register"}
+                  </button>
+                </Link>
+              )
             )}
           </div>
         )}

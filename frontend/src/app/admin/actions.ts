@@ -89,7 +89,7 @@ export async function getSiteSettings() {
 export async function updateSiteSettings(isActive: boolean) {
   try {
     await verifySession();
-    const res = await fetch(`${API_BASE_URL}/api/admin-settings/`, {
+    const res = await fetch(`${API_BASE_URL}/api/admin/settings/`, {
       method: "PATCH",
       headers: getAdminHeaders(),
       body: JSON.stringify({ is_registration_active: isActive }),

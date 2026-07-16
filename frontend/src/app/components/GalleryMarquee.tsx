@@ -12,15 +12,23 @@ interface GalleryItem {
 }
 
 export default function GalleryMarquee() {
-  const [items, setItems] = useState<GalleryItem[]>([]);
+  const [items, setItems] = useState<GalleryItem[]>([
+    { id: 1, title: 'Moment 1', media_file: '/img/img1.JPG', is_video: false, order: 1 },
+    { id: 2, title: 'Moment 2', media_file: '/img/img2.JPG', is_video: false, order: 2 },
+    { id: 3, title: 'Moment 3', media_file: '/img/img3.JPG', is_video: false, order: 3 },
+    { id: 4, title: 'Moment 4', media_file: '/img/img4.JPG', is_video: false, order: 4 },
+    { id: 5, title: 'Moment 5', media_file: '/img/img5.JPG', is_video: false, order: 5 },
+    { id: 6, title: 'Moment 6', media_file: '/img/img7.JPG', is_video: false, order: 6 },
+  ]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    fetch(`${API_BASE_URL}/api/gallery/`)
-      .then((res) => res.json())
-      .then((data) => setItems(data))
-      .catch((err) => console.error("Error fetching gallery:", err));
-  }, []);
+  // We are using static images instead of fetching from the backend API.
+  // useEffect(() => {
+  //   fetch(`${API_BASE_URL}/api/gallery/`)
+  //     .then((res) => res.json())
+  //     .then((data) => setItems(data))
+  //     .catch((err) => console.error("Error fetching gallery:", err));
+  // }, []);
 
   if (items.length === 0) return null;
 
@@ -30,7 +38,7 @@ export default function GalleryMarquee() {
 
   return (
     <div style={{ background: "#ffffff", padding: "6rem 0", overflow: "hidden" }}>
-      <div className="container" style={{ textAlign: "center", marginBottom: "3rem" }}>
+      <div className="container reveal-up" style={{ textAlign: "center", marginBottom: "3rem" }}>
         <h2 style={{ fontSize: "2.5rem", color: "var(--color-text-heading)", fontWeight: "800", marginBottom: "1rem" }}>
           Our Moments
         </h2>
@@ -38,6 +46,7 @@ export default function GalleryMarquee() {
       </div>
 
       <div
+        className="reveal-up delay-200"
         style={{
           position: "relative",
           width: "100%",
@@ -45,6 +54,29 @@ export default function GalleryMarquee() {
           padding: "1rem 0",
         }}
       >
+        {/* Left Fade Overlay */}
+        <div style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "150px",
+          height: "100%",
+          background: "linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)",
+          zIndex: 2,
+          pointerEvents: "none"
+        }} />
+        
+        {/* Right Fade Overlay */}
+        <div style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: "150px",
+          height: "100%",
+          background: "linear-gradient(to left, rgba(255,255,255,1) 0%, rgba(255,255,255,0) 100%)",
+          zIndex: 2,
+          pointerEvents: "none"
+        }} />
         <div
           className="marquee-track"
           ref={scrollRef}

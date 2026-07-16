@@ -466,7 +466,6 @@ export default function CompetitionsPage() {
                       {[
                         { label: "Format", val: level.format },
                         { label: "Duration", val: level.duration },
-                        { label: "Entry Fee", val: level.fee },
                       ].map((info, i) => (
                         <div
                           key={i}

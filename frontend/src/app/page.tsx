@@ -89,6 +89,9 @@ export default function Home() {
       const params = new URLSearchParams(window.location.search);
       if (params.get("register") === "true") {
         setIsModalOpen(true);
+        // Clear the query param so it doesn't reopen on refresh
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, document.title, newUrl);
       }
 
       // Set up scroll animations
@@ -103,7 +106,13 @@ export default function Home() {
       const elements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right, .fade-up');
       elements.forEach(el => observer.observe(el));
 
-      return () => observer.disconnect();
+      const handleOpenModal = () => setIsModalOpen(true);
+      window.addEventListener('openRegisterModal', handleOpenModal);
+
+      return () => {
+        observer.disconnect();
+        window.removeEventListener('openRegisterModal', handleOpenModal);
+      };
     }
   }, []);
 
