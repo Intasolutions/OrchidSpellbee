@@ -24,9 +24,9 @@ export default function RoundsAndPrizesPage() {
     },
     {
       num: "02",
-      name: "Zonal Level",
+      name: "District Level",
       type: "Written + Oral",
-      desc: "Qualifiers from multiple schools compete at the zonal level. The oral rounds begin here — spelling words aloud before a panel of judges in a live competitive setting.",
+      desc: "Qualifiers from multiple schools compete at the district level. The oral rounds begin here — spelling words aloud before a panel of judges in a live competitive setting.",
       color: "#7c3aed",
       bgLight: "rgba(124,58,237,0.08)",
     },

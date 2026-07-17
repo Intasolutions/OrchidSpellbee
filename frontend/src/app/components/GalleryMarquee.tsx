@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Image from "next/image";
 import { API_BASE_URL } from "@/config";
 
 interface GalleryItem {
@@ -99,6 +100,7 @@ export default function GalleryMarquee() {
                 boxShadow: "0 10px 30px rgba(0,0,0,0.10)",
                 flexShrink: 0,
                 backgroundColor: "#f8f9fa",
+                position: "relative"
               }}
             >
               {item.is_video ? (
@@ -111,10 +113,12 @@ export default function GalleryMarquee() {
                   style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               ) : (
-                <img
+                <Image
                   src={item.media_file}
                   alt={item.title || "Gallery image"}
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  fill
+                  sizes="360px"
+                  style={{ objectFit: "cover" }}
                 />
               )}
             </div>
