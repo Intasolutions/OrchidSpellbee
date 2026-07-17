@@ -5,7 +5,7 @@ from .models import TierForm, FormField, Student, Submission, SiteSettings, Agen
 class SiteSettingsSerializer(serializers.ModelSerializer):
     class Meta:
         model = SiteSettings
-        fields = ['is_registration_active']
+        fields = ['is_registration_active', 'is_results_published']
 
 
 class FormFieldSerializer(serializers.ModelSerializer):

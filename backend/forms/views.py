@@ -579,3 +579,35 @@ class GalleryListView(APIView):
         items = GalleryItem.objects.filter(is_active=True)
         serializer = GalleryItemSerializer(items, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+class PublicResultView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        settings_obj = SiteSettings.load()
+        if not settings_obj.is_results_published:
+            return Response({"error": "Results are not published yet."}, status=status.HTTP_403_FORBIDDEN)
+            
+        search_query = request.query_params.get('q', '').strip()
+        if not search_query:
+            return Response({"error": "Search query (Student Code or Email) is required."}, status=status.HTTP_400_BAD_REQUEST)
+            
+        student = Student.objects.filter(student_code__iexact=search_query, is_deleted=False).first()
+        if not student:
+            student = Student.objects.filter(email__iexact=search_query, is_deleted=False).first()
+            
+        if not student:
+            return Response({"error": "No student found with the provided code or email."}, status=status.HTTP_404_NOT_FOUND)
+            
+        latest_sub = Submission.objects.filter(student=student).order_by('-form__order').first()
+        
+        if not latest_sub:
+            return Response({"error": "No results found for this student."}, status=status.HTTP_404_NOT_FOUND)
+            
+        return Response({
+            "name": student.name,
+            "student_code": student.student_code,
+            "latest_tier": latest_sub.form.name,
+            "marks": latest_sub.marks,
+            "is_passed": latest_sub.is_passed,
+        })

@@ -129,6 +129,7 @@ class Submission(models.Model):
 
 class SiteSettings(models.Model):
     is_registration_active = models.BooleanField(default=True, help_text="Toggle global registration on/off")
+    is_results_published = models.BooleanField(default=False, help_text="Toggle global results visibility")
 
     class Meta:
         verbose_name = "Site Setting"

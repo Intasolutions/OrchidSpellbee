@@ -10,6 +10,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isRegistrationActive, setIsRegistrationActive] = useState(true);
+  const [isResultsPublished, setIsResultsPublished] = useState(false);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -17,7 +18,10 @@ export default function Navbar() {
     }
     fetch(`${API_BASE_URL}/api/settings/`)
       .then(res => res.json())
-      .then(data => setIsRegistrationActive(data.is_registration_active))
+      .then(data => {
+        setIsRegistrationActive(data.is_registration_active);
+        setIsResultsPublished(data.is_results_published);
+      })
       .catch(() => setIsRegistrationActive(true));
   }, []);
 
@@ -28,6 +32,10 @@ export default function Navbar() {
     { name: 'OUR BOOKS', path: '/our-books' },
     { name: 'CONTACT', path: '/contact' }
   ];
+
+  if (isResultsPublished) {
+    navLinks.splice(3, 0, { name: 'RESULTS', path: '/results' });
+  }
 
   return (
     <header className="animate-drop-down" style={{ 

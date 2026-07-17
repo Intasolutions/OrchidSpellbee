@@ -7,7 +7,7 @@ import Link from "next/link";
 export default function AdminDashboard() {
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [settings, setSettings] = useState({ is_registration_active: true });
+  const [settings, setSettings] = useState({ is_registration_active: true, is_results_published: false });
   const [updatingSettings, setUpdatingSettings] = useState(false);
 
   useEffect(() => {
@@ -25,9 +25,21 @@ export default function AdminDashboard() {
   const handleToggleRegistration = async () => {
     setUpdatingSettings(true);
     const newStatus = !settings.is_registration_active;
-    const res = await updateSiteSettings(newStatus);
+    const res = await updateSiteSettings({ is_registration_active: newStatus });
     if (res.success) {
       setSettings({ ...settings, is_registration_active: newStatus });
+    } else {
+      alert("Failed to update settings");
+    }
+    setUpdatingSettings(false);
+  };
+
+  const handleToggleResults = async () => {
+    setUpdatingSettings(true);
+    const newStatus = !settings.is_results_published;
+    const res = await updateSiteSettings({ is_results_published: newStatus });
+    if (res.success) {
+      setSettings({ ...settings, is_results_published: newStatus });
     } else {
       alert("Failed to update settings");
     }
@@ -90,6 +102,39 @@ export default function AdminDashboard() {
               position: 'absolute',
               top: '2px',
               left: settings.is_registration_active ? '26px' : '2px',
+              transition: 'left 0.3s',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+            }}></div>
+          </button>
+          <div style={{ width: '1px', height: '40px', background: '#e2e8f0', margin: '0 0.5rem' }}></div>
+          <div style={{ display: 'flex', flexDirection: 'column' }}>
+            <span style={{ fontWeight: 600, fontSize: '0.9rem', color: '#1e1b4b' }}>Publish Results</span>
+            <span style={{ fontSize: '0.75rem', color: settings.is_results_published ? '#10b981' : '#ef4444' }}>
+              {settings.is_results_published ? 'Published' : 'Hidden'}
+            </span>
+          </div>
+          <button 
+            onClick={handleToggleResults}
+            disabled={updatingSettings}
+            style={{
+              width: '50px',
+              height: '26px',
+              borderRadius: '13px',
+              background: settings.is_results_published ? '#10b981' : '#e2e8f0',
+              position: 'relative',
+              cursor: updatingSettings ? 'not-allowed' : 'pointer',
+              border: 'none',
+              transition: 'background 0.3s'
+            }}
+          >
+            <div style={{
+              width: '22px',
+              height: '22px',
+              background: 'white',
+              borderRadius: '50%',
+              position: 'absolute',
+              top: '2px',
+              left: settings.is_results_published ? '26px' : '2px',
               transition: 'left 0.3s',
               boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
             }}></div>

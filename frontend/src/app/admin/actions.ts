@@ -82,17 +82,17 @@ export async function getSiteSettings() {
     return await res.json();
   } catch (error: any) {
     console.error("getSiteSettings error:", error);
-    return { is_registration_active: true }; // default fallback
+    return { is_registration_active: true, is_results_published: false }; // default fallback
   }
 }
 
-export async function updateSiteSettings(isActive: boolean) {
+export async function updateSiteSettings(settings: { is_registration_active?: boolean, is_results_published?: boolean }) {
   try {
     await verifySession();
     const res = await fetch(`${API_BASE_URL}/api/admin/settings/`, {
       method: "PATCH",
       headers: getAdminHeaders(),
-      body: JSON.stringify({ is_registration_active: isActive }),
+      body: JSON.stringify(settings),
       cache: "no-store"
     });
     if (!res.ok) throw new Error("Failed to update settings");
