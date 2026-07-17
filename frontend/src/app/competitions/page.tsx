@@ -57,7 +57,7 @@ export default function CompetitionsPage() {
       color: "#ffb800",
       bgLight: "rgba(255,184,0,0.08)",
       format: "Written Test",
-      duration: "90 Minutes",
+      duration: "30 Minutes",
       fee: "₹500",
       desc: "The gateway to the Orchid Spell Bee journey. Students demonstrate their foundational spelling and vocabulary skills through a structured written examination.",
       details: [
