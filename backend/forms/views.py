@@ -11,6 +11,7 @@ from google.auth.transport import requests as google_requests
 from django.contrib.auth.models import User
 from django.conf import settings
 import razorpay
+from django.core.paginator import Paginator, EmptyPage
 
 from .models import TierForm, FormField, Student, Submission, SiteSettings, Agent, School
 from .serializers import (
@@ -610,4 +611,53 @@ class PublicResultView(APIView):
             "latest_tier": latest_sub.form.name,
             "marks": latest_sub.marks,
             "is_passed": latest_sub.is_passed,
+        })
+
+class PublicSchoolResultView(APIView):
+    permission_classes = [AllowAny]
+
+    def get(self, request):
+        settings_obj = SiteSettings.load()
+        if not settings_obj.is_results_published:
+            return Response({"error": "Results are not published yet."}, status=status.HTTP_403_FORBIDDEN)
+            
+        search_query = request.query_params.get('q', '').strip()
+        if not search_query:
+            return Response({"error": "Search query (School Name) is required."}, status=status.HTTP_400_BAD_REQUEST)
+            
+        schools = School.objects.filter(name__icontains=search_query)
+        if not schools.exists():
+            return Response({"error": "No school found matching the search query."}, status=status.HTTP_404_NOT_FOUND)
+            
+        students = Student.objects.filter(school__in=schools, is_deleted=False).order_by('name')
+        
+        try:
+            page = int(request.query_params.get('page', 1))
+        except ValueError:
+            page = 1
+            
+        paginator = Paginator(students, 10) # 10 students per page
+        
+        try:
+            students_page = paginator.page(page)
+        except EmptyPage:
+            return Response({"error": "No more results."}, status=status.HTTP_404_NOT_FOUND)
+            
+        results = []
+        for student in students_page:
+            latest_sub = Submission.objects.filter(student=student).order_by('-form__order').first()
+            if latest_sub:
+                results.append({
+                    "name": student.name,
+                    "student_code": student.student_code,
+                    "latest_tier": latest_sub.form.name,
+                    "marks": latest_sub.marks,
+                    "is_passed": latest_sub.is_passed,
+                })
+        
+        return Response({
+            "results": results,
+            "total_pages": paginator.num_pages,
+            "current_page": page,
+            "total_students": paginator.count
         })

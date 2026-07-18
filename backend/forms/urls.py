@@ -22,7 +22,8 @@ from .views import (
     AdminBackfillSchoolsView,
     AdminBulkMarksUploadView,
     GalleryListView,
-    PublicResultView
+    PublicResultView,
+    PublicSchoolResultView
 )
 
 router = DefaultRouter()
@@ -54,4 +55,5 @@ urlpatterns = [
     path('admin/backfill-schools/', AdminBackfillSchoolsView.as_view(), name='admin-backfill-schools'),
     path('gallery/', GalleryListView.as_view(), name='gallery-list'),
     path('public/result/', PublicResultView.as_view(), name='public-result'),
+    path('public/school-result/', PublicSchoolResultView.as_view(), name='public-school-result'),
 ]
