@@ -11,6 +11,8 @@ export default function SchoolsPage() {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterAgent, setFilterAgent] = useState("All Agents");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
 
   // Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -70,12 +72,17 @@ export default function SchoolsPage() {
     }
   };
 
+  const uniqueStates = Array.from(new Set(schools.map(s => s.state).filter(Boolean)));
+  const uniqueDistricts = Array.from(new Set(schools.map(s => s.district).filter(Boolean)));
+
   const filtered = schools.filter((s: any) => {
     const matchSearch = s.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchAgent = filterAgent === "All Agents" ||
       (filterAgent === "Unassigned" && !s.agent_name) ||
       (s.agent_name && s.agent_name === filterAgent);
-    return matchSearch && matchAgent;
+    const matchState = selectedState === "" || s.state === selectedState;
+    const matchDistrict = selectedDistrict === "" || s.district === selectedDistrict;
+    return matchSearch && matchAgent && matchState && matchDistrict;
   });
 
   const handleSelectAll = () => {
@@ -191,6 +198,43 @@ export default function SchoolsPage() {
             {agents.map((a: any) => <option key={a.id} value={a.name}>{a.name}</option>)}
           </select>
         </div>
+
+        {uniqueStates.length > 0 && (
+          <div style={{ minWidth: "150px" }}>
+            <select
+              value={selectedState}
+              onChange={(e) => { setSelectedState(e.target.value); setSelectedDistrict(""); }}
+              style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem", background: "white", color: "#1e1b4b" }}
+            >
+              <option value="">All States</option>
+              {uniqueStates.map((state: any) => (
+                <option key={state} value={state}>{state}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {uniqueDistricts.length > 0 && (
+          <div style={{ minWidth: "150px" }}>
+            <select
+              value={selectedDistrict}
+              onChange={(e) => setSelectedDistrict(e.target.value)}
+              style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "8px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem", background: "white", color: "#1e1b4b" }}
+            >
+              <option value="">All Districts</option>
+              {uniqueDistricts
+                .filter((district: any) => {
+                  if (!selectedState) return true;
+                  const validDistricts = new Set(schools.filter(s => s.state === selectedState).map(s => s.district).filter(Boolean));
+                  return validDistricts.has(district);
+                })
+                .map((district: any) => (
+                <option key={district} value={district}>{district}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
       </div>
 
       {/* Bulk Action Bar */}

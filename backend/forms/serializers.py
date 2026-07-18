@@ -69,13 +69,36 @@ class AgentSerializer(serializers.ModelSerializer):
 class SchoolSerializer(serializers.ModelSerializer):
     agent_name = serializers.CharField(source='agent.name', read_only=True)
     students_count = serializers.SerializerMethodField()
+    state = serializers.SerializerMethodField()
+    district = serializers.SerializerMethodField()
 
     class Meta:
         model = School
-        fields = ['id', 'name', 'agent', 'agent_name', 'students_count', 'created_at']
+        fields = ['id', 'name', 'agent', 'agent_name', 'students_count', 'state', 'district', 'created_at']
 
     def get_students_count(self, obj):
         return obj.students.filter(is_deleted=False).count()
+
+    def _get_labeled_data(self, obj):
+        if not hasattr(obj, '_cached_labeled_data'):
+            student = obj.students.filter(is_deleted=False).first()
+            obj._cached_labeled_data = {}
+            if student:
+                submission = student.submissions.first()
+                if submission:
+                    field_map = {str(field.id): field.label for field in submission.form.fields.all()}
+                    for key, val in submission.data.items():
+                        label = field_map.get(str(key), str(key))
+                        obj._cached_labeled_data[label] = val
+        return obj._cached_labeled_data
+
+    def get_state(self, obj):
+        data = self._get_labeled_data(obj)
+        return data.get('State') or data.get('state')
+
+    def get_district(self, obj):
+        data = self._get_labeled_data(obj)
+        return data.get('District') or data.get('district')
 
 class StudentSerializer(serializers.ModelSerializer):
     current_tier_name = serializers.CharField(source='current_tier.name', read_only=True)
