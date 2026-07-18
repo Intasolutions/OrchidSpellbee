@@ -41,18 +41,7 @@ export default function OurBooksPage() {
       topics: ["Latin & Greek roots", "Complex word structures", "State-level word bank", "Timed practice rounds"],
       desc: "The comprehensive guide for serious competitors. Covers over 2,500 words drawn from academic, scientific, and literary sources at the state-competition level.",
     },
-    {
-      title: "The Grand Finale Dictionary",
-      level: "Classes 10 – 12",
-      image: "/img/04.png",
-      color: "#f97316",
-      bgLight: "rgba(249,115,22,0.08)",
-      borderColor: "rgba(249,115,22,0.25)",
-      pages: "420 Pages",
-      words: "5,000+ Words",
-      topics: ["National-level word corpus", "International etymology", "Expert pronunciation guide", "Championship strategies"],
-      desc: "The ultimate resource for national-level competitors. Curated by our expert panel with 5,000+ rare and advanced words used in national and international spelling bees.",
-    },
+
   ];
 
   return (

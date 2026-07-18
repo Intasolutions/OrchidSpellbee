@@ -10,19 +10,20 @@ interface GalleryItem {
   media_file: string;
   is_video: boolean;
   order: number;
+  rotation?: string;
 }
 
 export default function GalleryMarquee() {
   const [items, setItems] = useState<GalleryItem[]>([
     { id: 1, title: 'Moment 1', media_file: '/img/img1.JPG', is_video: false, order: 1 },
     { id: 2, title: 'Moment 2', media_file: '/img/img2.JPG', is_video: false, order: 2 },
-    { id: 3, title: 'Moment 3', media_file: '/img/img3.JPG', is_video: false, order: 3 },
-    { id: 4, title: 'Moment 4', media_file: '/img/img4.JPG', is_video: false, order: 4 },
-    { id: 5, title: 'Moment 5', media_file: '/img/img5.JPG', is_video: false, order: 5 },
-    { id: 6, title: 'Moment 6', media_file: '/img/img7.JPG', is_video: false, order: 6 },
+    { id: 3, title: 'Moment 3', media_file: '/img/img3.JPG', is_video: false, order: 3, rotation: "rotate(180deg)" },
+    { id: 4, title: 'Moment 4', media_file: '/img/img4.JPG', is_video: false, order: 4, rotation: "rotate(-90deg) scale(1.4)" },
+    { id: 5, title: 'Moment 5', media_file: '/img/img5.JPG', is_video: false, order: 5, rotation: "rotate(-90deg) scale(1.4)" },
+    { id: 6, title: 'Moment 6', media_file: '/img/img7.JPG', is_video: false, order: 6, rotation: "rotate(-90deg) scale(1.4)" },
     { id: 7, title: 'Moment 7', media_file: '/video/orchid national.MOV', is_video: true, order: 7 },
-    { id: 8, title: 'Moment 8', media_file: '/video/orchid oral2 portrait.MOV', is_video: true, order: 8 },
-    { id: 9, title: 'Moment 9', media_file: '/video/orchid overall portrait.MOV', is_video: true, order: 9 },
+    { id: 8, title: 'Moment 8', media_file: '/video/orchid oral2 portrait.MOV', is_video: true, order: 8, rotation: "rotate(-90deg) scale(1.4)" },
+    { id: 9, title: 'Moment 9', media_file: '/video/orchid overall portrait.MOV', is_video: true, order: 9, rotation: "rotate(-90deg) scale(1.4)" },
   ]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -113,7 +114,12 @@ export default function GalleryMarquee() {
                   loop
                   muted
                   playsInline
-                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                  style={{ 
+                    width: "100%", 
+                    height: "100%", 
+                    objectFit: "cover",
+                    transform: item.rotation || "none"
+                  }}
                 />
               ) : (
                 <Image
@@ -121,7 +127,7 @@ export default function GalleryMarquee() {
                   alt={item.title || "Gallery image"}
                   fill
                   sizes="360px"
-                  style={{ objectFit: "cover" }}
+                  style={{ objectFit: "cover", transform: item.rotation || "none" }}
                 />
               )}
             </div>
