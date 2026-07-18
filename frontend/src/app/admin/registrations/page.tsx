@@ -14,6 +14,8 @@ export default function RegistrationsManager() {
   const [selectedTier, setSelectedTier] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedResult, setSelectedResult] = useState("");
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedDistrict, setSelectedDistrict] = useState("");
 
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);
@@ -65,6 +67,10 @@ export default function RegistrationsManager() {
     }
   };
 
+  // Extract unique states and districts for dropdowns
+  const uniqueStates = Array.from(new Set(submissions.map(s => (s.labeled_data || s.data || {})['State']).filter(Boolean)));
+  const uniqueDistricts = Array.from(new Set(submissions.map(s => (s.labeled_data || s.data || {})['District']).filter(Boolean)));
+
   // Filter logic
   const filteredSubmissions = submissions.filter((sub: any) => {
     const matchesSearch = 
@@ -83,7 +89,11 @@ export default function RegistrationsManager() {
     if (selectedResult === "FAILED") matchesResult = sub.is_passed === false;
     if (selectedResult === "PENDING") matchesResult = sub.is_passed === null;
 
-    return matchesSearch && matchesTier && matchesStatus && matchesResult;
+    const customData = sub.labeled_data || sub.data || {};
+    const matchesState = selectedState === "" || customData['State'] === selectedState;
+    const matchesDistrict = selectedDistrict === "" || customData['District'] === selectedDistrict;
+
+    return matchesSearch && matchesTier && matchesStatus && matchesResult && matchesState && matchesDistrict;
   });
 
   const handleExportExcel = () => {
@@ -420,6 +430,47 @@ export default function RegistrationsManager() {
             <option value="PENDING">Pending Grading</option>
           </select>
         </div>
+
+        {/* State Filter */}
+        {uniqueStates.length > 0 && (
+          <div style={{ minWidth: "150px" }}>
+            <label style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.4rem" }}>State</label>
+            <select 
+              value={selectedState}
+              onChange={(e) => { setSelectedState(e.target.value); setSelectedDistrict(""); }}
+              style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem", background: "white", color: "#000" }}
+            >
+              <option value="">All States</option>
+              {uniqueStates.map((state: any) => (
+                <option key={state} value={state}>{state}</option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* District Filter */}
+        {uniqueDistricts.length > 0 && (
+          <div style={{ minWidth: "150px" }}>
+            <label style={{ fontSize: "0.75rem", fontWeight: 700, color: "#64748b", textTransform: "uppercase", display: "block", marginBottom: "0.4rem" }}>District</label>
+            <select 
+              value={selectedDistrict}
+              onChange={(e) => setSelectedDistrict(e.target.value)}
+              style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.9rem", background: "white", color: "#000" }}
+            >
+              <option value="">All Districts</option>
+              {uniqueDistricts
+                .filter((district: any) => {
+                  if (!selectedState) return true;
+                  const submissionsInState = submissions.filter(s => (s.labeled_data || s.data || {})['State'] === selectedState);
+                  const validDistrictsInState = new Set(submissionsInState.map(s => (s.labeled_data || s.data || {})['District']).filter(Boolean));
+                  return validDistrictsInState.has(district);
+                })
+                .map((district: any) => (
+                <option key={district} value={district}>{district}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
       </div>
 
