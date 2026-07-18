@@ -3,7 +3,7 @@ from .models import TierForm, FormField, Student, Submission, SiteSettings
 
 class FormFieldInline(admin.StackedInline):
     model = FormField
-    fields = ('label', 'field_type', 'options', 'required', 'order', 'depends_on', 'depends_on_value', 'validation_pattern', 'validation_message')
+    fields = ('label', 'field_type', 'options', 'required', 'order', 'depends_on', 'depends_on_value', 'validation_pattern', 'validation_message', 'force_uppercase')
     extra = 1
 
 @admin.register(TierForm)

@@ -751,7 +751,13 @@ export default function RegistrationsManager() {
                             type={f.field_type === 'number' ? 'number' : f.field_type === 'email' ? 'email' : 'text'}
                             required={f.required}
                             value={addCustomData[f.id] || ""} 
-                            onChange={e => setAddCustomData({ ...addCustomData, [f.id]: e.target.value })} 
+                            onChange={e => {
+                              let val = e.target.value;
+                              if (f.force_uppercase) {
+                                val = val.toUpperCase();
+                              }
+                              setAddCustomData({ ...addCustomData, [f.id]: val });
+                            }} 
                             style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }} 
                             placeholder={`Enter ${f.label.toLowerCase()}`}
                           />

@@ -749,7 +749,13 @@ export default function Home() {
                       required={field.required}
                       placeholder={field.label}
                       value={formData[field.id]}
-                      onChange={(e) => setFormData({...formData, [field.id]: e.target.value})}
+                      onChange={(e) => {
+                        let val = e.target.value;
+                        if (field.force_uppercase) {
+                          val = val.toUpperCase();
+                        }
+                        setFormData({...formData, [field.id]: val});
+                      }}
                       pattern={field.validation_pattern || undefined}
                       title={field.validation_message || undefined}
                       style={{ width: '100%', padding: '0.75rem', borderRadius: '6px', border: '1px solid var(--color-border)', background: '#f8f9fa', color: '#000', outline: 'none' }}

@@ -13,7 +13,7 @@ class FormFieldSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FormField
-        fields = ['id', 'label', 'field_type', 'options', 'required', 'order', 'depends_on', 'depends_on_value', 'validation_pattern', 'validation_message']
+        fields = ['id', 'label', 'field_type', 'options', 'required', 'order', 'depends_on', 'depends_on_value', 'validation_pattern', 'validation_message', 'force_uppercase']
 
 class TierFormSerializer(serializers.ModelSerializer):
     fields = FormFieldSerializer(many=True, read_only=True)

@@ -29,6 +29,7 @@ class FormField(models.Model):
     depends_on_value = models.CharField(max_length=100, null=True, blank=True, help_text="Value the parent field must have")
     validation_pattern = models.CharField(max_length=255, null=True, blank=True, help_text="Regex pattern e.g. ^[0-9]{10}$")
     validation_message = models.CharField(max_length=255, null=True, blank=True, help_text="Error message if validation fails")
+    force_uppercase = models.BooleanField(default=False, help_text="If checked, this field will automatically convert user input to UPPERCASE")
 
     class Meta:
         ordering = ['order']
