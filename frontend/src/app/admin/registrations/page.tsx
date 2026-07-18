@@ -650,7 +650,7 @@ export default function RegistrationsManager() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000 }}>
           <div style={{ background: "white", borderRadius: "16px", padding: "2.5rem", width: "100%", maxWidth: "500px", boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)", position: "relative", color: "#000" }}>
             <h2 style={{ fontSize: "1.5rem", fontWeight: 800, color: "#1e1b4b", marginBottom: "1.5rem", margin: 0 }}>Manual Add Student</h2>
-            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem", maxHeight: "65vh", overflowY: "auto", paddingRight: "0.5rem" }}>
               <div>
                 <label style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", display: "block", marginBottom: "0.4rem" }}>Name</label>
                 <input type="text" value={addName} onChange={e => setAddName(e.target.value)} style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1" }} />
