@@ -179,7 +179,11 @@ export default function RegistrationsManager() {
                 if (["name", "email", "form_id", "payment_status"].includes(h)) return;
                 const field = tf.fields.find((f: any) => f.label.toLowerCase() === h);
                 if (field) {
-                  customData[field.id] = values[idx];
+                  let val = values[idx];
+                  if (field.force_uppercase && val) {
+                    val = val.toUpperCase();
+                  }
+                  customData[field.id] = val;
                 }
               });
             }
