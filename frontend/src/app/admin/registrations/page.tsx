@@ -673,18 +673,41 @@ export default function RegistrationsManager() {
                 if (!selectedTier || !selectedTier.fields || selectedTier.fields.length === 0) return null;
                 return (
                   <>
-                    {selectedTier.fields.map((f: any) => (
+                    {selectedTier.fields.map((f: any) => {
+                      if (f.depends_on && f.depends_on_value) {
+                        const parentField = selectedTier.fields.find((parentF: any) => parentF.label === f.depends_on);
+                        if (!parentField || addCustomData[parentField.id] !== f.depends_on_value) {
+                          return null;
+                        }
+                      }
+                      return (
                       <div key={f.id}>
                         <label style={{ fontSize: "0.8rem", fontWeight: 700, color: "#64748b", display: "block", marginBottom: "0.4rem" }}>{f.label} {f.required && "*"}</label>
-                        <input 
-                          type="text" 
-                          value={addCustomData[f.id] || ""} 
-                          onChange={e => setAddCustomData({ ...addCustomData, [f.id]: e.target.value })} 
-                          style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }} 
-                          placeholder={`Enter ${f.label.toLowerCase()}`}
-                        />
+                        {f.field_type === 'select' ? (
+                          <select 
+                            required={f.required}
+                            value={addCustomData[f.id] || ""} 
+                            onChange={e => setAddCustomData({ ...addCustomData, [f.id]: e.target.value })} 
+                            style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem", background: "white" }} 
+                          >
+                            <option value="">Select {f.label}</option>
+                            {(f.options || "").split(',').map((opt: string) => opt.trim() ? (
+                              <option key={opt.trim()} value={opt.trim()}>{opt.trim()}</option>
+                            ) : null)}
+                          </select>
+                        ) : (
+                          <input 
+                            type={f.field_type === 'number' ? 'number' : f.field_type === 'email' ? 'email' : 'text'}
+                            required={f.required}
+                            value={addCustomData[f.id] || ""} 
+                            onChange={e => setAddCustomData({ ...addCustomData, [f.id]: e.target.value })} 
+                            style={{ width: "100%", padding: "0.6rem 0.8rem", borderRadius: "6px", border: "1px solid #cbd5e1", fontSize: "0.9rem" }} 
+                            placeholder={`Enter ${f.label.toLowerCase()}`}
+                          />
+                        )}
                       </div>
-                    ))}
+                      );
+                    })}
                   </>
                 );
               })()}
