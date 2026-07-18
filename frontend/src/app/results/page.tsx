@@ -55,7 +55,7 @@ export default function ResultsPage() {
 
           <form onSubmit={handleSearch} style={{ display: "flex", flexDirection: "column", gap: "1rem", marginBottom: "2.5rem" }}>
             <div>
-              <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, color: "#334155", marginBottom: "0.5rem" }}>Student Search</label>
+              <label style={{ display: "block", fontSize: "0.875rem", fontWeight: 600, color: "#334155", marginBottom: "0.5rem" }}>Student Code or Email</label>
               <input 
                 type="text" 
                 value={query}

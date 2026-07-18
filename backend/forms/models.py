@@ -27,6 +27,8 @@ class FormField(models.Model):
     order = models.IntegerField(default=0)
     depends_on = models.CharField(max_length=100, null=True, blank=True, help_text="Label of the field this depends on")
     depends_on_value = models.CharField(max_length=100, null=True, blank=True, help_text="Value the parent field must have")
+    validation_pattern = models.CharField(max_length=255, null=True, blank=True, help_text="Regex pattern e.g. ^[0-9]{10}$")
+    validation_message = models.CharField(max_length=255, null=True, blank=True, help_text="Error message if validation fails")
 
     class Meta:
         ordering = ['order']
