@@ -18,31 +18,31 @@ export default function RoundsAndPrizesPage() {
       num: "01",
       name: "School Level",
       type: "Written Test",
-      desc: "The journey begins with a written spelling examination at your own school. Students are tested on a curated word list, and the top performers qualify for the next round.",
+      desc: "Students take a category-wise written examination. Candidates who achieve the qualifying pass mark advance to the District Level.",
       color: "#ffb800",
       bgLight: "rgba(255,184,0,0.08)",
     },
     {
       num: "02",
       name: "District Level",
-      type: "Written + Oral",
-      desc: "Qualifiers from multiple schools compete at the district level. The oral rounds begin here — spelling words aloud before a panel of judges in a live competitive setting.",
+      type: "Written Test",
+      desc: "School-level qualifiers take a category-wise written examination. Candidates who achieve the qualifying pass mark advance to the State Level.",
       color: "#7c3aed",
       bgLight: "rgba(124,58,237,0.08)",
     },
     {
       num: "03",
       name: "State Level",
-      type: "Oral Rounds",
-      desc: "The state's finest spellers face elimination-style oral rounds. Words grow in complexity, drawing from academic, literary, and scientific vocabulary.",
+      type: "Written + Oral",
+      desc: "Phase 1 (Written Test): District-level qualifiers take a preliminary written examination. Candidates who achieve the qualifying pass mark advance to the National Level.\n\nPhase 2 (Oral Round): The top 20 students in each category compete in the live oral round to determine the Top 10 State Champions.",
       color: "#0ea5e9",
       bgLight: "rgba(14,165,233,0.08)",
     },
     {
       num: "04",
-      name: "National Grand Finale",
-      type: "Grand Finale",
-      desc: "The pinnacle of the Orchid Spell Bee. National champions from every state compete on a grand stage before thousands of spectators, battling for glory and life-changing prizes.",
+      name: "National Level",
+      type: "Written + Oral",
+      desc: "Phase 1 (Written Test): State-level qualifiers take a preliminary written examination.\n\nPhase 2 (Oral Round): Candidates who qualify in the written test compete in the live oral rounds to determine the Top 10 National Champions.",
       color: "#f97316",
       bgLight: "rgba(249,115,22,0.08)",
     },
@@ -143,23 +143,6 @@ export default function RoundsAndPrizesPage() {
               marginBottom: "2rem",
             }}
           >
-          <div
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              padding: "0.4rem 1.2rem",
-              background: "rgba(255,184,0,0.15)",
-              border: "1px solid rgba(255,184,0,0.3)",
-              borderRadius: "30px",
-              fontSize: "0.8rem",
-              fontWeight: "700",
-              color: "#ffb800",
-              letterSpacing: "1.5px",
-              textTransform: "uppercase" as const,
-              marginBottom: "2rem",
-            }}
-          >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
               <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
               <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
@@ -169,7 +152,6 @@ export default function RoundsAndPrizesPage() {
               <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
             </svg>
             Prizes &amp; Recognition
-          </div>
           </div>
           <h1
             style={{
@@ -333,6 +315,7 @@ export default function RoundsAndPrizesPage() {
                       color: "var(--color-text-secondary)",
                       lineHeight: "1.75",
                       margin: 0,
+                      whiteSpace: "pre-line",
                     }}
                   >
                     {round.desc}
