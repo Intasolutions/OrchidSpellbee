@@ -113,12 +113,12 @@ export default function CompetitionsPage() {
       format: "Written + Oral",
       duration: "2-Day Event",
       fee: "Free (Qualified)",
-      desc: "Phase 1 (Written Test): State-level qualifiers take a preliminary written examination.\n\nPhase 2 (Oral Round): Candidates who qualify in the written test compete in the live oral rounds to determine the Top 10 National Champions.",
+      desc: "Phase 1 (Written Test): State-level qualifiers take a preliminary written examination.\n\nPhase 2 (Oral Round): Candidates who qualify in the written test compete in the live oral rounds to determine the Top 10 National Champions.\n\nInternational Qualification: Students who score 50% and above in this level are eligible for the International Level.",
       details: [
         "Elite oral spelling championship",
         "Words from international dictionaries",
         "Live-streamed before thousands",
-        "Cash prizes + trophies + certificates",
+        "50%+ score qualifies for International Level",
       ],
     },
   ];
