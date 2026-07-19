@@ -59,7 +59,7 @@ export default function CompetitionsPage() {
       format: "Written Test",
       duration: "30 Minutes",
       fee: "₹500",
-      desc: "The gateway to the Orchid Spell Bee journey. Students demonstrate their foundational spelling and vocabulary skills through a structured written examination.",
+      desc: "Students take a category-wise written examination. Candidates who achieve the qualifying pass mark advance to the District Level.",
       details: [
         "Multiple-choice spelling questions",
         "Fill-in-the-blank vocabulary section",
@@ -77,7 +77,7 @@ export default function CompetitionsPage() {
       format: "Written",
       duration: "2 Hours",
       fee: "Free (Qualified)",
-      desc: "Competitors who clear the school round face tougher challenges here. The introduction of rigorous written formats begins, testing their verbal command of spelling.",
+      desc: "School-level qualifiers take a category-wise written examination. Candidates who achieve the qualifying pass mark advance to the State Level.",
       details: [
         "Advanced written spelling test",
         "Vocabulary and definition matching",
@@ -95,7 +95,7 @@ export default function CompetitionsPage() {
       format: "Written + Oral",
       duration: "Full Day Event",
       fee: "Free (Qualified)",
-      desc: "A prestige event bringing together the state's finest spellers. The competition intensifies with complex word sets drawn from academic and literary sources.",
+      desc: "Phase 1 (Written Test): District-level qualifiers take a preliminary written examination. Candidates who achieve the qualifying pass mark advance to the National Level.\n\nPhase 2 (Oral Round): The top 20 students in each category compete in the live oral round to determine the Top 10 State Champions.",
       details: [
         "Elimination-style oral rounds",
         "Advanced written examination",
@@ -113,7 +113,7 @@ export default function CompetitionsPage() {
       format: "Written + Oral",
       duration: "2-Day Event",
       fee: "Free (Qualified)",
-      desc: "The ultimate stage. Champions from across India battle for national glory, with prizes totaling over ₹1,00,000 and lifetime recognition.",
+      desc: "Phase 1 (Written Test): State-level qualifiers take a preliminary written examination.\n\nPhase 2 (Oral Round): Candidates who qualify in the written test compete in the live oral rounds to determine the Top 10 National Champions.",
       details: [
         "Elite oral spelling championship",
         "Words from international dictionaries",
@@ -452,6 +452,7 @@ export default function CompetitionsPage() {
                         color: "var(--color-text-secondary)",
                         lineHeight: "1.8",
                         marginBottom: "2rem",
+                        whiteSpace: "pre-line",
                       }}
                     >
                       {level.desc}
