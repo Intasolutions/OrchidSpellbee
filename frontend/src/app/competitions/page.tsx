@@ -252,8 +252,10 @@ export default function CompetitionsPage() {
         <div
           className="container stats-grid reveal-up"
           style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
+            display: "flex",
+            justifyContent: "space-around",
+            alignItems: "center",
+            flexWrap: "wrap",
             gap: "2rem",
             textAlign: "center",
           }}
