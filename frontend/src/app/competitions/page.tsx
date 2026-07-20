@@ -124,8 +124,7 @@ export default function CompetitionsPage() {
   const stats = [
     { value: "10,000+", label: "Participants Annually" },
     { value: "4", label: "Competition Tiers" },
-    { value: "₹1L+", label: "Total Prize Pool" },
-    { value: "50+", label: "Districts Covered" },
+    { value: "₹25L+", label: "Total Prize Pool" },
   ];
 
   return (
