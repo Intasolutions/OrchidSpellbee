@@ -550,7 +550,7 @@ export default function RoundsAndPrizesPage() {
                 ))}
                 
                 <div style={{ padding: "1.2rem 2rem", borderTop: "2px dashed rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.02)", textAlign: "center", fontStyle: "italic", fontSize: "0.85rem", color: "rgba(255,255,255,0.8)" }}>
-                  REGISTRATION FEE FOR SELECTED CANDIDATES: <b>₹2000</b>
+                  REGISTRATION FEE FOR SELECTED CANDIDATES: <b>₹2,000/-</b>
                 </div>
               </div>
             </div>
@@ -678,7 +678,7 @@ export default function RoundsAndPrizesPage() {
                 ))}
                 
                 <div style={{ padding: "1.2rem 2rem", borderTop: "2px dashed #e2e8f0", background: "#f8fafc", textAlign: "center", fontStyle: "italic", fontSize: "0.85rem", color: "#475569" }}>
-                  REGISTRATION FEE FOR SELECTED CANDIDATES: <b>₹1000</b><br/>
+                  REGISTRATION FEE FOR SELECTED CANDIDATES: <b>₹1,000/-</b><br/>
                   <span style={{fontSize: "0.75rem"}}>Including text Book</span>
                 </div>
               </div>
@@ -792,7 +792,7 @@ export default function RoundsAndPrizesPage() {
                 ))}
                 
                 <div style={{ padding: "1.2rem 2rem", borderTop: "2px dashed #e2e8f0", background: "#f8fafc", textAlign: "center", fontStyle: "italic", fontSize: "0.85rem", color: "#475569" }}>
-                  REGISTRATION FEE FOR SELECTED CANDIDATES: <b>₹500</b><br/>
+                  REGISTRATION FEE FOR SELECTED CANDIDATES: <b>₹500/-</b><br/>
                   <span style={{fontSize: "0.75rem"}}>Including text Book</span>
                 </div>
               </div>
@@ -907,7 +907,7 @@ export default function RoundsAndPrizesPage() {
                 ))}
                 
                 <div style={{ padding: "1.2rem 2rem", borderTop: "2px dashed #e2e8f0", background: "#f8fafc", textAlign: "center", fontStyle: "italic", fontSize: "0.85rem", color: "#475569" }}>
-                  REGISTRATION FEE: <b>₹100</b><br/>
+                  REGISTRATION FEE: <b>₹100/-</b><br/>
                   <span style={{fontSize: "0.75rem"}}>Including text Book</span>
                 </div>
               </div>

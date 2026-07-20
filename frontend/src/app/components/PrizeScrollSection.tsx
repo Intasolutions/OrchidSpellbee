@@ -9,7 +9,7 @@ const prizes = [
     bgClass: "linear-gradient(145deg, #064e3b, #022c22)",
     borderColor: "rgba(16,185,129,0.3)",
     shadowColor: "rgba(16,185,129,0.3)",
-    fee: "₹100",
+    fee: "₹100/-",
     includesTextbook: true,
     data: [
       { rank: "1ST PRIZE:", detail: "MEMENTO + CERTIFICATE" },
@@ -22,7 +22,7 @@ const prizes = [
     bgClass: "linear-gradient(145deg, #4c1d95, #2e1065)",
     borderColor: "rgba(124,58,237,0.3)",
     shadowColor: "rgba(124,58,237,0.3)",
-    fee: "₹500",
+    fee: "₹500/-",
     includesTextbook: true,
     data: [
       { rank: "1ST PRIZE:", detail: "₹5,000/- + MEMENTO + CERTIFICATE" },
@@ -39,7 +39,7 @@ const prizes = [
     bgClass: "linear-gradient(145deg, #0c4a6e, #082f49)",
     borderColor: "rgba(14,165,233,0.3)",
     shadowColor: "rgba(14,165,233,0.3)",
-    fee: "₹1000",
+    fee: "₹1,000/-",
     includesTextbook: true,
     data: [
       { rank: "1ST PRIZE:", detail: "₹15,000/- + MEMENTO + CERTIFICATE" },
@@ -56,7 +56,7 @@ const prizes = [
     bgClass: "linear-gradient(145deg, #1e1b4b, #0f172a)",
     borderColor: "rgba(76,58,153,0.5)",
     shadowColor: "rgba(76,58,153,0.4)",
-    fee: "₹2000",
+    fee: "₹2,000/-",
     includesTextbook: false,
     data: [
       { rank: "1ST PRIZE:", detail: "₹25,000/- + MEMENTO + CERTIFICATE" },
