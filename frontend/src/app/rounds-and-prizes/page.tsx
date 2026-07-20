@@ -49,30 +49,30 @@ export default function RoundsAndPrizesPage() {
   ];
 
   const nationalPrizes = [
-    { rank: "1st Prize", amount: "₹25000", extras: "+MEMENTO+CERTIFICATE", highlight: true },
-    { rank: "2nd Prize", amount: "₹20000", extras: "+MEMENTO+CERTIFICATE", highlight: false },
-    { rank: "3rd Prize", amount: "₹15000", extras: "+MEMENTO+CERTIFICATE", highlight: false },
-    { rank: "4th Prize", amount: "₹10000", extras: "+MEMENTO+CERTIFICATE", highlight: false },
-    { rank: "5th Prize", amount: "₹5000", extras: "+MEMENTO+CERTIFICATE", highlight: false },
-    { rank: "6th-10th Prizes", amount: "₹2000", extras: "+MEMENTO+CERTIFICATE", highlight: false },
+    { rank: "1st Prize", amount: "₹25,000/-", extras: "+MEMENTO+CERTIFICATE", highlight: true },
+    { rank: "2nd Prize", amount: "₹20,000/-", extras: "+MEMENTO+CERTIFICATE", highlight: false },
+    { rank: "3rd Prize", amount: "₹15,000/-", extras: "+MEMENTO+CERTIFICATE", highlight: false },
+    { rank: "4th Prize", amount: "₹10,000/-", extras: "+MEMENTO+CERTIFICATE", highlight: false },
+    { rank: "5th Prize", amount: "₹5,000/-", extras: "+MEMENTO+CERTIFICATE", highlight: false },
+    { rank: "6th-10th Prizes", amount: "₹2,000/-", extras: "+MEMENTO+CERTIFICATE", highlight: false },
   ];
 
   const statePrizes = [
-    { rank: "1st Prize", amount: "₹15000", extras: "+MEMENTO+CERTIFICATE" },
-    { rank: "2nd Prize", amount: "₹10000", extras: "+MEMENTO+CERTIFICATE" },
-    { rank: "3rd Prize", amount: "₹5000", extras: "+MEMENTO+CERTIFICATE" },
-    { rank: "4th Prize", amount: "₹3000", extras: "+MEMENTO+CERTIFICATE" },
-    { rank: "5th Prize", amount: "₹2000", extras: "+MEMENTO+CERTIFICATE" },
-    { rank: "6th-10th Prizes", amount: "₹1000", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "1st Prize", amount: "₹15,000/-", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "2nd Prize", amount: "₹10,000/-", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "3rd Prize", amount: "₹5,000/-", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "4th Prize", amount: "₹3,000/-", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "5th Prize", amount: "₹2,000/-", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "6th-10th Prizes", amount: "₹1,000/-", extras: "+MEMENTO+CERTIFICATE" },
   ];
 
   const districtPrizes = [
-    { rank: "1st Prize", amount: "₹5000", extras: "+MEMENTO+CERTIFICATE" },
-    { rank: "2nd Prize", amount: "₹3000", extras: "+MEMENTO+CERTIFICATE" },
-    { rank: "3rd Prize", amount: "₹1500", extras: "+MEMENTO+CERTIFICATE" },
-    { rank: "4th Prize", amount: "₹1000", extras: "+MEMENTO+CERTIFICATE" },
-    { rank: "5th Prize", amount: "₹750", extras: "+MEMENTO+CERTIFICATE" },
-    { rank: "6th-10th Prizes", amount: "₹500", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "1st Prize", amount: "₹5,000/-", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "2nd Prize", amount: "₹3,000/-", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "3rd Prize", amount: "₹1,500/-", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "4th Prize", amount: "₹1,000/-", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "5th Prize", amount: "₹750/-", extras: "+MEMENTO+CERTIFICATE" },
+    { rank: "6th-10th Prizes", amount: "₹500/-", extras: "+MEMENTO+CERTIFICATE" },
   ];
 
   const schoolPrizes = [
