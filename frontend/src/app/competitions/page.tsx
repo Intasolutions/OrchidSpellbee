@@ -64,7 +64,7 @@ export default function CompetitionsPage() {
         "Multiple-choice spelling questions",
         "Fill-in-the-blank vocabulary section",
         "Word origin and etymology basics",
-        "Students who scored 50% above mark advance to district level",
+        "Students who scored 40% above mark advance to district level",
       ],
     },
     {
@@ -82,7 +82,7 @@ export default function CompetitionsPage() {
         "Advanced written spelling test",
         "Vocabulary and definition matching",
         "Pronunciation and diction scoring",
-        "Students who scored 50% above mark advance to state level",
+        "Students who scored 40% above mark advance to state level",
       ],
     },
     {
@@ -99,7 +99,7 @@ export default function CompetitionsPage() {
       details: [
         "Elimination-style oral rounds",
         "Advanced written examination",
-        "Students who scored 50% above mark advance to national level",
+        "Students who scored 40% above mark advance to national level",
       ],
     },
     {
@@ -574,6 +574,43 @@ export default function CompetitionsPage() {
                 </div>
               )
           )}
+
+          {/* Bottom Tab Buttons */}
+          <div
+            className="reveal-up"
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              gap: "1rem",
+              marginTop: "3rem",
+              flexWrap: "wrap",
+            }}
+          >
+            {levels.map((level) => (
+              <button
+                key={level.id}
+                onClick={() => setActiveTab(level.id)}
+                style={{
+                  padding: "0.75rem 1.8rem",
+                  borderRadius: "50px",
+                  border: `2px solid ${activeTab === level.id ? level.color : "transparent"}`,
+                  background: activeTab === level.id ? level.bgLight : "white",
+                  color: activeTab === level.id ? level.color : "var(--color-text-secondary)",
+                  fontWeight: "700",
+                  fontSize: "0.9rem",
+                  cursor: "pointer",
+                  transition: "all 0.25s ease",
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.5rem",
+                }}
+              >
+                <level.Icon size={16} color={activeTab === level.id ? level.color : "var(--color-text-secondary)"} />
+                {level.name}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

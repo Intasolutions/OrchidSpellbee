@@ -333,6 +333,59 @@ export default function RoundsAndPrizesPage() {
           className="container"
           style={{ maxWidth: "1100px", margin: "0 auto" }}
         >
+          {/* All participants note */}
+          <div
+            style={{
+              marginBottom: "4rem",
+              padding: "1.5rem",
+              background: "rgba(255,184,0,0.08)",
+              border: "1px solid rgba(255,184,0,0.25)",
+              borderRadius: "14px",
+              display: "flex",
+              gap: "1rem",
+              alignItems: "flex-start",
+            }}
+          >
+            <div
+              style={{
+                width: "40px",
+                height: "40px",
+                background: "rgba(255,184,0,0.15)",
+                borderRadius: "10px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                flexShrink: 0,
+              }}
+            >
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffb800" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="8" r="6" />
+                <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
+              </svg>
+            </div>
+            <div>
+              <div
+                style={{
+                  fontWeight: "700",
+                  color: "var(--color-text-heading)",
+                  marginBottom: "0.3rem",
+                }}
+              >
+                Every Participant is a Winner
+              </div>
+              <div
+                style={{
+                  color: "var(--color-text-secondary)",
+                  fontSize: "0.9rem",
+                  lineHeight: "1.6",
+                }}
+              >
+                All registered students receive a participation certificate.
+                School-level qualifiers receive special merit awards.
+              </div>
+            </div>
+          </div>
+
           <div style={{ textAlign: "center", marginBottom: "5rem" }}>
             <h2
               style={{
@@ -862,58 +915,7 @@ export default function RoundsAndPrizesPage() {
           </div>
           </div>
 
-          {/* All participants note */}
-              <div
-                style={{
-                  marginTop: "1.5rem",
-                  padding: "1.5rem",
-                  background: "rgba(255,184,0,0.08)",
-                  border: "1px solid rgba(255,184,0,0.25)",
-                  borderRadius: "14px",
-                  display: "flex",
-                  gap: "1rem",
-                  alignItems: "flex-start",
-                }}
-              >
-                <div
-                  style={{
-                    width: "40px",
-                    height: "40px",
-                    background: "rgba(255,184,0,0.15)",
-                    borderRadius: "10px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexShrink: 0,
-                  }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffb800" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="8" r="6" />
-                    <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11" />
-                  </svg>
-                </div>
-                <div>
-                  <div
-                    style={{
-                      fontWeight: "700",
-                      color: "var(--color-text-heading)",
-                      marginBottom: "0.3rem",
-                    }}
-                  >
-                    Every Participant is a Winner
-                  </div>
-                  <div
-                    style={{
-                      color: "var(--color-text-secondary)",
-                      fontSize: "0.9rem",
-                      lineHeight: "1.6",
-                    }}
-                  >
-                    All registered students receive a participation certificate.
-                    School-level qualifiers receive special merit awards.
-                  </div>
-                </div>
-              </div>
+
             </div>
 
       {/* Call to Action */}
