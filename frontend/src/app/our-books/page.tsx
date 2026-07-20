@@ -146,7 +146,7 @@ export default function OurBooksPage() {
         >
           {[
             { val: "3", label: "Books in Series" },
-            { val: "25,000+", label: "Total Words Covered" },
+            { val: "27,000+", label: "Total Words Covered" },
             { val: "Expert", label: "Curated Content" },
             { val: "All Levels", label: "Classes 1 - 9" },
           ].map((s, i) => (
