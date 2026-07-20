@@ -112,7 +112,7 @@ export default function CompetitionsPage() {
       format: "Written + Oral",
       duration: "",
       fee: "Free (Qualified)",
-      desc: "Phase 1 (Written Test): State-level qualifiers take a preliminary written examination.\n\nPhase 2 (Oral Round): Candidates who qualify in the written test compete in the live oral rounds to determine the Top 10 National Champions.",
+      desc: "Phase 1 (Written Test): State-level qualifiers take a preliminary written examination. Candidates who achieve the qualifying pass mark advance to the oral round.\n\nPhase 2 (Oral Round): The top 20 students in each category compete in the live oral round to determine the Top 10 National Champions.",
       details: [
         "Elite oral spelling championship",
         "Words from international dictionaries",
