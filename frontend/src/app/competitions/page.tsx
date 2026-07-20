@@ -75,14 +75,14 @@ export default function CompetitionsPage() {
       color: "#7c3aed",
       bgLight: "rgba(124,58,237,0.08)",
       format: "Written",
-      duration: "2 Hours",
+      duration: "1 Hour",
       fee: "Free (Qualified)",
       desc: "School-level qualifiers take a category-wise written examination. Candidates who achieve the qualifying pass mark advance to the State Level.",
       details: [
         "Advanced written spelling test",
         "Vocabulary and definition matching",
         "Pronunciation and diction scoring",
-        "Top 15% advance to State Level",
+        "Students who scored 50% above mark advance to state level",
       ],
     },
     {
@@ -92,15 +92,14 @@ export default function CompetitionsPage() {
       badge: "Level 03",
       color: "#0ea5e9",
       bgLight: "rgba(14,165,233,0.08)",
-      format: "Written + Oral",
-      duration: "Full Day Event",
+      format: "Phase 1- written, phase 2- oral",
+      duration: "",
       fee: "Free (Qualified)",
       desc: "Phase 1 (Written Test): District-level qualifiers take a preliminary written examination. Candidates who achieve the qualifying pass mark advance to the National Level.\n\nPhase 2 (Oral Round): The top 20 students in each category compete in the live oral round to determine the Top 10 State Champions.",
       details: [
         "Elimination-style oral rounds",
         "Advanced written examination",
-        "Etymology and language of origin",
-        "State Champions advance to National",
+        "Students who scored 50% above mark advance to national level",
       ],
     },
     {
@@ -111,14 +110,13 @@ export default function CompetitionsPage() {
       color: "#f97316",
       bgLight: "rgba(249,115,22,0.08)",
       format: "Written + Oral",
-      duration: "2-Day Event",
+      duration: "",
       fee: "Free (Qualified)",
-      desc: "Phase 1 (Written Test): State-level qualifiers take a preliminary written examination.\n\nPhase 2 (Oral Round): Candidates who qualify in the written test compete in the live oral rounds to determine the Top 10 National Champions.\n\nInternational Qualification: Students who score 50% and above in this level are eligible for the International Level.",
+      desc: "Phase 1 (Written Test): State-level qualifiers take a preliminary written examination.\n\nPhase 2 (Oral Round): Candidates who qualify in the written test compete in the live oral rounds to determine the Top 10 National Champions.",
       details: [
         "Elite oral spelling championship",
         "Words from international dictionaries",
         "Live-streamed before thousands",
-        "50%+ score qualifies for International Level",
       ],
     },
   ];
@@ -467,7 +465,7 @@ export default function CompetitionsPage() {
                       {[
                         { label: "Format", val: level.format },
                         { label: "Duration", val: level.duration },
-                      ].map((info, i) => (
+                      ].filter(info => info.val).map((info, i) => (
                         <div
                           key={i}
                           style={{
