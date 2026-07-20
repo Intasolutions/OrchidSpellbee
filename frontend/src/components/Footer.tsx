@@ -42,10 +42,10 @@ export default function Footer() {
              Contact
            </h4>
            <p style={{ color: 'var(--color-text-secondary)', fontSize: '0.9rem', lineHeight: '1.8', margin: 0 }}>
-             <strong>Kerala Region:</strong> +91 7560 99 77 00 | +91 8606 69 88 24<br/>
-             <strong>Karnataka Region:</strong> +91 63662 22500 | +91 98863 30905<br/>
-             <strong>Email:</strong> info@orchidspellbee.com<br/>
-             <strong>Website:</strong> www.orchidspellbee.com
+             <strong>Kerala Region:</strong> <span style={{ whiteSpace: 'nowrap' }}>+91 7560 99 77 00</span> | <span style={{ whiteSpace: 'nowrap' }}>+91 8606 69 88 24</span><br/>
+             <strong>Karnataka Region:</strong> <span style={{ whiteSpace: 'nowrap' }}>+91 63662 22500</span> | <span style={{ whiteSpace: 'nowrap' }}>+91 98863 30905</span><br/>
+             <strong>Email:</strong> <span style={{ whiteSpace: 'nowrap' }}>info@orchidspellbee.com</span><br/>
+             <strong>Website:</strong> <span style={{ whiteSpace: 'nowrap' }}>www.orchidspellbee.com</span>
            </p>
         </div>
         
