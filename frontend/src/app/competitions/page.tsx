@@ -64,7 +64,7 @@ export default function CompetitionsPage() {
         "Multiple-choice spelling questions",
         "Fill-in-the-blank vocabulary section",
         "Word origin and etymology basics",
-        "Top 20% advance to District Level",
+        "Students who scored 50% above mark advance to district level",
       ],
     },
     {
