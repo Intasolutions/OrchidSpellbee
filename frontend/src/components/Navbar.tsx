@@ -29,7 +29,6 @@ export default function Navbar() {
     { name: 'HOME', path: '/' },
     { name: 'COMPETITIONS', path: '/competitions' },
     { name: 'ROUNDS & PRIZES', path: '/rounds-and-prizes' },
-    { name: 'OUR BOOKS', path: '/our-books' },
     { name: 'CONTACT', path: '/contact' }
   ];
 
