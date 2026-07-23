@@ -40,6 +40,7 @@ export default function RegistrationsManager() {
   const [bulkFile, setBulkFile] = useState<File | null>(null);
   const [bulkFormId, setBulkFormId] = useState("");
   const [bulkLoading, setBulkLoading] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState("");
 
   const [bulkMarksFile, setBulkMarksFile] = useState<File | null>(null);
   const [bulkMarksLoading, setBulkMarksLoading] = useState(false);
@@ -213,21 +214,46 @@ export default function RegistrationsManager() {
         
         // Send in batches of 10 to prevent Vercel/Render server timeouts
         const BATCH_SIZE = 10;
+        const CONCURRENCY = 4; // Run 4 batches at the same time to speed up the process
+        const batches: any[][] = [];
+        for (let i = 0; i < registrations.length; i += BATCH_SIZE) {
+          batches.push(registrations.slice(i, i + BATCH_SIZE));
+        }
+
         let successCount = 0;
         let failedBatches = 0;
         let lastError = "";
+        
+        setBulkProgress(`Preparing to upload ${registrations.length} students...`);
 
-        for (let i = 0; i < registrations.length; i += BATCH_SIZE) {
-          const batch = registrations.slice(i, i + BATCH_SIZE);
-          const res = await adminBulkAddRegistrations(batch);
-          if (res.success) {
-            successCount += batch.length;
-          } else {
-            failedBatches++;
-            lastError = res.error;
-            break; // Stop on first failed batch
-          }
-        }
+        const executeBatches = async () => {
+          let nextBatchIndex = 0;
+          const workers = Array(CONCURRENCY).fill(null).map(async () => {
+            while (nextBatchIndex < batches.length) {
+              const currentIdx = nextBatchIndex++;
+              const batch = batches[currentIdx];
+              if (!batch) continue;
+              try {
+                const res = await adminBulkAddRegistrations(batch);
+                if (res.success) {
+                  successCount += batch.length;
+                  setBulkProgress(`Uploaded ${successCount} of ${registrations.length} students...`);
+                } else {
+                  failedBatches++;
+                  lastError = res.error;
+                  nextBatchIndex = batches.length; // Stop other workers
+                }
+              } catch (err: any) {
+                failedBatches++;
+                lastError = err.message || "Network error";
+                nextBatchIndex = batches.length;
+              }
+            }
+          });
+          await Promise.all(workers);
+        };
+
+        await executeBatches();
 
         if (failedBatches === 0) {
           alert(`Bulk upload successful! Registered ${successCount} students.`);
@@ -914,6 +940,31 @@ export default function RegistrationsManager() {
               <div>
                 <input type="file" accept=".csv" onChange={(e) => setBulkFile(e.target.files?.[0] || null)} />
               </div>
+              {bulkProgress && (
+                <div style={{ 
+                  marginTop: "1rem", 
+                  padding: "0.75rem 1rem", 
+                  background: "rgba(139, 92, 246, 0.08)", 
+                  border: "1px solid rgba(139, 92, 246, 0.2)", 
+                  borderRadius: "8px", 
+                  color: "#8b5cf6", 
+                  fontSize: "0.85rem", 
+                  fontWeight: 700, 
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: "0.5rem" 
+                }}>
+                  <span style={{ 
+                    display: "inline-block", 
+                    width: "8px", 
+                    height: "8px", 
+                    borderRadius: "50%", 
+                    background: "#8b5cf6",
+                    opacity: 0.8
+                  }}></span>
+                  {bulkProgress}
+                </div>
+              )}
             </div>
             <div style={{ display: "flex", justifyContent: "flex-end", marginTop: "2rem", gap: "1rem" }}>
               <button onClick={() => setShowBulkModal(false)} style={{ background: "none", border: "1px solid #cbd5e1", padding: "0.6rem 1.2rem", borderRadius: "8px", fontWeight: 700, cursor: "pointer", color: "#475569" }}>Cancel</button>
