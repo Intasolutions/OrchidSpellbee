@@ -17,6 +17,15 @@ export default function RegistrationsManager() {
   const [selectedState, setSelectedState] = useState("");
   const [selectedDistrict, setSelectedDistrict] = useState("");
 
+  // Pagination State
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(50);
+
+  // Reset page when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchQuery, selectedTier, selectedStatus, selectedResult, selectedState, selectedDistrict]);
+
   const [showAddModal, setShowAddModal] = useState(false);
   const [showBulkModal, setShowBulkModal] = useState(false);
   const [showBulkMarksModal, setShowBulkMarksModal] = useState(false);
@@ -95,6 +104,10 @@ export default function RegistrationsManager() {
 
     return matchesSearch && matchesTier && matchesStatus && matchesResult && matchesState && matchesDistrict;
   });
+
+  const totalItems = filteredSubmissions.length;
+  const totalPages = Math.ceil(totalItems / pageSize) || 1;
+  const paginatedSubmissions = filteredSubmissions.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const handleExportExcel = () => {
     if (filteredSubmissions.length === 0) {
@@ -530,7 +543,7 @@ export default function RegistrationsManager() {
                     Loading registration entries...
                   </td>
                 </tr>
-              ) : filteredSubmissions.map((sub: any) => (
+              ) : paginatedSubmissions.map((sub: any) => (
                 <tr 
                   key={sub.id} 
                   style={{ borderBottom: "1px solid #f1f5f9" }}
@@ -612,6 +625,70 @@ export default function RegistrationsManager() {
           </table>
         </div>
       </div>
+
+      {/* Pagination Controls */}
+      {totalPages > 1 && (
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "1.5rem", padding: "0.75rem 1rem", background: "white", borderRadius: "12px", border: "1px solid #e2e8f0" }}>
+          <div style={{ fontSize: "0.9rem", color: "#64748b", display: "flex", alignItems: "center", gap: "1rem" }}>
+            <span>
+              Showing <span style={{ fontWeight: 600, color: "#1e1b4b" }}>{((currentPage - 1) * pageSize) + 1}</span> to <span style={{ fontWeight: 600, color: "#1e1b4b" }}>{Math.min(currentPage * pageSize, totalItems)}</span> of <span style={{ fontWeight: 600, color: "#1e1b4b" }}>{totalItems}</span> entries
+            </span>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+              <span style={{ fontSize: "0.8rem", color: "#64748b" }}>Rows per page:</span>
+              <select
+                value={pageSize}
+                onChange={(e) => {
+                  setPageSize(parseInt(e.target.value));
+                  setCurrentPage(1);
+                }}
+                style={{ padding: "0.2rem 0.4rem", borderRadius: "4px", border: "1px solid #cbd5e1", outline: "none", fontSize: "0.8rem", background: "white" }}
+              >
+                <option value={25}>25</option>
+                <option value={50}>50</option>
+                <option value={100}>100</option>
+                <option value={200}>200</option>
+              </select>
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+              style={{
+                padding: "0.4rem 0.8rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                background: currentPage === 1 ? "#f1f5f9" : "white",
+                color: currentPage === 1 ? "#94a3b8" : "#1e1b4b",
+                fontWeight: 600,
+                fontSize: "0.85rem",
+                cursor: currentPage === 1 ? "not-allowed" : "pointer"
+              }}
+            >
+              Previous
+            </button>
+            <div style={{ display: "flex", alignItems: "center", padding: "0 0.5rem", fontSize: "0.85rem", fontWeight: 600, color: "#1e1b4b" }}>
+              Page {currentPage} of {totalPages}
+            </div>
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+              style={{
+                padding: "0.4rem 0.8rem",
+                borderRadius: "6px",
+                border: "1px solid #cbd5e1",
+                background: currentPage === totalPages ? "#f1f5f9" : "white",
+                color: currentPage === totalPages ? "#94a3b8" : "#1e1b4b",
+                fontWeight: 600,
+                fontSize: "0.85rem",
+                cursor: currentPage === totalPages ? "not-allowed" : "pointer"
+              }}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Details Modal */}
       {selectedSub && (
