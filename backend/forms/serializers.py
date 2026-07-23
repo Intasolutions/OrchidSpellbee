@@ -159,26 +159,38 @@ class AdminRegistrationCreateSerializer(serializers.Serializer):
             raise serializers.ValidationError({"form_id": "Invalid form_id"})
 
         import uuid
-        email_to_use = email
+        
+        # Check if a student with this exact name already has a profile using this base email
+        parts = email.split('@')
+        username_part = parts[0]
+        domain_part = parts[1] if len(parts) > 1 else 'orchidspellbee.com'
+        
+        existing_student = Student.objects.filter(
+            name__iexact=name,
+            email__istartswith=f"{username_part}+",
+            email__iendswith=f"@{domain_part}"
+        ).first()
+        
+        if not existing_student:
+            existing_student = Student.objects.filter(
+                name__iexact=name,
+                email__iexact=email
+            ).first()
 
-        # Loop to ensure we generate a truly unique email if it's already used by another student
-        while True:
-            student_exists = Student.objects.filter(email__iexact=email_to_use).first()
-            user_exists = User.objects.filter(username__iexact=email_to_use).exists()
+        if existing_student:
+            email_to_use = existing_student.email
+        else:
+            email_to_use = email
+            # Loop to ensure we generate a truly unique email if it's already used by another student
+            while True:
+                student_exists = Student.objects.filter(email__iexact=email_to_use).first()
+                user_exists = User.objects.filter(username__iexact=email_to_use).exists()
 
-            if not student_exists and not user_exists:
-                break
+                if not student_exists and not user_exists:
+                    break
 
-            # If the student exists and has the exact same name, we can reuse this student profile
-            if student_exists and student_exists.name.strip().lower() == name.lower():
-                email_to_use = student_exists.email
-                break
-
-            # Otherwise, append a unique suffix to the email
-            parts = email.split('@')
-            username_part = parts[0]
-            domain_part = parts[1] if len(parts) > 1 else 'orchidspellbee.com'
-            email_to_use = f"{username_part}+{uuid.uuid4().hex[:6]}@{domain_part}"
+                # Otherwise, append a unique suffix to the email
+                email_to_use = f"{username_part}+{uuid.uuid4().hex[:6]}@{domain_part}"
 
         # Get or create User
         user, created_user = User.objects.get_or_create(
