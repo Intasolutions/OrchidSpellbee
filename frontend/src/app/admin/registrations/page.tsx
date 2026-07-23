@@ -211,8 +211,8 @@ export default function RegistrationsManager() {
           }
         }
         
-        // Send in batches of 50 to prevent Vercel/Render server timeouts
-        const BATCH_SIZE = 50;
+        // Send in batches of 10 to prevent Vercel/Render server timeouts
+        const BATCH_SIZE = 10;
         let successCount = 0;
         let failedBatches = 0;
         let lastError = "";
