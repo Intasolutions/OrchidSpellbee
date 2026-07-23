@@ -21,6 +21,7 @@ from .views import (
     AdminBulkRegistrationView,
     AdminBackfillSchoolsView,
     AdminBulkMarksUploadView,
+    AdminCleanupDuplicatesView,
     GalleryListView,
     PublicResultView,
     PublicSchoolResultView
@@ -53,6 +54,7 @@ urlpatterns = [
     path('auth/me/', StudentMeView.as_view(), name='student-me'),
     path('verify-payment/', VerifyPaymentView.as_view(), name='verify-payment'),
     path('admin/backfill-schools/', AdminBackfillSchoolsView.as_view(), name='admin-backfill-schools'),
+    path('admin/cleanup-duplicates/', AdminCleanupDuplicatesView.as_view(), name='admin-cleanup-duplicates'),
     path('gallery/', GalleryListView.as_view(), name='gallery-list'),
     path('public/result/', PublicResultView.as_view(), name='public-result'),
     path('public/school-result/', PublicSchoolResultView.as_view(), name='public-school-result'),

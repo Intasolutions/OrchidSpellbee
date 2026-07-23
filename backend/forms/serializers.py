@@ -147,8 +147,8 @@ class AdminRegistrationCreateSerializer(serializers.Serializer):
     data = serializers.JSONField(required=False, default=dict)
 
     def create(self, validated_data):
-        email = validated_data['email']
-        name = validated_data['name']
+        email = validated_data['email'].strip()
+        name = validated_data['name'].strip()
         form_id = validated_data['form_id']
         payment_status = validated_data.get('payment_status', 'PAID')
         password = validated_data.get('password') or 'Orchid@123'
@@ -158,10 +158,32 @@ class AdminRegistrationCreateSerializer(serializers.Serializer):
         except TierForm.DoesNotExist:
             raise serializers.ValidationError({"form_id": "Invalid form_id"})
 
+        import uuid
+        email_to_use = email
+
+        # Loop to ensure we generate a truly unique email if it's already used by another student
+        while True:
+            student_exists = Student.objects.filter(email__iexact=email_to_use).first()
+            user_exists = User.objects.filter(username__iexact=email_to_use).exists()
+
+            if not student_exists and not user_exists:
+                break
+
+            # If the student exists and has the exact same name, we can reuse this student profile
+            if student_exists and student_exists.name.strip().lower() == name.lower():
+                email_to_use = student_exists.email
+                break
+
+            # Otherwise, append a unique suffix to the email
+            parts = email.split('@')
+            username_part = parts[0]
+            domain_part = parts[1] if len(parts) > 1 else 'orchidspellbee.com'
+            email_to_use = f"{username_part}+{uuid.uuid4().hex[:6]}@{domain_part}"
+
         # Get or create User
         user, created_user = User.objects.get_or_create(
-            username=email,
-            defaults={'email': email}
+            username=email_to_use,
+            defaults={'email': email_to_use}
         )
         if created_user:
             user.set_password(password)
@@ -172,7 +194,7 @@ class AdminRegistrationCreateSerializer(serializers.Serializer):
             user=user,
             defaults={
                 'name': name,
-                'email': email,
+                'email': email_to_use,
                 'current_tier': tier_form
             }
         )
@@ -180,12 +202,14 @@ class AdminRegistrationCreateSerializer(serializers.Serializer):
             student.current_tier = tier_form
             student.save()
 
-        # Create Submission
-        submission = Submission.objects.create(
+        # Get or create Submission to make it idempotent and avoid duplicates
+        submission, created_sub = Submission.objects.get_or_create(
             student=student,
             form=tier_form,
-            data=validated_data.get('data', {}),
-            payment_status=payment_status
+            defaults={
+                'data': validated_data.get('data', {}),
+                'payment_status': payment_status
+            }
         )
         return submission
 
