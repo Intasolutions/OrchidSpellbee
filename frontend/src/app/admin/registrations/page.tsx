@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getSubmissions, updateSubmissionPaymentStatus, deleteSubmission, getTierForms, updateSubmissionMarks, adminAddRegistration, adminBulkAddRegistrations, adminBulkUploadMarks, adminCleanupDuplicates } from "../actions";
+import { getSubmissions, updateSubmissionPaymentStatus, deleteSubmission, getTierForms, updateSubmissionMarks, adminAddRegistration, adminBulkAddRegistrations, adminBulkUploadMarks } from "../actions";
 
 export default function RegistrationsManager() {
   const [submissions, setSubmissions] = useState<any[]>([]);
@@ -349,21 +349,6 @@ export default function RegistrationsManager() {
     document.body.removeChild(link);
   };
 
-  const handleCleanupDuplicates = async () => {
-    if (!confirm("Are you sure you want to clean up duplicate registrations in the live database? This will only keep the first registration for Avanthika, Aniya, and Dhyan, and delete the bad duplicates.")) return;
-    try {
-      const res = await adminCleanupDuplicates();
-      if (res.success) {
-        alert(`Cleanup successful! Deleted ${res.data.deleted_count} duplicate registrations.\n\nLog:\n${res.data.log.join("\n")}`);
-        window.location.reload();
-      } else {
-        alert("Error during cleanup: " + res.error);
-      }
-    } catch (err) {
-      alert("Failed to run cleanup action.");
-    }
-  };
-
   return (
     <div>
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "2rem" }}>
@@ -395,24 +380,6 @@ export default function RegistrationsManager() {
             }}
           >
             Upload Marks
-          </button>
-          <button 
-            onClick={handleCleanupDuplicates}
-            style={{ 
-              background: "#dc2626", 
-              color: "white", 
-              border: "none", 
-              padding: "0.75rem 1.5rem", 
-              borderRadius: "8px", 
-              fontWeight: 700, 
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              boxShadow: "0 4px 10px rgba(220, 38, 38, 0.2)"
-            }}
-          >
-            Clean Duplicates
           </button>
           <button 
             onClick={handleExportExcel}

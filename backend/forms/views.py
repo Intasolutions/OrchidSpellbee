@@ -529,49 +529,7 @@ class AdminBackfillSchoolsView(APIView):
         })
 
 
-class AdminCleanupDuplicatesView(APIView):
-    """
-    One-time endpoint to clean up duplicate submissions for students sharing school emails.
-    Protected by admin token. Call: GET /api/admin/cleanup-duplicates/
-    """
-    permission_classes = [IsAdminOrSecretToken]
 
-    def get(self, request):
-        target_emails = [
-            "infantjesubethanyschool@gmail.com",
-            "skpsosb@skps.ac.in",
-            "manarcadinfantjesus@gmail.com"
-        ]
-
-        deleted_ids = []
-        log = []
-
-        for email in target_emails:
-            student = Student.objects.filter(email__iexact=email).first()
-            if not student:
-                log.append(f"Student with email {email} not found. Skipping.")
-                continue
-
-            submissions = list(Submission.objects.filter(student=student).order_by('submitted_at'))
-            if len(submissions) <= 1:
-                log.append(f"Student {student.name} ({email}) has {len(submissions)} submission(s). No duplicates.")
-                continue
-
-            keep = submissions[0]
-            to_delete = submissions[1:]
-
-            log.append(f"Student {student.name} ({email}): Keeping sub {keep.id}, deleting {len(to_delete)} duplicates.")
-
-            for sub in to_delete:
-                deleted_ids.append(sub.id)
-                sub.delete()
-
-        return Response({
-            "status": "success",
-            "deleted_count": len(deleted_ids),
-            "deleted_ids": deleted_ids,
-            "log": log
-        })
 
 
 

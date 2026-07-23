@@ -453,17 +453,3 @@ export async function deleteSchool(id: number) {
   }
 }
 
-export async function adminCleanupDuplicates() {
-  try {
-    await verifySession();
-    const res = await fetch(`${API_BASE_URL}/api/admin/cleanup-duplicates/`, {
-      headers: getAdminHeaders(),
-      cache: "no-store"
-    });
-    if (!res.ok) throw new Error("Failed to run duplicate cleanup");
-    return { success: true, data: await res.json() };
-  } catch (error: any) {
-    console.error("adminCleanupDuplicates error:", error);
-    return { success: false, error: error.message };
-  }
-}
