@@ -211,13 +211,30 @@ export default function RegistrationsManager() {
           }
         }
         
-        const res = await adminBulkAddRegistrations(registrations);
-        if (res.success) {
-          alert(res.data.message || "Bulk upload successful!");
+        // Send in batches of 50 to prevent Vercel/Render server timeouts
+        const BATCH_SIZE = 50;
+        let successCount = 0;
+        let failedBatches = 0;
+        let lastError = "";
+
+        for (let i = 0; i < registrations.length; i += BATCH_SIZE) {
+          const batch = registrations.slice(i, i + BATCH_SIZE);
+          const res = await adminBulkAddRegistrations(batch);
+          if (res.success) {
+            successCount += batch.length;
+          } else {
+            failedBatches++;
+            lastError = res.error;
+            break; // Stop on first failed batch
+          }
+        }
+
+        if (failedBatches === 0) {
+          alert(`Bulk upload successful! Registered ${successCount} students.`);
           setShowBulkModal(false);
           window.location.reload();
         } else {
-          alert("Error in bulk upload: " + res.error);
+          alert(`Error in bulk upload (registered ${successCount} successfully before error): ${lastError}`);
         }
       } catch (err) {
         alert("Error parsing CSV. Please check the format.");
