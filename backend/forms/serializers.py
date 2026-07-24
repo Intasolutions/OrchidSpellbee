@@ -160,36 +160,23 @@ class AdminRegistrationCreateSerializer(serializers.Serializer):
 
         import uuid
         
-        # Check if a student with this exact name already has a profile using this base email
-        parts = email.split('@')
-        username_part = parts[0]
-        domain_part = parts[1] if len(parts) > 1 else 'orchidspellbee.com'
-        
+        # Check if a student with this exact name and email already exists in the database
         existing_student = Student.objects.filter(
             name__iexact=name,
-            email__istartswith=f"{username_part}+",
-            email__iendswith=f"@{domain_part}"
+            email__iexact=email
         ).first()
-        
-        if not existing_student:
-            existing_student = Student.objects.filter(
-                name__iexact=name,
-                email__iexact=email
-            ).first()
 
         if existing_student:
-            email_to_use = existing_student.email
+            email_to_use = existing_student.user.username if existing_student.user else existing_student.email
         else:
             email_to_use = email
-            # Loop to ensure we generate a truly unique email if it's already used by another student
+            username_part, domain_part = email.split('@') if '@' in email else (email, 'orchidspellbee.com')
+            # Loop to ensure we generate a truly unique username (for User.username)
             while True:
-                student_exists = Student.objects.filter(email__iexact=email_to_use).first()
                 user_exists = User.objects.filter(username__iexact=email_to_use).exists()
-
-                if not student_exists and not user_exists:
+                if not user_exists:
                     break
-
-                # Otherwise, append a unique suffix to the email
+                # Otherwise, append a unique suffix to the username
                 email_to_use = f"{username_part}+{uuid.uuid4().hex[:6]}@{domain_part}"
 
         # Get or create User
@@ -206,7 +193,7 @@ class AdminRegistrationCreateSerializer(serializers.Serializer):
             user=user,
             defaults={
                 'name': name,
-                'email': email_to_use,
+                'email': email,
                 'current_tier': tier_form
             }
         )

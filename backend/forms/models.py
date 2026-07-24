@@ -57,7 +57,7 @@ class School(models.Model):
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, related_name='student_profile')
     name = models.CharField(max_length=200)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(db_index=True)
     school = models.ForeignKey(School, on_delete=models.SET_NULL, null=True, blank=True, related_name='students')
     current_tier = models.ForeignKey(TierForm, on_delete=models.SET_NULL, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -391,9 +391,26 @@ class StudentRegisterView(APIView):
 
 class StudentLoginView(APIView):
     def post(self, request):
-        email = request.data.get("email")
+        email_or_code = request.data.get("email", "").strip()
         password = request.data.get("password")
-        user = authenticate(username=email, password=password)
+        
+        # Try to find student by student code
+        student = Student.objects.filter(student_code__iexact=email_or_code).first()
+        
+        # If not found, try to find student by email
+        if not student:
+            students = Student.objects.filter(email__iexact=email_or_code)
+            if students.count() > 1:
+                return Response({
+                    "error": "Multiple accounts share this email. Please sign in using your unique Student Code (e.g., OSB-2026-XXXX)."
+                }, status=status.HTTP_400_BAD_REQUEST)
+            student = students.first()
+            
+        username_to_auth = email_or_code
+        if student and student.user:
+            username_to_auth = student.user.username
+            
+        user = authenticate(username=username_to_auth, password=password)
         if user is not None and hasattr(user, 'student_profile'):
             token, _ = Token.objects.get_or_create(user=user)
             return Response({"token": token.key, "student_id": user.student_profile.id})
